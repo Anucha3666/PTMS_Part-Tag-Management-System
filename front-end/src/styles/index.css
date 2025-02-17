@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "LilyUPC";
+  src: url("../assets/fonts/upclb.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.text-logo {
+  font-family: "LilyUPC", sans-serif !important;
+  font-style: italic;
+}

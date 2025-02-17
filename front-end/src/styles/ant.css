@@ -1,0 +1,45 @@
+/* ? ---------- Input ---------- ? */
+.ant-input {
+  width: 100% !important;
+}
+
+.green-checkbox .ant-checkbox-inner {
+  border-color: #40c45f;
+}
+
+.green-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #40c45f;
+  border-color: #40c45f;
+}
+
+.green-checkbox:hover .ant-checkbox-inner {
+  border-color: lightgreen;
+}
+
+/* ? ---------- Card ---------- ? */
+.ant-card-body {
+  padding: 0px !important;
+}
+
+/* ? --------- Menu --------- ? */
+
+.ant-collapse-content-box {
+  padding: 0px !important;
+}
+
+.ant-table-footer {
+  padding: 0px !important;
+}
+
+.ant-table-placeholder .ant-table-cell {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.css-dev-only-do-not-override-1f4pemq.ant-empty {
+  margin: 0px !important;
+}
+
+.ant-drawer-body {
+  padding: 12px !important;
+}
