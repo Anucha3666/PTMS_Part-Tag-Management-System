@@ -1,6 +1,6 @@
 import { Empty, Table } from "antd";
 import type { TableProps } from "antd";
-import { CirclePlus, Eye, Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoView } from "react-photo-view";
 import { PhotoProvider } from "react-photo-view";
@@ -16,7 +16,7 @@ type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 export const PartTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onClose } = useDisclosure();
   const { parts } = useAppSelector((state) => state.parts);
   const [height, setHeight] = useState(0);
   const [dataModal, setDataModal] = useState<TDataModalPart>(
@@ -138,6 +138,7 @@ export const PartTable: FC = () => {
       title: "Action",
       key: "action",
       width: "4rem",
+      fixed: "right",
       render: (_, record) => (
         <div
           className='flex gap-2 cursor-pointer'
@@ -190,17 +191,13 @@ export const PartTable: FC = () => {
       <Table<TPart>
         columns={columns}
         dataSource={parts?.map((item) => ({ ...item, key: item?.part_id }))}
-        className=' w-full !text-nowrap'
-        rowSelection={{ type: "checkbox", ...rowSelection }}
+        className=' w-full !text-nowrap p-2'
+        rowSelection={{ type: "checkbox", ...rowSelection, fixed: "left" }}
         components={{
           header: {
             cell: (props: React.HTMLAttributes<HTMLTableHeaderCellElement>) => (
-              <th
-                {...props}
-                style={{
-                  textAlign: "center",
-                }}>
-                {props.children}
+              <th {...props}>
+                <p className=' w-full text-center'>{props.children}</p>
               </th>
             ),
           },
@@ -216,23 +213,31 @@ export const PartTable: FC = () => {
             />
           ),
         }}
-        footer={() => (
-          <div className='w-full flex justify-end bg-white border-b-[1px] p-4'>
-            <CirclePlus
-              className=' text-gray-400 hover:text-green-600 cursor-pointer'
-              onClick={onOpen}
-            />
-          </div>
-        )}
-        scroll={{ x: "max-content", y: `${height - 230}px` }}
+        // footer={() => (
+        //   <div className='w-full flex justify-end bg-white border-b-[1px] p-4'>
+        //     <CirclePlus
+        //       className=' text-gray-400 hover:text-green-600 cursor-pointer'
+        //       onClick={onOpen}
+        //     />
+        //   </div>
+        // )}
+        scroll={{ x: "max-content", y: `${height - 190}px` }}
       />
       <CreateUpdatePartModal
         open={isOpen || isUpdate}
         isUpdate={isUpdate}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+        }}
       />
-      <ViewPartModal open={dataModal?.order === "view"} onClose={onClose} />
-      <DeletePartModal open={dataModal?.order === "delete"} onClose={onClose} />
+      <ViewPartModal
+        open={dataModal?.order === "view"}
+        onClose={() => setDataModal({} as TDataModalPart)}
+      />
+      <DeletePartModal
+        open={dataModal?.order === "delete"}
+        onClose={() => setDataModal({} as TDataModalPart)}
+      />
     </div>
   );
 };

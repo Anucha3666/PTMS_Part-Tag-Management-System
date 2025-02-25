@@ -2,7 +2,6 @@ import { Empty, Table } from "antd";
 import type { TableProps } from "antd";
 import { Pencil, Trash2 } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
-import iconCCT from "/assets/images/icon-cct.png";
 import { PhotoView } from "react-photo-view";
 import { PhotoProvider } from "react-photo-view";
 
@@ -48,9 +47,14 @@ export const PrintTable: FC = () => {
       render: () => (
         <div className='flex'>
           <PhotoProvider>
-            <PhotoView src={iconCCT}>
+            <PhotoView
+              src={
+                "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms.png"
+              }>
               <img
-                src={iconCCT}
+                src={
+                  "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms.png"
+                }
                 alt='icon-cct'
                 className=' w-full !max-h-[4rem] !h-[4rem] object-cover cursor-pointer'
               />

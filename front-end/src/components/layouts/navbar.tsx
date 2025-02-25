@@ -1,5 +1,4 @@
 import { Button, Segmented } from "antd";
-import iconCCT from "/assets/images/icon-cct.png";
 import { useScreen } from "@/hooks";
 import { CircleUserRound, Expand, LogOut, Shrink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -10,12 +9,24 @@ export const AppNavbar = () => {
 
   return (
     <div className=' w-full h-min  grid grid-cols-3 bg-white justify-between gap-1 p-2 items-center shadow-md'>
-      <div className=' flex gap-1 items-center'>
-        <img src={iconCCT} alt='' className=' w-[2.4rem] h-max' />
-        <div className='!w-[4px] h-[34px] rounded-full bg-black' />
+      <div className=' flex gap-2 items-center'>
+        <img
+          src={
+            "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms.png"
+          }
+          alt='icon-ptms'
+          className=' w-[2.4rem] h-max'
+        />
+        <div className='!w-[3px] h-[34px] rounded-full  bg-black  shadow-inner' />
         <div className=' text-sm'>
-          <p className=' text-lg font-bold'>CCT</p>
-          <p className=' -mt-2'>Control Compare Tags</p>
+          <p
+            className='text-xl font-bold'
+            style={{ fontFamily: "Oswald, sans-serif" }}>
+            PTMS
+          </p>
+          <p className=' -mt-2 text-[0.7rem] font-bold'>
+            Part Tag Manager System
+          </p>
         </div>
       </div>
 
