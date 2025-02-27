@@ -1,69 +1,56 @@
 import { TPart } from "@/types";
-import { Input, Modal, Upload as UploadAntd } from "antd";
-import { UploadChangeParam } from "antd/es/upload";
+import { Input, Modal } from "antd";
+import React, { FC, Fragment, useEffect, useState } from "react";
+import { UploadImage } from "../common/upload-image";
+import { usePart } from "@/services/hooks";
 
-import { FC, useState } from "react";
+type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 
 export type TCreateUpdatePartModal = {
   open: boolean;
-  onClose?: () => void;
-  isUpdate?: boolean;
-};
-
-export type TUpload = {
-  src: string;
-  setSrc: (e: string) => void;
-};
-
-export const Upload: FC<TUpload> = ({ src, setSrc }) => {
-  const handleChangeUpload = (info: UploadChangeParam) => {
-    const latestFile = info.fileList.slice(-1)[0]?.originFileObj;
-    if (latestFile) {
-      const reader = new FileReader();
-      reader.readAsDataURL(latestFile);
-      reader.onload = () => {
-        setSrc(String(reader.result ?? ""));
-      };
-    }
-  };
-
-  return (
-    <UploadAntd
-      name='avatar'
-      listType='picture-card'
-      className='avatar-uploader'
-      showUploadList={false}
-      beforeUpload={() => false}
-      onChange={(e) => handleChangeUpload(e)}>
-      {(src ?? "") !== "" ? (
-        <img src={src} alt='uploaded' style={{ width: "100%" }} />
-      ) : (
-        <p>Upload</p>
-      )}
-    </UploadAntd>
-  );
+  onClose: () => void;
+  data?: TDataModalPart;
 };
 
 export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
   open,
   onClose,
+  data = {} as TDataModalPart,
 }) => {
+  const { mutateCreatePart, mutateUpdatePart } = usePart();
   const [formData, setFormData] = useState<Partial<TPart>>({});
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value ?? 0) : value,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onClose?.();
+    if ((data?.order ?? "") === "update") {
+      mutateUpdatePart(formData as TPart);
+    } else {
+      mutateCreatePart(formData as TPart);
+    }
+    onClose();
   };
 
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
   return (
-    <Modal title={"Add Print"} open={open} onCancel={onClose} width={"23rem"}>
+    <Modal
+      title={"Add Print"}
+      open={open}
+      onCancel={onClose}
+      width={"23rem"}
+      onOk={handleSubmit}>
       <form onSubmit={handleSubmit} className=' -mt-6'>
         <div className='grid gap-1 py-4'>
           <div>
@@ -106,51 +93,66 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
           </div>
           <div className='flex gap-2 justify-between'>
             <div className='justify-between items-center'>
-              <label
-                htmlFor='q_point'
-                className='text-right text-[0.8rem] overflow-hidden text-nowrap w-full'>
+              <label className='text-right text-[0.8rem] overflow-hidden text-nowrap w-full'>
                 Picture Std :
               </label>
-              <Upload
+              <UploadImage
                 src={formData?.picture_std ?? ""}
                 setSrc={(e) => setFormData({ ...formData, picture_std: e })}
               />
             </div>
             <div className='justify-between items-center'>
-              <label
-                htmlFor='q_point'
-                className='text-right text-[0.8rem] text-nowrap'>
+              <label className='text-right text-[0.8rem] text-nowrap'>
                 Q-Point :
               </label>
-              <Upload
+              <UploadImage
                 src={formData?.q_point ?? ""}
                 setSrc={(e) => setFormData({ ...formData, q_point: e })}
               />
             </div>
             <div className='justify-between items-center'>
-              <label
-                htmlFor='packing'
-                className='text-right text-[0.8rem] text-nowrap'>
+              <label className='text-right text-[0.8rem] text-nowrap'>
                 Packing :
               </label>
-              <Upload
+              <UploadImage
                 src={formData?.packing ?? ""}
                 setSrc={(e) => setFormData({ ...formData, packing: e })}
               />
             </div>
           </div>
-          <div>
-            <label
-              htmlFor='q_point'
-              className='text-right text-[0.8rem] text-nowrap'>
-              More pictures :
+          <div className=' flex flex-col gap-1 items-start'>
+            <label className='text-right text-[0.8rem] text-nowrap'>
+              More pictures ({formData?.more_pictures?.length ?? 0}/3) :
             </label>
             <div className=' flex gap-2'>
-              {Array?.from({ length: 1 })?.map(() => (
-                <Upload
-                  src={formData?.picture_std ?? ""}
-                  setSrc={(e) => setFormData({ ...formData, picture_std: e })}
-                />
+              {Array?.from({
+                length:
+                  (formData?.more_pictures?.length ?? 0) + 1 >= 3
+                    ? 3
+                    : (formData?.more_pictures?.length ?? 0) + 1,
+              })?.map((_, i) => (
+                <Fragment key={i}>
+                  <UploadImage
+                    src={(formData?.more_pictures ?? [])[i] ?? ""}
+                    setSrc={(e) =>
+                      e === ""
+                        ? setFormData({
+                            ...formData,
+                            more_pictures: (formData?.more_pictures ?? [])
+                              ?.slice(0, i)
+                              ?.concat(
+                                (formData?.more_pictures ?? [])?.slice(i + 1)
+                              ),
+                          })
+                        : setFormData({
+                            ...formData,
+                            more_pictures: (
+                              formData?.more_pictures ?? []
+                            )?.concat(e ?? ""),
+                          })
+                    }
+                  />
+                </Fragment>
               ))}
             </div>
           </div>

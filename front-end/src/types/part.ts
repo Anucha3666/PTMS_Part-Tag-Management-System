@@ -6,7 +6,7 @@ export type TCerateUpdatePart = {
   picture_std: string;
   q_point: string;
   packing: string;
-  more_pictures: [string, string, string];
+  more_pictures: string[];
 };
 
 export type TPart = {
@@ -17,7 +17,7 @@ export type TPart = {
   picture_std: string;
   q_point: string;
   packing: string;
-  more_pictures: [string, string, string];
+  more_pictures: string[];
   creator: string;
   create_at: string;
   update_at: string;

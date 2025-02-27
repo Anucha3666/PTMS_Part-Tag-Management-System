@@ -5,7 +5,6 @@ import { FC, useEffect, useRef, useState } from "react";
 import { PhotoView } from "react-photo-view";
 import { PhotoProvider } from "react-photo-view";
 import { CreateUpdatePartModal } from "./create-update-part-modal";
-import { useDisclosure } from "@/helpers";
 import { TPart } from "@/types";
 import { useAppSelector } from "@/store/hook";
 import { ViewPartModal } from "./view-part-modal";
@@ -16,15 +15,11 @@ type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 export const PartTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
 
-  const { isOpen, onClose } = useDisclosure();
   const { parts } = useAppSelector((state) => state.parts);
   const [height, setHeight] = useState(0);
   const [dataModal, setDataModal] = useState<TDataModalPart>(
     {} as TDataModalPart
   );
-
-  const isUpdate =
-    (dataModal?.part_id ?? "") !== "" && dataModal?.order === "update";
 
   const columns: TableProps<TPart>["columns"] = [
     {
@@ -40,7 +35,6 @@ export const PartTable: FC = () => {
       key: "part_name",
       sorter: (a, b) => a.part_name.localeCompare(b.part_name),
     },
-
     {
       title: "Packing Standard",
       dataIndex: "packing_std",
@@ -83,6 +77,10 @@ export const PartTable: FC = () => {
                   src={q_point}
                   alt={`q_point`}
                   className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                  onError={(e) => {
+                    e.currentTarget.onerror = null; // ป้องกันการวนลูปหากรูปภาพสำรองโหลดไม่ได้
+                    e.currentTarget.src = "path/to/backup-image.jpg"; // ระบุพาธไปยังรูปภาพสำรอง
+                  }}
                 />
               </div>
             </PhotoView>
@@ -224,14 +222,12 @@ export const PartTable: FC = () => {
         scroll={{ x: "max-content", y: `${height - 190}px` }}
       />
       <CreateUpdatePartModal
-        open={isOpen || isUpdate}
-        isUpdate={isUpdate}
-        onClose={() => {
-          onClose();
-        }}
+        open={dataModal?.order === "update"}
+        data={dataModal}
+        onClose={() => setDataModal({} as TDataModalPart)}
       />
       <ViewPartModal
-        open={dataModal?.order === "view"}
+        open={dataModal}
         onClose={() => setDataModal({} as TDataModalPart)}
       />
       <DeletePartModal
