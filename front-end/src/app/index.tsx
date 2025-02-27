@@ -9,6 +9,7 @@ import {
 
 import { AppProvider } from "../providers";
 import {
+  LoginPage,
   NotFoundPage,
   PartManagementPage,
   UnderConstructionPage,
@@ -20,7 +21,8 @@ const AppRoutes: FC = () => {
 
   return (
     <Routes location={location}>
-      <Route path='/' element={<Navigate to={"/part-management"} />} />
+      <Route path='/' element={<Navigate to={"/login"} />} />
+      <Route path='/login' element={<LoginPage />} />
       <Route element={<AppLayout />}>
         <Route path='/part-management' element={<PartManagementPage />} />
         <Route path='/report' element={<UnderConstructionPage />} />
