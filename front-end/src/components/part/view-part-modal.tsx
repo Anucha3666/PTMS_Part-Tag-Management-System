@@ -102,7 +102,10 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
             More pictures ({open?.more_pictures?.length ?? 0}/3) :
           </label>
           <div className=' flex gap-2'>
-            {open?.more_pictures?.map((src, i) => (
+            {(open?.more_pictures?.length === 0
+              ? [""]
+              : open?.more_pictures
+            )?.map((src, i) => (
               <Fragment key={i}>
                 <UploadImage src={src ?? ""} disabled />
               </Fragment>

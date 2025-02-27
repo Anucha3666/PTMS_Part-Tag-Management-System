@@ -3,6 +3,7 @@ import { Input, Modal } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import { UploadImage } from "../common/upload-image";
 import { usePart } from "@/services/hooks";
+import { useAppSelector } from "@/store/hook";
 
 type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 
@@ -18,6 +19,8 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
   data = {} as TDataModalPart,
 }) => {
   const { mutateCreatePart, mutateUpdatePart } = usePart();
+
+  const { parts } = useAppSelector((state) => state.parts);
   const [formData, setFormData] = useState<Partial<TPart>>({});
 
   const handleChange = (
@@ -36,12 +39,17 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
       mutateUpdatePart(formData as TPart);
     } else {
       mutateCreatePart(formData as TPart);
+      if (parts?.length < 7) window.location.reload();
     }
     onClose();
   };
 
   useEffect(() => {
-    setFormData(data);
+    setFormData({});
+  }, [open]);
+
+  useEffect(() => {
+    if ((data?.order ?? "") === "update") setFormData(data);
   }, [data]);
 
   return (

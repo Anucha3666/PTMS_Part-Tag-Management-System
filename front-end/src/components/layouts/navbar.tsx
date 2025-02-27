@@ -2,10 +2,12 @@ import { Button, Segmented } from "antd";
 import { useScreen } from "@/hooks";
 import { CircleUserRound, Expand, LogOut, Shrink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "@/store/hook";
 
 export const AppNavbar = () => {
   const navigate = useNavigate();
   const { isFullScreen, toggleScreen } = useScreen();
+  const { parts } = useAppSelector((state) => state.parts);
 
   return (
     <div className=' w-full h-min  grid grid-cols-3 bg-white justify-between gap-1 p-2 items-center shadow-md'>
@@ -35,6 +37,8 @@ export const AppNavbar = () => {
           options={["Part Management", "Report"]}
           onChange={(value) => {
             navigate(`/${value?.split(" ")?.join("-")?.toLocaleLowerCase()}`);
+            if (value === "Part Management" && parts?.length < 7)
+              window.location.reload();
           }}
           className='p-1'
         />

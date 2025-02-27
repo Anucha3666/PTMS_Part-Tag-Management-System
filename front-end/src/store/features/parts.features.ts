@@ -1,4 +1,3 @@
-import { mockPart } from "@/assets/mocks";
 import { TPart } from "@/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
@@ -7,7 +6,7 @@ export type TPartsState = {
 };
 
 const initialState: TPartsState = {
-  parts: mockPart(),
+  parts: [],
 };
 
 const partsSlice = createSlice({

@@ -6,14 +6,16 @@ import { PhotoView } from "react-photo-view";
 import { PhotoProvider } from "react-photo-view";
 import { CreateUpdatePartModal } from "./create-update-part-modal";
 import { TPart } from "@/types";
-import { useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { ViewPartModal } from "./view-part-modal";
 import { DeletePartModal } from "./delete-part-modal";
+import { setPrintTags } from "@/store/features/print-tags.features";
 
 type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 
 export const PartTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
 
   const { parts } = useAppSelector((state) => state.parts);
   const [height, setHeight] = useState(0);
@@ -53,13 +55,13 @@ export const PartTable: FC = () => {
             <PhotoView src={picture_std}>
               <div className='relative w-full h-[4rem] bg-slate-50 rounded-md'>
                 <img
-                  src={picture_std}
+                  src={picture_std ?? ""}
                   alt={`picture_std`}
                   className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/image.png";
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
                   }}
                 />
               </div>
@@ -85,7 +87,7 @@ export const PartTable: FC = () => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/image.png";
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
                   }}
                 />
               </div>
@@ -105,9 +107,14 @@ export const PartTable: FC = () => {
             <PhotoView src={packing}>
               <div className='relative w-[4rem] h-[4rem] bg-slate-50 rounded-md'>
                 <img
-                  src={packing}
+                  src={packing ?? ""}
                   alt={`packing`}
                   className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                  }}
                 />
               </div>
             </PhotoView>
@@ -123,22 +130,24 @@ export const PartTable: FC = () => {
       render: (more_pictures: TPart["more_pictures"]) => (
         <PhotoProvider>
           <div className='flex gap-1'>
-            {more_pictures?.map((src, i) => (
-              <PhotoView key={i} src={src}>
-                <div className='relative w-[4rem] h-[4rem] bg-slate-50 rounded-md'>
-                  <img
-                    src={src}
-                    alt={`more_pictures.${i + 1}`}
-                    className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src =
-                        "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/image.png";
-                    }}
-                  />
-                </div>
-              </PhotoView>
-            ))}
+            {((more_pictures?.length ?? 0) === 0 ? [""] : more_pictures)?.map(
+              (src, i) => (
+                <PhotoView key={i} src={src}>
+                  <div className='relative w-[4rem] h-[4rem] bg-slate-50 rounded-md'>
+                    <img
+                      src={src ?? ""}
+                      alt={`more_pictures.${i + 1}`}
+                      className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src =
+                          "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                      }}
+                    />
+                  </div>
+                </PhotoView>
+              )
+            )}
           </div>
         </PhotoProvider>
       ),
@@ -176,11 +185,9 @@ export const PartTable: FC = () => {
   ];
 
   const rowSelection: TableProps<TPart>["rowSelection"] = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: TPart[]) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
+    onChange: (_: React.Key[], selectedRows: TPart[]) => {
+      dispatch(
+        setPrintTags(selectedRows?.map((item) => ({ ...item, no_tags: 1 })))
       );
     },
     getCheckboxProps: (record: TPart) => ({
@@ -196,42 +203,46 @@ export const PartTable: FC = () => {
   }, [height]);
 
   return (
-    <div ref={divRef} className=' w-full h-full'>
-      <Table<TPart>
-        columns={columns}
-        dataSource={parts?.map((item) => ({ ...item, key: item?.part_id }))}
-        className=' w-full !text-nowrap p-2'
-        rowSelection={{ type: "checkbox", ...rowSelection, fixed: "left" }}
-        components={{
-          header: {
-            cell: (props: React.HTMLAttributes<HTMLTableHeaderCellElement>) => (
-              <th {...props}>
-                <p className=' w-full text-center'>{props.children}</p>
-              </th>
-            ),
-          },
-        }}
-        locale={{
-          emptyText: (
-            <Empty
-              image={Empty?.PRESENTED_IMAGE_DEFAULT}
-              description='No data available'
-              style={{
-                padding: "40px",
-              }}
-            />
-          ),
-        }}
-        // footer={() => (
-        //   <div className='w-full flex justify-end bg-white border-b-[1px] p-4'>
-        //     <CirclePlus
-        //       className=' text-gray-400 hover:text-green-600 cursor-pointer'
-        //       onClick={onOpen}
-        //     />
-        //   </div>
-        // )}
-        scroll={{ x: "max-content", y: `${height - 190}px` }}
-      />
+    <>
+      <div ref={divRef} className=' w-full h-full overflow-hidden'>
+        <div className='w-full h-min bg-white max-h-full rounded-md dark:shadow-md-dark'>
+          <Table<TPart>
+            columns={columns}
+            dataSource={parts?.map((item) => ({
+              ...item,
+              key: item?.part_id,
+            }))}
+            className=' w-full !text-nowrap p-2'
+            rowSelection={{ type: "checkbox", ...rowSelection, fixed: "left" }}
+            components={{
+              header: {
+                cell: (
+                  props: React.HTMLAttributes<HTMLTableHeaderCellElement>
+                ) => (
+                  <th {...props}>
+                    <p className=' w-full text-center'>{props.children}</p>
+                  </th>
+                ),
+              },
+            }}
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty?.PRESENTED_IMAGE_DEFAULT}
+                  description='No data available'
+                  style={{
+                    padding: "40px",
+                  }}
+                />
+              ),
+            }}
+            scroll={{
+              x: "max-content",
+              y: parts?.length < 7 ? "max-content" : `${height - 190}px`,
+            }}
+          />
+        </div>
+      </div>
       <CreateUpdatePartModal
         open={dataModal?.order === "update"}
         data={dataModal}
@@ -242,9 +253,9 @@ export const PartTable: FC = () => {
         onClose={() => setDataModal({} as TDataModalPart)}
       />
       <DeletePartModal
-        open={dataModal?.order === "delete"}
+        open={dataModal}
         onClose={() => setDataModal({} as TDataModalPart)}
       />
-    </div>
+    </>
   );
 };

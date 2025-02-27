@@ -1,8 +1,9 @@
 import { Button, Drawer, Segmented } from "antd";
 import { Printer } from "lucide-react";
 import PDFTag from "./pdf/tag";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { PrintTable } from "./print-table";
+import { useReactToPrint } from "react-to-print";
 
 export type TPrintTagDrawer = {
   open?: boolean;
@@ -15,6 +16,14 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
   open = false,
   onClose,
 }) => {
+  const printRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: "Document Title",
+    onAfterPrint: () => console.log("Printing completed"),
+  });
+
   const [segmented, setSegmented] = useState("Part List");
 
   useEffect(() => {
@@ -28,7 +37,9 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
       onClose={onClose}
       footer={
         <div className=' w-full flex justify-end'>
-          <Button className=' flex gap-2 px-2 font-medium'>
+          <Button
+            className=' flex gap-2 px-2 font-medium'
+            onClick={() => handlePrint()}>
             <Printer size={20} />
             Print
           </Button>
@@ -43,7 +54,13 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         />
         <div className=' w-full h-full overflow-auto'>
           <div className='flex w-full rounded-md overflow-hidden flex-col space-y-2'>
-            {segmented === "Part List" ? <PrintTable /> : <PDFTag />}
+            {segmented === "Part List" ? (
+              <PrintTable />
+            ) : (
+              <div ref={printRef}>
+                <PDFTag />
+              </div>
+            )}
           </div>
         </div>
       </div>

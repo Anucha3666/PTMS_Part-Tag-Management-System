@@ -1,16 +1,31 @@
+import { usePart } from "@/services/hooks";
+import { TPart } from "@/types";
 import { Modal } from "antd";
 import { FC } from "react";
 
+type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
+
 export type TDeletePartModal = {
-  open: boolean;
+  open: TDataModalPart;
   onClose?: () => void;
-  isUpdate?: boolean;
 };
 
 export const DeletePartModal: FC<TDeletePartModal> = ({ open, onClose }) => {
+  const { mutateDeletePart } = usePart();
   return (
-    <Modal open={open} onCancel={onClose}>
-      <text>Delete</text>
+    <Modal
+      title={"Delete Part"}
+      open={open?.order === "delete"}
+      okText={"Delete"}
+      okButtonProps={{
+        style: { backgroundColor: "red", borderColor: "red", color: "white" },
+      }}
+      onCancel={onClose}
+      onOk={() => {
+        mutateDeletePart(open?.part_id);
+        if (onClose) onClose();
+      }}>
+      <text>Please press "Delete" to delete part {`"${open?.part_no}"`}. </text>
     </Modal>
   );
 };

@@ -1,28 +1,28 @@
-import { Empty, Table } from "antd";
+import { setPrintTags } from "@/store/features/print-tags.features";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { TPrintTag } from "@/types";
+import { Empty, Input, Table } from "antd";
 import type { TableProps } from "antd";
-import { Pencil, Trash2 } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoView } from "react-photo-view";
 import { PhotoProvider } from "react-photo-view";
 
-interface DataType {
-  key: string;
-  part_no: string;
-  part_name: string;
-  packing_standard: number;
-}
+type TDataTable = TPrintTag & { index: number };
 
 export const PrintTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
 
+  const { printTags } = useAppSelector((state) => state.printTags);
   const [height, setHeight] = useState(0);
 
-  const columns: TableProps<DataType>["columns"] = [
+  const columns: TableProps<TDataTable>["columns"] = [
     {
       title: "Part No.",
       dataIndex: "part_no",
       key: "part_no",
-      width: "18rem",
+      width: "12rem",
       sorter: (a, b) => a.part_no.localeCompare(b.part_no),
     },
     {
@@ -34,30 +34,32 @@ export const PrintTable: FC = () => {
 
     {
       title: "Packing Standard",
-      dataIndex: "packing_standard",
-      key: "packing_standard",
+      dataIndex: "packing_std",
+      key: "packing_std",
       width: "12rem",
-      sorter: (a, b) => a.packing_standard - b.packing_standard,
+      sorter: (a, b) => a.packing_std - b.packing_std,
     },
     {
       title: "Picture Standard",
-      dataIndex: "picture_standard",
-      key: "picture_standard",
+      dataIndex: "picture_std",
+      key: "picture_std",
       width: "12rem",
-      render: () => (
+      render: (picture_std) => (
         <div className='flex'>
           <PhotoProvider>
-            <PhotoView
-              src={
-                "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms.png"
-              }>
-              <img
-                src={
-                  "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms.png"
-                }
-                alt='icon-cct'
-                className=' w-full !max-h-[4rem] !h-[4rem] object-cover cursor-pointer'
-              />
+            <PhotoView src={picture_std}>
+              <div className='relative w-full h-[4rem] bg-slate-50 rounded-md'>
+                <img
+                  src={picture_std ?? ""}
+                  alt={`picture_std`}
+                  className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                  }}
+                />
+              </div>
             </PhotoView>
           </PhotoProvider>
         </div>
@@ -65,38 +67,90 @@ export const PrintTable: FC = () => {
     },
     {
       title: "Action",
-      key: "action",
-      width: "4rem",
+      key: "index",
+      width: "10rem",
+      fixed: "right",
       render: (_, record) => (
-        <div
-          className='flex gap-2 cursor-pointer'
-          onClick={() => console.log(record)}>
-          <Pencil
-            className=' text-gray-400 hover:text-orange-400'
-            onClick={() => {
-              //   setIsOpen(isOpen?.concat("edit-data"));
-            }}
-          />
-          <Trash2
+        <div className='flex gap-2 cursor-pointer justify-center items-center'>
+          <div className=' bg-slate-100 rounded-md   p-1 flex justify-center items-center'>
+            <Plus
+              onClick={() =>
+                dispatch(
+                  setPrintTags(
+                    printTags
+                      ?.slice(0, record?.index)
+                      ?.concat({ ...record, no_tags: record?.no_tags + 1 })
+                      ?.concat(printTags?.slice(record?.index + 1))
+                  )
+                )
+              }
+            />
+            <div className=' !w-[3rem] flex '>
+              <Input
+                value={record?.no_tags}
+                className=' text-center'
+                onChange={(e) =>
+                  dispatch(
+                    setPrintTags(
+                      printTags
+                        ?.slice(0, record?.index)
+                        ?.concat({
+                          ...record,
+                          no_tags:
+                            isNaN(Number(e?.target?.value)) ||
+                            Number(e?.target?.value) <= 0
+                              ? 0
+                              : Number(e?.target?.value),
+                        })
+                        ?.concat(printTags?.slice(record?.index + 1))
+                    )
+                  )
+                }
+              />
+            </div>
+            <Minus
+              onClick={() =>
+                dispatch(
+                  setPrintTags(
+                    printTags
+                      ?.slice(0, record?.index)
+                      ?.concat({
+                        ...record,
+                        no_tags:
+                          record?.no_tags - 1 <= 0 ? 0 : record?.no_tags - 1,
+                      })
+                      ?.concat(printTags?.slice(record?.index + 1))
+                  )
+                )
+              }
+            />
+          </div>
+          <X
             className=' text-gray-400 hover:text-red-600'
-            onClick={() => {
-              //   setIsOpen(isOpen?.concat("delete-data"));
-            }}
+            onClick={() =>
+              dispatch(
+                setPrintTags(
+                  printTags
+                    ?.slice(0, record?.index)
+                    ?.concat(printTags?.slice(record?.index + 1))
+                )
+              )
+            }
           />
         </div>
       ),
     },
   ];
 
-  const rowSelection: TableProps<DataType>["rowSelection"] = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+  const rowSelection: TableProps<TDataTable>["rowSelection"] = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: TDataTable[]) => {
       console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
         selectedRows
       );
     },
-    getCheckboxProps: (record: DataType) => ({
+    getCheckboxProps: (record: TDataTable) => ({
       disabled: record.part_no === "Disabled User",
       employee: record.part_no,
     }),
@@ -110,35 +164,23 @@ export const PrintTable: FC = () => {
 
   return (
     <div ref={divRef} className='w-full h-full'>
-      <Table<DataType>
+      <Table<TDataTable>
         columns={columns}
         dataSource={
-          [
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-            { part_no: "1234567890", part_name: "test", packing_standard: 100 },
-          ] as DataType[]
+          printTags?.map((item, i) => ({ ...item, index: i })) as TDataTable[]
         }
         className=' w-full h-full !text-nowrap'
-        rowSelection={{ type: "checkbox", ...rowSelection }}
+        rowSelection={{ ...rowSelection }}
         components={{
           header: {
             cell: (props: React.HTMLAttributes<HTMLTableHeaderCellElement>) => (
               <th
                 {...props}
                 style={{
+                  ...props?.style,
                   textAlign: "center",
                 }}>
-                {props.children}
+                <p className=' w-full text-center'>{props.children}</p>
               </th>
             ),
           },
