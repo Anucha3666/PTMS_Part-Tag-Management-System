@@ -56,6 +56,11 @@ export const PartTable: FC = () => {
                   src={picture_std}
                   alt={`picture_std`}
                   className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/image.png";
+                  }}
                 />
               </div>
             </PhotoView>
@@ -74,12 +79,13 @@ export const PartTable: FC = () => {
             <PhotoView src={q_point}>
               <div className='relative w-[4rem] h-[4rem] bg-slate-50 rounded-md'>
                 <img
-                  src={q_point}
+                  src={q_point ?? ""}
                   alt={`q_point`}
                   className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
                   onError={(e) => {
-                    e.currentTarget.onerror = null; // ป้องกันการวนลูปหากรูปภาพสำรองโหลดไม่ได้
-                    e.currentTarget.src = "path/to/backup-image.jpg"; // ระบุพาธไปยังรูปภาพสำรอง
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/image.png";
                   }}
                 />
               </div>
@@ -124,6 +130,11 @@ export const PartTable: FC = () => {
                     src={src}
                     alt={`more_pictures.${i + 1}`}
                     className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src =
+                        "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/image.png";
+                    }}
                   />
                 </div>
               </PhotoView>
