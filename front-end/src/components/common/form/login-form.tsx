@@ -1,5 +1,5 @@
 import { useAuth } from "@/services/hooks";
-import { TAuth, TLogin } from "@/types/auth";
+import { TLogin } from "@/types/auth";
 import { cookieCryptoUtils } from "@/utils";
 
 import type { FormProps } from "antd";
