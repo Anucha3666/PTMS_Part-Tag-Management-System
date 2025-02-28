@@ -1,23 +1,24 @@
+import { TAuth } from "@/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type TUtilsState = {
-  state: string;
+  dataUser: TAuth;
 };
 
 const initialState: TUtilsState = {
-  state: "",
+  dataUser: {} as TAuth,
 };
 
 const utilsSlice = createSlice({
   name: "utils",
   initialState,
   reducers: {
-    setState: (state, action: PayloadAction<string>) => {
-      state.state = action.payload;
+    setDataUser: (state, action: PayloadAction<TUtilsState["dataUser"]>) => {
+      state.dataUser = action.payload;
     },
   },
 });
 
-export const { setState } = utilsSlice.actions;
+export const { setDataUser } = utilsSlice.actions;
 
 export default utilsSlice.reducer;

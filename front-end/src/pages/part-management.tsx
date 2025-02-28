@@ -4,9 +4,12 @@ import { CreateUpdatePartModal, PartTable } from "../components/part";
 import { useState } from "react";
 import { PrintTagDrawer } from "@/components/prints";
 import { useDisclosure } from "@/helpers";
+import { useAppSelector } from "@/store/hook";
 
 export const PartManagementPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { printTags } = useAppSelector((state) => state.printTags);
   const [isOpenPrintTagDrawer, setIsOpenPrintTagDrawer] = useState(false);
 
   return (
@@ -24,7 +27,8 @@ export const PartManagementPage = () => {
             <div className=' flex gap-1 items-center justify-center'>
               <Button
                 className=' px-2'
-                onClick={() => setIsOpenPrintTagDrawer(true)}>
+                onClick={() => setIsOpenPrintTagDrawer(true)}
+                disabled={(printTags?.length ?? 0) <= 0}>
                 <Printer size={20} />
                 Print Tag
               </Button>

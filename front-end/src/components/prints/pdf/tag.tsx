@@ -1,5 +1,6 @@
 "use client";
 
+import { formatDate } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { FC } from "react";
 import QRCode from "react-qr-code";
@@ -40,10 +41,7 @@ const PDFTag: FC = () => {
                     <p className=' -mt-1'>Identification and status tag</p>
                   </div>
 
-                  <QRCode
-                    value={`A${(i * 6 + j + 1).toString().padStart(4, "0")}`}
-                    className=' w-[4.6rem] h-min'
-                  />
+                  <QRCode value={item?.part_no} className=' w-[4.6rem] h-min' />
                 </div>
                 <div className='w-full h-full !text-[0.7rem]'>
                   <div className=' flex w-full gap-2'>
@@ -57,7 +55,9 @@ const PDFTag: FC = () => {
                     <div className='w-[10rem]'>
                       <div className=' w-full flex text-nowrap gap-2'>
                         <p>วันที่</p>
-                        <p className='w-full border-b border-black inline-block'></p>
+                        <p className='w-full border-b border-black inline-block indent-2 font-bold'>
+                          {formatDate(new Date())}
+                        </p>
                       </div>
                       <p className=' -mt-1'>Date</p>
                     </div>
@@ -66,7 +66,7 @@ const PDFTag: FC = () => {
                   <div className='w-full'>
                     <div className=' w-full flex text-nowrap gap-2'>
                       <p>ชื่อชิ้นงาน</p>
-                      <p className='w-full border-b border-black inline-block'>
+                      <p className='w-full border-b border-black inline-block indent-2 font-bold '>
                         {item?.part_name}
                       </p>
                     </div>
@@ -76,7 +76,7 @@ const PDFTag: FC = () => {
                   <div className='w-full'>
                     <div className=' w-full flex text-nowrap gap-2'>
                       <p>เลขที่แบบ</p>
-                      <p className='w-full border-b border-black inline-block'>
+                      <p className='w-full border-b border-black inline-block indent-2 font-bold'>
                         {item?.part_no}
                       </p>
                     </div>
@@ -87,7 +87,7 @@ const PDFTag: FC = () => {
                     <div className='w-full'>
                       <div className=' w-full flex text-nowrap gap-2'>
                         <p>จำนวน</p>
-                        <p className='w-full border-b border-black inline-block'>
+                        <p className='w-full border-b border-black inline-block text-center font-bold'>
                           {item?.packing_std?.toLocaleString("en")}
                         </p>
                         <p>ชิ้น</p>
@@ -128,7 +128,7 @@ const PDFTag: FC = () => {
                     />
                   </div>
                 </div>
-                <div className=' absolute bottom-0 text-[0.7rem] right-0 px-2 flex w-full'>
+                <div className=' absolute -bottom-[2px] text-[0.7rem] right-0 px-1 flex w-full'>
                   <p>A{(i * 6 + j + 1).toString().padStart(4, "0")}</p>
                   <p className=' w-full text-end'>
                     FM-PRO-016 Rev.00 Effective Date : 19/01/13

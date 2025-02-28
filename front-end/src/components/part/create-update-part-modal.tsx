@@ -20,6 +20,7 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
 }) => {
   const { mutateCreatePart, mutateUpdatePart } = usePart();
 
+  const { dataUser } = useAppSelector((state) => state.utils);
   const { parts } = useAppSelector((state) => state.parts);
   const [formData, setFormData] = useState<Partial<TPart>>({});
 
@@ -38,7 +39,7 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
     if ((data?.order ?? "") === "update") {
       mutateUpdatePart(formData as TPart);
     } else {
-      mutateCreatePart(formData as TPart);
+      mutateCreatePart({ ...formData, creator: dataUser?.full_name } as TPart);
       if (parts?.length < 7) window.location.reload();
     }
     onClose();

@@ -4,6 +4,7 @@ import PDFTag from "./pdf/tag";
 import { FC, useEffect, useRef, useState } from "react";
 import { PrintTable } from "./print-table";
 import { useReactToPrint } from "react-to-print";
+import { useAppSelector } from "@/store/hook";
 
 export type TPrintTagDrawer = {
   open?: boolean;
@@ -18,17 +19,19 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
 
+  const { printTags } = useAppSelector((state) => state.printTags);
+  const [segmented, setSegmented] = useState("Part List");
+
   const handlePrint = useReactToPrint({
     contentRef: printRef,
     documentTitle: "Document Title",
     onAfterPrint: () => console.log("Printing completed"),
   });
 
-  const [segmented, setSegmented] = useState("Part List");
-
   useEffect(() => {
     setSegmented("Part List");
   }, [open]);
+
   return (
     <Drawer
       title='Print Tags'
@@ -39,7 +42,11 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         <div className=' w-full flex justify-end'>
           <Button
             className=' flex gap-2 px-2 font-medium'
-            onClick={() => handlePrint()}>
+            onClick={() => handlePrint()}
+            disabled={
+              (printTags?.find(({ no_tags }) => (no_tags ?? 0) > 0)?.no_tags ??
+                0) === 0
+            }>
             <Printer size={20} />
             Print
           </Button>
@@ -54,13 +61,12 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         />
         <div className=' w-full h-full overflow-auto'>
           <div className='flex w-full rounded-md overflow-hidden flex-col space-y-2'>
-            {segmented === "Part List" ? (
-              <PrintTable />
-            ) : (
-              <div ref={printRef}>
-                <PDFTag />
-              </div>
-            )}
+            {segmented === "Part List" ? <PrintTable /> : <PDFTag />}
+          </div>
+        </div>
+        <div className=' hidden'>
+          <div ref={printRef}>
+            <PDFTag />
           </div>
         </div>
       </div>

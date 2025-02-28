@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { TPrintTag } from "@/types";
 import { Empty, Input, Table } from "antd";
 import type { TableProps } from "antd";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoView } from "react-photo-view";
 import { PhotoProvider } from "react-photo-view";
@@ -125,36 +125,10 @@ export const PrintTable: FC = () => {
               }
             />
           </div>
-          <X
-            className=' text-gray-400 hover:text-red-600'
-            onClick={() =>
-              dispatch(
-                setPrintTags(
-                  printTags
-                    ?.slice(0, record?.index)
-                    ?.concat(printTags?.slice(record?.index + 1))
-                )
-              )
-            }
-          />
         </div>
       ),
     },
   ];
-
-  const rowSelection: TableProps<TDataTable>["rowSelection"] = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: TDataTable[]) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      );
-    },
-    getCheckboxProps: (record: TDataTable) => ({
-      disabled: record.part_no === "Disabled User",
-      employee: record.part_no,
-    }),
-  };
 
   useEffect(() => {
     if (divRef.current) {
@@ -170,7 +144,6 @@ export const PrintTable: FC = () => {
           printTags?.map((item, i) => ({ ...item, index: i })) as TDataTable[]
         }
         className=' w-full h-full !text-nowrap'
-        rowSelection={{ ...rowSelection }}
         components={{
           header: {
             cell: (props: React.HTMLAttributes<HTMLTableHeaderCellElement>) => (

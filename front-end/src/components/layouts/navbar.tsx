@@ -7,6 +7,7 @@ import { useAppSelector } from "@/store/hook";
 export const AppNavbar = () => {
   const navigate = useNavigate();
   const { isFullScreen, toggleScreen } = useScreen();
+  const { dataUser } = useAppSelector((state) => state.utils);
   const { parts } = useAppSelector((state) => state.parts);
 
   return (
@@ -48,8 +49,10 @@ export const AppNavbar = () => {
         <div className='gap-1 items-center hidden md:flex '>
           <CircleUserRound size={34} />
           <div className=' flex flex-col text-sm'>
-            <p className=' font-medium'>full_name</p>
-            <p className=' -mt-1 text-[0.8rem]'>{"position"} ["role"]</p>
+            <p className=' font-medium'>{dataUser?.full_name}</p>
+            <p className=' -mt-1 text-[0.8rem]'>
+              {dataUser?.position} [{dataUser?.role}]
+            </p>
           </div>
         </div>
 
