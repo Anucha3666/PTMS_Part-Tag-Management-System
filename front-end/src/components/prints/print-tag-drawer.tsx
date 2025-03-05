@@ -1,3 +1,4 @@
+import { usePrint } from "@/services/hooks";
 import { useAppSelector } from "@/store/hook";
 import { Button, Drawer, Segmented } from "antd";
 import { Printer } from "lucide-react";
@@ -18,6 +19,7 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
   onClose,
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
+  const { mutatePrint } = usePrint();
 
   const { printTags } = useAppSelector((state) => state.print);
   const [segmented, setSegmented] = useState("Part List");
@@ -43,6 +45,7 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
           <Button
             className=' flex gap-2 px-2 font-medium'
             onClick={() => {
+              mutatePrint(printTags);
               handlePrint();
             }}
             disabled={

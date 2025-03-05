@@ -1,11 +1,11 @@
 import { AxiosError } from "axios";
 
-import { useAppDispatch } from "@/store/hook";
 import { SERVICE_CONFIG_ACCESS_KEY, VITE_API_BASE_URL } from "@/constants";
-import { APIService } from "./api.service";
+import { setParts } from "@/store/features/parts.features";
+import { useAppDispatch } from "@/store/hook";
 import { TPart, TResponse } from "@/types";
 import { localStorageCryptoUtils } from "@/utils";
-import { setParts } from "@/store/features/parts.features";
+import { APIService } from "./api.service";
 
 export class PartService extends APIService {
   dispatch = useAppDispatch();
@@ -39,12 +39,14 @@ export class PartService extends APIService {
       const dataPart = (await (localStorageCryptoUtils?.get("DATA_PART") ??
         [])) as TPart[];
 
-      const res = await dataPart?.concat({
-        ...data,
-        part_id: Math.floor(Date.now() / 1000).toString(),
-        create_at: new Date()?.toISOString(),
-        update_at: new Date()?.toISOString(),
-      });
+      const res = await [
+        {
+          ...data,
+          part_id: Math.floor(Date.now() / 1000).toString(),
+          create_at: new Date()?.toISOString(),
+          update_at: new Date()?.toISOString(),
+        },
+      ]?.concat(dataPart);
 
       await localStorageCryptoUtils?.set("DATA_PART", res);
 

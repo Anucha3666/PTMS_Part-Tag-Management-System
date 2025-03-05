@@ -2,13 +2,14 @@ import { AxiosError } from "axios";
 
 import { SERVICE_CONFIG_ACCESS_KEY, VITE_API_BASE_URL } from "@/constants";
 import { setPrintingHistorys } from "@/store/features/print.features";
-import { useAppDispatch } from "@/store/hook";
-import { TPrintTag, TResponse } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { TPrintingHistorys, TPrintTag, TResponse } from "@/types";
 import { localStorageCryptoUtils } from "@/utils";
 import { APIService } from "./api.service";
 
 export class PrintService extends APIService {
   dispatch = useAppDispatch();
+  utils = useAppSelector((store) => store?.utils);
 
   constructor() {
     super(VITE_API_BASE_URL, {
@@ -16,10 +17,10 @@ export class PrintService extends APIService {
     });
   }
 
-  getPrintingHistorys = async (): Promise<TPrintTag[]> => {
+  getPrintingHistorys = async (): Promise<TPrintingHistorys[]> => {
     try {
       const data = (await (localStorageCryptoUtils?.get("DATA_PRINT") ??
-        [])) as TPrintTag[];
+        [])) as TPrintingHistorys[];
 
       this.dispatch(setPrintingHistorys(data || []));
       return data || [];
@@ -34,15 +35,21 @@ export class PrintService extends APIService {
     }
   };
 
-  print = async (data: TPrintTag): Promise<TResponse<TPrintTag[]>> => {
+  print = async (
+    data: TPrintTag[]
+  ): Promise<TResponse<TPrintingHistorys[]>> => {
     try {
       const dataPrint = (await (localStorageCryptoUtils?.get("DATA_PRINT") ??
-        [])) as TPrintTag[];
+        [])) as TPrintingHistorys[];
 
-      const res = await dataPrint?.concat({
-        ...data,
-        create_at: new Date()?.toISOString(),
-      });
+      const res = await [
+        {
+          _id: Math.floor(Date.now() / 1000).toString(),
+          data: data,
+          printed_by: this?.utils?.dataUser?.full_name,
+          create_at: new Date()?.toISOString(),
+        },
+      ]?.concat(dataPrint);
 
       await localStorageCryptoUtils?.set("DATA_PRINT", res);
 

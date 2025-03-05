@@ -7,14 +7,14 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { AppProvider } from "../providers";
+import { AppLayout } from "@/layouts/app";
 import {
   LoginPage,
   NotFoundPage,
   PartManagementPage,
-  UnderConstructionPage,
+  ReportPage,
 } from "@/pages";
-import { AppLayout } from "@/layouts/app";
+import { AppProvider } from "../providers";
 
 const AppRoutes: FC = () => {
   const location = useLocation();
@@ -25,7 +25,7 @@ const AppRoutes: FC = () => {
       <Route path='/login' element={<LoginPage />} />
       <Route element={<AppLayout />}>
         <Route path='/part-management' element={<PartManagementPage />} />
-        <Route path='/report' element={<UnderConstructionPage />} />
+        <Route path='/report' element={<ReportPage />} />
       </Route>
 
       <Route path='*' element={<NotFoundPage />} />

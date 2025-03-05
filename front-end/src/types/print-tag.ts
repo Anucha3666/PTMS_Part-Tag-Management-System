@@ -5,6 +5,11 @@ export type TPrintTag = {
   packing_std: number;
   picture_std: string;
   no_tags: number;
-  printed_by?: string;
-  create_at?: string;
+};
+
+export type TPrintingHistorys = {
+  _id: string;
+  data: TPrintTag[];
+  printed_by: string;
+  create_at: string;
 };
