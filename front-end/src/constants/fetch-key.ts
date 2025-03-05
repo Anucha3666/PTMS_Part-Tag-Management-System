@@ -1,1 +1,2 @@
 export const GET_PARTS = "GET_PARTS";
+export const GET_PRINTING_HISTORYS = "GET_PRINTING_HISTORYS";

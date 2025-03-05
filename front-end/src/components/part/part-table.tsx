@@ -1,15 +1,14 @@
-import { Empty, Table } from "antd";
+import { setPrintTags } from "@/store/features/print.features";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { TPart } from "@/types";
 import type { TableProps } from "antd";
+import { Empty, Table } from "antd";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
-import { PhotoView } from "react-photo-view";
-import { PhotoProvider } from "react-photo-view";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 import { CreateUpdatePartModal } from "./create-update-part-modal";
-import { TPart } from "@/types";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { ViewPartModal } from "./view-part-modal";
 import { DeletePartModal } from "./delete-part-modal";
-import { setPrintTags } from "@/store/features/print-tags.features";
+import { ViewPartModal } from "./view-part-modal";
 
 type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 

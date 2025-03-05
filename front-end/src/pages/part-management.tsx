@@ -1,15 +1,15 @@
-import { Button, Input } from "antd";
-import { CirclePlus, Printer, Search } from "lucide-react";
-import { CreateUpdatePartModal, PartTable } from "../components/part";
-import { useState } from "react";
 import { PrintTagDrawer } from "@/components/prints";
 import { useDisclosure } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
+import { Button, Input } from "antd";
+import { CirclePlus, Printer, Search } from "lucide-react";
+import { useState } from "react";
+import { CreateUpdatePartModal, PartTable } from "../components/part";
 
 export const PartManagementPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { printTags } = useAppSelector((state) => state.printTags);
+  const { printTags } = useAppSelector((state) => state.print);
   const [isOpenPrintTagDrawer, setIsOpenPrintTagDrawer] = useState(false);
 
   return (

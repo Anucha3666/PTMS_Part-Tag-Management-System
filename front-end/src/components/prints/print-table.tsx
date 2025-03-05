@@ -1,12 +1,11 @@
-import { setPrintTags } from "@/store/features/print-tags.features";
+import { setPrintTags } from "@/store/features/print.features";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { TPrintTag } from "@/types";
-import { Empty, Input, Table } from "antd";
 import type { TableProps } from "antd";
+import { Empty, Input, Table } from "antd";
 import { Minus, Plus } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
-import { PhotoView } from "react-photo-view";
-import { PhotoProvider } from "react-photo-view";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 
 type TDataTable = TPrintTag & { index: number };
 
@@ -14,7 +13,7 @@ export const PrintTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
-  const { printTags } = useAppSelector((state) => state.printTags);
+  const { printTags } = useAppSelector((state) => state.print);
   const [height, setHeight] = useState(0);
 
   const columns: TableProps<TDataTable>["columns"] = [

@@ -3,14 +3,16 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type TPrintTagsState = {
   printTags: TPrintTag[];
+  printingHistorys: TPrintTag[];
 };
 
 const initialState: TPrintTagsState = {
   printTags: [],
+  printingHistorys: [],
 };
 
-const printTagsSlice = createSlice({
-  name: "printTags",
+const printSlice = createSlice({
+  name: "print",
   initialState,
   reducers: {
     setPrintTags: (
@@ -19,9 +21,15 @@ const printTagsSlice = createSlice({
     ) => {
       state.printTags = action.payload;
     },
+    setPrintingHistorys: (
+      state,
+      action: PayloadAction<TPrintTagsState["printingHistorys"]>
+    ) => {
+      state.printingHistorys = action.payload;
+    },
   },
 });
 
-export const { setPrintTags } = printTagsSlice.actions;
+export const { setPrintTags, setPrintingHistorys } = printSlice.actions;
 
-export default printTagsSlice.reducer;
+export default printSlice.reducer;

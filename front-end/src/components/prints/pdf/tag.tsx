@@ -7,7 +7,7 @@ import QRCode from "react-qr-code";
 
 const PDFTag: FC = () => {
   const isView = true;
-  const { printTags } = useAppSelector((state) => state.printTags);
+  const { printTags } = useAppSelector((state) => state.print);
 
   const data = printTags?.flatMap((item) =>
     Array.from({ length: item?.no_tags }, () => ({ ...item }))

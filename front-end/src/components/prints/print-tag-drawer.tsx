@@ -1,10 +1,10 @@
+import { useAppSelector } from "@/store/hook";
 import { Button, Drawer, Segmented } from "antd";
 import { Printer } from "lucide-react";
-import PDFTag from "./pdf/tag";
 import { FC, useEffect, useRef, useState } from "react";
-import { PrintTable } from "./print-table";
 import { useReactToPrint } from "react-to-print";
-import { useAppSelector } from "@/store/hook";
+import PDFTag from "./pdf/tag";
+import { PrintTable } from "./print-table";
 
 export type TPrintTagDrawer = {
   open?: boolean;
@@ -19,7 +19,7 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
 
-  const { printTags } = useAppSelector((state) => state.printTags);
+  const { printTags } = useAppSelector((state) => state.print);
   const [segmented, setSegmented] = useState("Part List");
 
   const handlePrint = useReactToPrint({
@@ -42,7 +42,9 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         <div className=' w-full flex justify-end'>
           <Button
             className=' flex gap-2 px-2 font-medium'
-            onClick={() => handlePrint()}
+            onClick={() => {
+              handlePrint();
+            }}
             disabled={
               (printTags?.find(({ no_tags }) => (no_tags ?? 0) > 0)?.no_tags ??
                 0) === 0
