@@ -1,9 +1,9 @@
+import { usePart } from "@/services/hooks";
+import { useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import { Input, Modal } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import { UploadImage } from "../common/upload-image";
-import { usePart } from "@/services/hooks";
-import { useAppSelector } from "@/store/hook";
 
 type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 

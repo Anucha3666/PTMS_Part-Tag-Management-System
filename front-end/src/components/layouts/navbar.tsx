@@ -46,7 +46,7 @@ export const AppNavbar = () => {
               if (value === "Part Management" && parts?.length < 7)
                 window.location.reload();
             }}
-            className='p-1'
+            className=' w-min p-1 gap-2'
           />
         </div>
 

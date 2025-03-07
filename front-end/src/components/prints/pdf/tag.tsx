@@ -43,7 +43,7 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
       className={`${
         isView ? "scale-100 space-y-4 bg-[#525659] p-4" : "bg-white"
       } h-full w-full text-black`}>
-      {Array?.from({ length: Math?.ceil(dataPrint?.length / 6) })?.map(
+      {Array?.from({ length: Math?.ceil(dataPrint?.length / 4) })?.map(
         (_, i) => (
           <div
             key={i}
@@ -52,8 +52,8 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
                 ? "h-[297mm] w-[210mm] min-w-[210mm] p-2 shadow-2xl"
                 : "page-break h-full"
             }`}>
-            <div className='h-full w-full grid grid-cols-2 gap-2 grid-rows-3 justify-between '>
-              {dataPrint?.slice(i * 6, i * 6 + 6)?.map((item, j) => (
+            <div className='h-full w-full grid grid-cols-2 gap-2 grid-rows-2 justify-between '>
+              {dataPrint?.slice(i * 4, i * 4 + 4)?.map((item, j) => (
                 <div
                   key={j}
                   className=' w-full h-full relative px-6 border border-black pt-2'>
@@ -68,7 +68,7 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
                     </div>
 
                     <QRCode
-                      value={item?.part_no}
+                      value={`https://ptms-ipc.vercel.app/${item?.part_no}`}
                       className=' w-[4.6rem] h-min'
                     />
                   </div>
@@ -149,7 +149,15 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
                       </div>
                     </div>
 
-                    <div className=' w-full h-[6.5rem] overflow-hidden flex items-center justify-center border border-black mt-1'>
+                    <div className='w-full'>
+                      <div className=' w-full flex text-nowrap gap-2'>
+                        <p>ใบสั่งงานเลขที่</p>
+                        <p className='w-full border-b border-black inline-block indent-2 font-bold'></p>
+                      </div>
+                      <p className=' -mt-1'>Order No.</p>
+                    </div>
+
+                    <div className=' w-full h-[16rem] overflow-hidden flex items-center justify-center border border-black mt-1'>
                       <img
                         src={item?.picture_std}
                         alt={item?.part_no}
@@ -157,8 +165,8 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
                       />
                     </div>
                   </div>
-                  <div className=' absolute -bottom-[2px] text-[0.7rem] right-0 px-1 flex w-full'>
-                    <p>A{(i * 6 + j + 1 + num).toString().padStart(4, "0")}</p>
+                  <div className=' absolute -bottom-[1px] text-[0.7rem] right-0 px-1 flex w-full'>
+                    <p>A{(i * 4 + j + 1 + num).toString().padStart(4, "0")}</p>
                     <p className=' w-full text-end'>
                       FM-PRO-016 Rev.00 Effective Date : 19/01/13
                     </p>

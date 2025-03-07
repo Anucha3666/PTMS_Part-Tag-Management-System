@@ -22,6 +22,8 @@ export class PrintService extends APIService {
       const data = (await (localStorageCryptoUtils?.get("DATA_PRINT") ??
         [])) as TPrintingHistorys[];
 
+      console.log("data", data);
+
       this.dispatch(setPrintingHistorys(data || []));
       return data || [];
     } catch (error) {

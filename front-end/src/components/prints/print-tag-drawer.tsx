@@ -60,7 +60,7 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
       <div className=' flex flex-col gap-2 w-full h-full overflow-hidden'>
         <Segmented<string>
           options={["Part List", "Preview"]}
-          className='p-1 w-min'
+          className=' w-min p-1 gap-2'
           value={segmented}
           onChange={(value) => setSegmented(value)}
         />

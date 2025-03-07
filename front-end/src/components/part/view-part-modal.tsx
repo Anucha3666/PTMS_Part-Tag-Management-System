@@ -1,8 +1,8 @@
+import { formatDateTime } from "@/helpers";
 import { TPart } from "@/types";
 import { Input, Modal } from "antd";
 import { FC, Fragment } from "react";
 import { UploadImage } from "../common/upload-image";
-import { formatDateTime } from "@/helpers";
 
 type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 
