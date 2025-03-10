@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from 'bcrypt';
 const saltRounds = 10;
 
 const Bcrypt = () => {
@@ -13,12 +13,12 @@ const Bcrypt = () => {
 
   const comparePasswords = async (
     userEnteredPassword: string,
-    hashedPasswordFromDatabase: string
+    hashedPasswordFromDatabase: string,
   ) => {
     try {
       const result = await bcrypt.compare(
         userEnteredPassword,
-        hashedPasswordFromDatabase
+        hashedPasswordFromDatabase,
       );
       return result;
     } catch (error) {

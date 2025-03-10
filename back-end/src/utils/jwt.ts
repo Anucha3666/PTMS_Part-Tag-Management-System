@@ -25,7 +25,7 @@ const JWT = () => {
     try {
       const decodedData = await jwt?.verify(token, secretKey);
       return decodedData ?? null;
-    } catch (error) {
+    } catch {
       console.error('Invalid token');
       return null;
     }

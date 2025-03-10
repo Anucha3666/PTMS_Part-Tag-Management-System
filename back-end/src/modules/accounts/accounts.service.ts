@@ -1,10 +1,9 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
-import { Account, AccountDocument } from './schemas/account.schema';
+import { Model } from 'mongoose';
 import { ResponseFormat } from 'src/types/common';
+import { Account, AccountDocument } from './account.entity';
+import { CreateAccountDto, UpdateAccountDto } from './accounts.dto';
 
 @Injectable()
 export class AccountsService {
