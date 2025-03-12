@@ -8,7 +8,7 @@ export class AppService {
       <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/svg+xml" href="https://snc-services.sncformer.com/b8-mes/images/logo-wes.png">
+        <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms-white.png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Welcome to Our Site</title>
         <style>
@@ -65,7 +65,7 @@ export class AppService {
         <div class="container">
           <h1 class="title">Hello, Welcome!</h1>
           <p class="subtitle">We're excited to have you here. But please go and use our main website.</p>
-          <a href="https://snc-services.sncformer.com/b8-mes/login"><button class="button">Go to website B8 - MES</button></a>
+          <a href="https://ptms-ipc.vercel.app/login"><button class="button">Go to website IPC | PTMS</button></a>
         </div>
       </body>
       </html>

@@ -6,16 +6,19 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateAccountDto, UpdateAccountDto } from './accounts.dto';
 import { AccountsService } from './accounts.service';
 
-@Controller('api/account')
+@Controller('account')
 export class AccountController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createAccountDto: CreateAccountDto) {
     return this.accountsService.create(createAccountDto);
   }
@@ -36,7 +39,7 @@ export class AccountController {
   }
 }
 
-@Controller('api/accounts')
+@Controller('accounts')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 

@@ -1,76 +1,95 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
+import { AccountHelper } from 'src/helpers/accounts.helper';
+import { TRESAccunt } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
+import { ValidatorUtils } from 'src/utils';
 import { Account, AccountDocument } from './account.entity';
 import { CreateAccountDto, UpdateAccountDto } from './accounts.dto';
 
 @Injectable()
 export class AccountsService {
-  private type: typeof Account;
-
+  accountHelper = AccountHelper;
   constructor(
     @InjectModel(Account.name) private accountModel: Model<AccountDocument>,
-  ) {
-    this.type = Account;
-  }
-
-  private async findEmployeeID(
-    employee_id: string,
-  ): Promise<InstanceType<typeof this.type>> {
-    return this.accountModel.findOne({ employee_id }).exec();
-  }
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   async create(
-    createAccountDto: CreateAccountDto,
-  ): Promise<ResponseFormat<InstanceType<typeof this.type>>> {
+    req: CreateAccountDto,
+  ): Promise<ResponseFormat<AccountDocument>> {
     try {
-      const dataUser = await this.findEmployeeID(createAccountDto?.employee_id);
-      const alreadyUsed = (dataUser?.employee_id ?? '') !== '';
+      await ValidatorUtils.validate(CreateAccountDto, req);
 
-      if (alreadyUsed) {
+      const existingAccount =
+        await this.accountHelper.class.findAccountByEmployeeNumberOrUsername(
+          this?.accountModel,
+          req?.employee_number,
+          req?.username,
+        );
+
+      if (existingAccount) {
+        let duplicateField = '';
+
+        if (existingAccount.employee_number === req.employee_number) {
+          duplicateField = `Employee number "${req.employee_number}"`;
+        }
+        if (existingAccount.username === req.username) {
+          duplicateField += duplicateField
+            ? ` and username "${req.username}"`
+            : `Username "${req.username}"`;
+        }
+
         throw new HttpException(
           {
             status: 'error',
-            message: `Employee ID ${createAccountDto.employee_id} is already in use.`,
-            data: [dataUser],
+            message: `${duplicateField} is already in use. Please choose a different one.`,
+            data: [existingAccount],
           },
           HttpStatus.BAD_REQUEST,
         );
       }
 
-      const createdAccount = new this.accountModel({
-        auth: null,
-        ...createAccountDto,
-      });
-
-      const savedAccount = await createdAccount.save();
+      const dto = await CreateAccountDto.createWithHashedPassword(req);
+      const account = new this.accountModel(dto);
+      const savedAccount = await account.save();
+      const result = [savedAccount?.toObject()].map(this.accountHelper.map);
 
       return {
         status: 'success',
         message: 'Account created successfully.',
-        data: [savedAccount],
+        data: result,
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;
-
       throw new HttpException(
-        {
-          status: 'error',
-          message:
-            'An error occurred while creating the account. Please try again later.',
-          data: [],
-        },
+        { status: 'error', message: error.message, data: [] },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async findAll(): Promise<ResponseFormat<InstanceType<typeof this.type>>> {
+  async findAll(): Promise<ResponseFormat<TRESAccunt>> {
     try {
-      const req = await this.accountModel.find().exec();
+      const cachedAccounts =
+        await this.cacheManager.get<TRESAccunt[]>('accounts');
+      if (cachedAccounts) {
+        return {
+          status: 'success',
+          message: 'Accounts retrieved from cache.',
+          data: cachedAccounts,
+        };
+      }
 
-      if ((req?.length ?? 0) <= 0) {
+      const accounts = await this.accountModel
+        .find()
+        .select('-password')
+        .lean()
+        .exec();
+      if ((accounts?.length ?? 0) <= 0) {
         throw new HttpException(
           {
             status: 'error',
@@ -81,14 +100,16 @@ export class AccountsService {
         );
       }
 
+      const result = accounts.map(this.accountHelper.map);
+      await this.cacheManager.set('accounts', result);
+
       return {
         status: 'success',
         message: 'Accounts retrieved successfully.',
-        data: req,
+        data: result,
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;
-
       throw new HttpException(
         {
           status: 'error',
@@ -100,12 +121,25 @@ export class AccountsService {
     }
   }
 
-  async findOne(
-    id: string,
-  ): Promise<ResponseFormat<InstanceType<typeof this.type>>> {
+  async findOne(id: string): Promise<ResponseFormat<TRESAccunt>> {
     try {
-      const account = await this.accountModel.findById(id).exec();
+      const CACHE_KEY = `account_by_employee_number_${id}`;
 
+      const cachedAccount =
+        await this.cacheManager.get<TRESAccunt[]>(CACHE_KEY);
+      if (cachedAccount) {
+        return {
+          status: 'success',
+          message: 'Account retrieved from cache.',
+          data: cachedAccount,
+        };
+      }
+
+      const account = await this.accountModel
+        .findById(id)
+        .select('-password')
+        .lean()
+        .exec();
       if (!account) {
         throw new HttpException(
           {
@@ -117,20 +151,18 @@ export class AccountsService {
         );
       }
 
+      const result = [account].map(this.accountHelper.map);
+      await this.cacheManager.set(CACHE_KEY, result);
+
       return {
         status: 'success',
         message: 'Account retrieved successfully.',
-        data: [account],
+        data: result,
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;
-
       throw new HttpException(
-        {
-          status: 'error',
-          message: 'Failed to retrieve the account. Please try again later.',
-          data: [],
-        },
+        { status: 'error', message: 'Error retrieving account.', data: [] },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -138,51 +170,71 @@ export class AccountsService {
 
   async update(
     id: string,
-    updateAccountDto: UpdateAccountDto,
-  ): Promise<ResponseFormat<InstanceType<typeof this.type>>> {
+    req: UpdateAccountDto,
+  ): Promise<ResponseFormat<AccountDocument | TRESAccunt>> {
     try {
-      const updatedAccount = await this.accountModel
-        .findByIdAndUpdate(
-          id,
-          { ...updateAccountDto, updated_at: new Date() },
-          { new: true },
+      await ValidatorUtils.validate(UpdateAccountDto, req);
+
+      const existingAccount = await this.accountModel
+        .findById(id)
+        .select(
+          '-password -_id -created_at -updated_at -username -role -employee_number',
         )
         .exec();
-
-      if (!updatedAccount) {
+      if (!existingAccount) {
         throw new HttpException(
           {
             status: 'error',
-            message: `Account with ID ${id} not found. Update operation failed.`,
+            message: `No account found with this id.`,
             data: [],
           },
           HttpStatus.NOT_FOUND,
         );
       }
 
+      const dto = await UpdateAccountDto?.createWithUpdatedAt(req);
+      const isSame = Object.keys(existingAccount.toObject()).every((key) => {
+        return existingAccount[key] === dto[key];
+      });
+      if (isSame) {
+        return {
+          status: 'success',
+          message:
+            'Unable to update information because the information has not changed.',
+          data: [existingAccount],
+        };
+      }
+
+      console.log(dto);
+
+      const updatedAccount = await this.accountModel
+        .findByIdAndUpdate(id, dto, { new: true })
+        .select('-password')
+        .lean()
+        .exec();
+      const result = [updatedAccount].map(this.accountHelper.map);
+
+      await this.cacheManager.del('accounts');
+      await this.cacheManager.del(`account_by_employee_number_${id}`);
+
       return {
         status: 'success',
         message: 'Account updated successfully.',
-        data: [updatedAccount],
+        data: result,
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;
-
       throw new HttpException(
-        {
-          status: 'error',
-          message: 'Failed to update the account. Please try again later.',
-          data: [],
-        },
+        { status: 'error', message: 'Error updating account.', data: [] },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async delete(
-    id: string,
-  ): Promise<ResponseFormat<InstanceType<typeof this.type>>> {
+  async delete(id: string): Promise<ResponseFormat<AccountDocument>> {
     try {
+      // const account = await this.accountModel.findById(id).exec();
+
       const deletedAccount = await this.accountModel
         .findByIdAndDelete(id)
         .exec();
@@ -191,13 +243,15 @@ export class AccountsService {
         throw new HttpException(
           {
             status: 'error',
-            message: `Account with ID ${id} not found. Deletion failed.`,
+            message: `Account with ID ${id} not found.`,
             data: [],
           },
           HttpStatus.NOT_FOUND,
         );
       }
 
+      await this.cacheManager.del('accounts');
+      await this.cacheManager.del(`account_by_employee_number_${id}`);
       return {
         status: 'success',
         message: 'Account deleted successfully.',
@@ -205,14 +259,8 @@ export class AccountsService {
       };
     } catch (error) {
       if (error instanceof HttpException) throw error;
-
       throw new HttpException(
-        {
-          status: 'error',
-          message:
-            'An error occurred during the deletion process. Please try again later.',
-          data: [],
-        },
+        { status: 'error', message: 'Error deleting account.', data: [] },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

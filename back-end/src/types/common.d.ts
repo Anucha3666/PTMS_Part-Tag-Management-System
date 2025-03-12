@@ -3,3 +3,5 @@ export type ResponseFormat<T> = {
   message: string;
   data: T[];
 };
+
+export type TRole = 'admin' | 'user' | 'viewer' | '' | null | 'owner';

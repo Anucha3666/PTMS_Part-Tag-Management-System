@@ -6,28 +6,25 @@ export type AccountDocument = Account & Document;
 @Schema({ versionKey: false })
 export class Account {
   @Prop({ required: true })
-  employee_id: string;
+  employee_number: string;
 
   @Prop({ required: true })
-  name: string;
+  first_name: string;
 
   @Prop({ required: true })
-  section: string;
+  last_name: string;
 
   @Prop({ required: true })
-  position: string;
-
-  @Prop()
-  description?: string;
+  username: string;
 
   @Prop({ required: true })
-  company: string;
+  password: string;
 
-  @Prop()
-  auth?: string;
+  @Prop({ default: () => null })
+  role?: string | null;
 
-  @Prop()
-  on_line_at?: Date;
+  @Prop({ default: () => null })
+  profile_picture?: string | null;
 
   @Prop({ default: () => new Date() })
   created_at?: Date;
