@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { TRole } from 'src/types';
 
 export type AccountDocument = Account & Document;
 
 @Schema({ versionKey: false })
 export class Account {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   employee_number: string;
 
   @Prop({ required: true })
@@ -14,14 +15,14 @@ export class Account {
   @Prop({ required: true })
   last_name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   username: string;
 
   @Prop({ required: true })
   password: string;
 
   @Prop({ default: () => null })
-  role?: string | null;
+  role?: TRole;
 
   @Prop({ default: () => null })
   profile_picture?: string | null;

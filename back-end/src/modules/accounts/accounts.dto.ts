@@ -23,8 +23,8 @@ export class CreateAccountDto {
   @IsNotEmpty()
   readonly password: string;
 
-  @IsOptional()
   @IsString()
+  @IsNotEmpty()
   readonly role?: string | null;
 
   @IsOptional()

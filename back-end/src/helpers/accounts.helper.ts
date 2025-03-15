@@ -39,6 +39,17 @@ export class ClassAccountHelper {
       })
       .exec();
   }
+
+  async findAccountByAccountID(
+    accountModel: Model<AccountDocument>,
+    _id: string,
+  ): Promise<AccountDocument | null> {
+    return accountModel
+      .findOne({
+        _id,
+      })
+      .exec();
+  }
 }
 
 export const mapAccountToTRESAccount = (account: any) => ({

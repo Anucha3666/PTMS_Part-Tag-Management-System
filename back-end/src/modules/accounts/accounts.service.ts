@@ -66,7 +66,11 @@ export class AccountsService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
-        { status: 'error', message: error.message, data: [] },
+        {
+          status: 'error',
+          message: `Create account: ${error.message}`,
+          data: [],
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -113,7 +117,7 @@ export class AccountsService {
       throw new HttpException(
         {
           status: 'error',
-          message: 'Failed to retrieve accounts. Please try again later.',
+          message: `Find all accounts: ${error.message}`,
           data: [],
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -162,7 +166,11 @@ export class AccountsService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
-        { status: 'error', message: 'Error retrieving account.', data: [] },
+        {
+          status: 'error',
+          message: `Find one account: ${error.message}`,
+          data: [],
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -205,8 +213,6 @@ export class AccountsService {
         };
       }
 
-      console.log(dto);
-
       const updatedAccount = await this.accountModel
         .findByIdAndUpdate(id, dto, { new: true })
         .select('-password')
@@ -225,7 +231,11 @@ export class AccountsService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
-        { status: 'error', message: 'Error updating account.', data: [] },
+        {
+          status: 'error',
+          message: `Update account: ${error.message}`,
+          data: [],
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -260,7 +270,11 @@ export class AccountsService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
-        { status: 'error', message: 'Error deleting account.', data: [] },
+        {
+          status: 'error',
+          message: `Delete account: ${error.message}`,
+          data: [],
+        },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

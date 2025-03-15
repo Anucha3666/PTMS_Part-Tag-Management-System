@@ -1,18 +1,19 @@
-import { AccountDocument } from 'src/modules/accounts/account.entity';
-import { JWTUtils } from 'src/utils';
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
+@Injectable()
 export class ClassAuthHelper {
-  async generateToken(data: AccountDocument): Promise<string | null> {
-    const token = await JWTUtils?.generate({
-      account_id: data?._id,
-      employee_number: data?.employee_number,
-      username: data?.username,
-      role: data?.role,
+  constructor(private readonly jwtService: JwtService) {}
+
+  generateToken(dataUser: any): string {
+    return this.jwtService.sign({
+      account_id: dataUser._id,
+      username: dataUser.username,
+      employee_number: dataUser.employee_number,
     });
-    return token ?? null;
   }
 }
 
 export const AuthHelper = {
-  class: new ClassAuthHelper(),
+  class: new ClassAuthHelper(new JwtService()),
 };
