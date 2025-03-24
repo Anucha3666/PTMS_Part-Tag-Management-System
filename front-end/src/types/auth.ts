@@ -1,4 +1,4 @@
-export type TRole = "admin" | "user" | "block";
+export type TRole = "admin" | "user" | "viewer" | "owner" | "" | null;
 
 export type TSignIn = {
   username: string;
@@ -18,13 +18,25 @@ export type TLogin = {
   remember?: string;
 };
 
-export type TAuth = {
-  user_id: string;
+export type TSignUp = {
+  employee_number: string;
+  first_name: string;
+  last_name: string;
   username: string;
-  role: TRole;
-  full_name: string;
+  password: string;
+};
+
+export type TAuth = {
+  account_id: string;
+  employee_number: string;
+  first_name: string;
+  last_name: string;
+  username: string;
   position: string;
-  external_auth: string;
+  profile_picture: string | null;
+  role: TRole;
+  created_at: string;
+  updated_at: string;
   token: string;
 };
 

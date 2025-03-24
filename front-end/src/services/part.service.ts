@@ -52,7 +52,6 @@ export class PartService extends APIService {
 
       return {
         status: "success",
-        statusCode: 200,
         message: "Create part successfully",
         data: res,
       };
@@ -63,7 +62,6 @@ export class PartService extends APIService {
           message:
             error.response?.data?.message ||
             "Failed to create part in due to an unknown error",
-          statusCode: error.response?.status || 500,
           status: "error",
           data: [],
         };
@@ -71,7 +69,6 @@ export class PartService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to create part in due to an unknown error",
-          statusCode: 500,
           status: "error",
           data: [],
         };
@@ -94,7 +91,6 @@ export class PartService extends APIService {
 
       return {
         status: "success",
-        statusCode: 200,
         message: "Update part successfully",
         data: res,
       };
@@ -105,7 +101,6 @@ export class PartService extends APIService {
           message:
             error.response?.data?.message ||
             "Failed to update part in due to an unknown error",
-          statusCode: error.response?.status || 500,
           status: "error",
           data: [],
         };
@@ -113,7 +108,6 @@ export class PartService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to update part in due to an unknown error",
-          statusCode: 500,
           status: "error",
           data: [],
         };
@@ -132,7 +126,6 @@ export class PartService extends APIService {
 
       return {
         status: "success",
-        statusCode: 200,
         message: "Delete part successfully",
         data: res,
       };
@@ -143,7 +136,6 @@ export class PartService extends APIService {
           message:
             error.response?.data?.message ||
             "Failed to delete part in due to an unknown error",
-          statusCode: error.response?.status || 500,
           status: "error",
           data: [],
         };
@@ -151,7 +143,6 @@ export class PartService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to delete part in due to an unknown error",
-          statusCode: 500,
           status: "error",
           data: [],
         };

@@ -52,6 +52,20 @@ export class ClassAccountHelper {
   }
 }
 
+export const mapAccountToTRESSignIn = (account: any) => ({
+  account_id: account._id.toString(),
+  employee_number: account.employee_number,
+  first_name: account.first_name,
+  last_name: account.last_name,
+  username: account.username,
+  profile_picture: account.profile_picture ?? null,
+  role: account.role ?? null,
+  created_at: account.created_at ?? null,
+  updated_at: account.updated_at ?? null,
+  token: '',
+  _id: undefined,
+});
+
 export const mapAccountToTRESAccount = (account: any) => ({
   account_id: account._id.toString(),
   ...account,
@@ -64,5 +78,6 @@ export const mapAccountToTRESAccount = (account: any) => ({
 
 export const AccountHelper = {
   class: new ClassAccountHelper(),
+  mapSignIn: mapAccountToTRESSignIn,
   map: mapAccountToTRESAccount,
 };

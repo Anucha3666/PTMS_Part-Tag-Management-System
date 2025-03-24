@@ -43,3 +43,10 @@
 .ant-drawer-body {
   padding: 12px !important;
 }
+
+.ant-otp-input {
+  width: 32px !important;
+  height: 32px !important;
+}
+
+/* ant-input css-dev-only-do-not-override-1htoz2s ant-input-outlined ant-otp-input */

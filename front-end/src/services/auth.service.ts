@@ -1,59 +1,31 @@
 import { AxiosError } from "axios";
 
-import { TAuth, TSignIn } from "../types/auth";
 import {
   SERVICE_CONFIG_ACCESS_KEY,
   SERVICE_CONFIG_DATA_USER,
+  VITE_API_BASE_URL,
 } from "@/constants/service";
 import { TResponse } from "@/types/common";
+import { TAuth, TSignIn, TSignUp } from "../types/auth";
 import { APIService } from "./api.service";
 
 export class AuthService extends APIService {
   constructor() {
-    super("https://checklist-rooms.sncformer.com", {
+    super(VITE_API_BASE_URL, {
       accessTokenKey: SERVICE_CONFIG_ACCESS_KEY,
       userIdKey: SERVICE_CONFIG_DATA_USER,
     });
   }
 
-  signIn = async (data: TSignIn): Promise<TResponse<TAuth[]>> => {
+  signIn = async (req: TSignIn): Promise<TResponse<TAuth[]>> => {
     try {
-      const { data: res } = await this.post<{
-        err: boolean;
-        msg: string;
-        token: string;
-        username: string;
-        name: string;
-        OU: string;
-        position: string;
-      }>("/login_ad/api", {
-        router: "login",
-        ...data,
-      });
+      const { data } = await this.post<TResponse<TAuth[]>>(
+        "/auth/sign-in",
+        req
+      );
 
-      const newRes: TResponse<TAuth[]> = {
-        status: res?.err ? "error" : "success",
-        statusCode: 0,
-        message: res?.msg,
-        data: [
-          {
-            user_id: res?.username,
-            username: res?.username,
-            role: "admin",
-            full_name: res?.name,
-            position: res?.position,
-            external_auth: "",
-            token: res?.token,
-          },
-        ],
-      };
-
-      if (newRes.status === "success") {
-        this.setAccessToken(newRes.data[0].token);
-        this.setDataUser(newRes.data[0]);
-      }
-
-      return newRes;
+      if (data?.status) this?.setDataUser(data?.data[0]);
+      return data;
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("SIGN_IN_ERROR", error.response);
@@ -61,7 +33,6 @@ export class AuthService extends APIService {
           message:
             error.response?.data?.message ||
             "Failed to sign in due to an unknown error",
-          statusCode: error.response?.status || 500,
           status: "error",
           data: [] as TAuth[],
         };
@@ -69,9 +40,34 @@ export class AuthService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to sign in due to an unknown error",
-          statusCode: 500,
           status: "error",
           data: [] as TAuth[],
+        };
+      }
+    }
+  };
+
+  signUp = async (req: TSignUp): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.post<TResponse<[]>>("/auth/sign-up", req);
+
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("SIGN_UP_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to sign up due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to sign up due to an unknown error",
+          status: "error",
+          data: [],
         };
       }
     }

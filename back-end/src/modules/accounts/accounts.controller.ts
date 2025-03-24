@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 
@@ -23,8 +24,16 @@ export class AccountController {
   @Post()
   @UseGuards(RolesGuard)
   @Roles('admin', 'owner')
-  create(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountsService.create(createAccountDto);
+  create(@Request() req, @Body() createAccountDto: CreateAccountDto) {
+    const account_id = req.user.account_id;
+
+    return this.accountsService.create({
+      ...createAccountDto,
+      is_approved: true,
+      approved_by: account_id,
+      approved_at: new Date(),
+      created_by: account_id,
+    });
   }
 
   @Get(':id')

@@ -1,5 +1,11 @@
 import { Exclude, plainToClass } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { BcryptUtils } from 'src/utils';
 
 export class CreateAccountDto {
@@ -38,6 +44,34 @@ export class CreateAccountDto {
   @IsOptional()
   @IsDate()
   readonly updated_at?: Date;
+
+  @IsOptional()
+  @IsString()
+  readonly created_by?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly is_approved?: boolean;
+
+  @IsOptional()
+  @IsDate()
+  readonly approved_at?: Date;
+
+  @IsOptional()
+  @IsString()
+  readonly approved_by?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  readonly is_deleted?: boolean;
+
+  @IsOptional()
+  @IsDate()
+  readonly deleted_at?: Date;
+
+  @IsOptional()
+  @IsString()
+  readonly deleted_by?: string | null;
 
   constructor(data: Partial<CreateAccountDto>) {
     Object.assign(this, data);

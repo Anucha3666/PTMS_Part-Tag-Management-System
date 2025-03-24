@@ -13,6 +13,7 @@ import {
   NotFoundPage,
   PartManagementPage,
   ReportPage,
+  SettingsPage,
   ViewPartPage,
 } from "@/pages";
 import { AppProvider } from "../providers";
@@ -27,6 +28,7 @@ const AppRoutes: FC = () => {
       <Route element={<AppLayout />}>
         <Route path='/part-management' element={<PartManagementPage />} />
         <Route path='/report' element={<ReportPage />} />
+        <Route path='/setting' element={<SettingsPage />} />
       </Route>
       <Route path='/:part_id' element={<ViewPartPage />} />
 

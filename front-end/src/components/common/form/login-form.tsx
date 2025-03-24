@@ -8,28 +8,20 @@ import { Lock, User } from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
-export type TLoginFormProps = {
-  isMachine?: boolean;
-};
-
-export const LoginForm: FC<TLoginFormProps> = () => {
+export const LoginForm: FC = () => {
   const navigate = useNavigate();
   const { mutateSignIn } = useAuth();
 
   const onFinish: FormProps<TLogin>["onFinish"] = async (values) => {
-    try {
+    const res = await mutateSignIn(values);
+
+    if (res?.status === "success") {
       if (values?.remember) {
         cookieCryptoUtils?.set("DATA_USER_REMEMBER", values);
       } else {
         cookieCryptoUtils.delete("DATA_USER_REMEMBER");
       }
-      const res = await mutateSignIn(values);
-
-      if (res?.status === "success") {
-        navigate("/part-management");
-      }
-    } catch (error) {
-      console.error("SIGN_IN_ERROR", error);
+      navigate("/part-management");
     }
   };
 
@@ -45,7 +37,7 @@ export const LoginForm: FC<TLoginFormProps> = () => {
         }
         onFinish={onFinish}
         autoComplete='off'>
-        <div className='w-full gap-4 flex flex-col text-white '>
+        <div className='w-full gap-2 flex flex-col text-white '>
           <div className=''>
             <p>Username</p>
 
@@ -95,7 +87,7 @@ export const LoginForm: FC<TLoginFormProps> = () => {
             type='primary'
             htmlType='submit'
             className=' bg-blue-500 hover:scale-[101%] active:scale-[99%]'>
-            เข้าสู่ระบบ
+            Sign In
           </Button>
         </div>
       </Form>

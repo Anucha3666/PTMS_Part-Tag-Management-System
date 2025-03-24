@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { AccountHelper, AuthHelper } from 'src/helpers';
+import { TRESSignIn } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
 import { BcryptUtils, ValidatorUtils } from 'src/utils';
 import { Account, AccountDocument } from '../accounts/account.entity';
@@ -36,7 +37,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async signIn(req: SignInDto): Promise<ResponseFormat<AccountDocument>> {
+  async signIn(req: SignInDto): Promise<ResponseFormat<TRESSignIn>> {
     try {
       await ValidatorUtils.validate(SignInDto, req);
 
@@ -60,10 +61,11 @@ export class AuthService {
         req?.password,
         existingAccount?.password,
       );
-      const isWaitingForConfirmation = existingAccount?.role === null;
-      const isBlock = existingAccount?.role === '';
-
-      if (!isVedifind || isWaitingForConfirmation || isBlock) {
+      const isWaitingForConfirmation =
+        (existingAccount?.is_approved ?? false) === false;
+      const isBlock = (existingAccount?.role ?? '') === '';
+      const isDeleted = (existingAccount?.is_deleted ?? false) === true;
+      if (!isVedifind || isWaitingForConfirmation || isBlock || isDeleted) {
         throw new HttpException(
           {
             status: 'error',
@@ -71,16 +73,17 @@ export class AuthService {
               ? `Invalid username or password.`
               : isWaitingForConfirmation
                 ? 'Your account is pending approval. Please wait for confirmation.'
-                : 'Your account has been blocked. Please contact support for assistance.',
+                : isBlock
+                  ? 'Your account has been blocked. Please contact support for assistance.'
+                  : 'Your account has been deleted. Please contact support for assistance.', // เพิ่มตรงนี้
             data: [],
           },
           HttpStatus.UNAUTHORIZED,
         );
       }
-
       const token = await this?.generateToken(existingAccount);
       const result = [existingAccount?.toObject()]
-        .map(this.accountHelper.map)
+        .map(this.accountHelper.mapSignIn)
         ?.map((item) => ({
           ...item,
           token,
@@ -136,7 +139,17 @@ export class AuthService {
       const dto = await SignUpDto.createWithHashedPassword(req);
       const account = new this.accountModel(dto);
       const savedAccount = await account.save();
-      const result = [savedAccount?.toObject()].map(this.accountHelper.map);
+      const updatedAccount = await this.accountModel
+        .findByIdAndUpdate(
+          savedAccount?._id,
+          { created_by: savedAccount?._id },
+          { new: true },
+        )
+        .select('-password')
+        .lean()
+        .exec();
+
+      const result = [updatedAccount].map(this.accountHelper.map);
 
       return {
         status: 'success',

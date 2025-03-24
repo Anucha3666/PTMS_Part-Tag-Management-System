@@ -54,7 +54,7 @@ export class AccountsService {
       }
 
       const dto = await CreateAccountDto.createWithHashedPassword(req);
-      const account = new this.accountModel(dto);
+      const account = new this.accountModel({ ...dto });
       const savedAccount = await account.save();
       const result = [savedAccount?.toObject()].map(this.accountHelper.map);
 

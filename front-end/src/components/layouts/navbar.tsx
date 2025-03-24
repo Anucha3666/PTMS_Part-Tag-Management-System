@@ -14,6 +14,8 @@ export const AppNavbar = () => {
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const { first_name, last_name, role } = dataUser;
+
   return (
     <>
       <div className=' w-full h-min  grid grid-cols-3 bg-white justify-between gap-1 p-2 items-center shadow-md'>
@@ -54,9 +56,11 @@ export const AppNavbar = () => {
           <div className='gap-1 items-center hidden md:flex '>
             <CircleUserRound size={34} />
             <div className=' flex flex-col text-sm'>
-              <p className=' font-medium'>{dataUser?.full_name}</p>
+              <p className=' font-medium'>
+                {first_name} {last_name}
+              </p>
               <p className=' -mt-1 text-[0.8rem]'>
-                {dataUser?.position} [{dataUser?.role}]
+                [{`${role?.toLocaleUpperCase()?.slice(0, 1)}${role?.slice(1)}`}]
               </p>
             </div>
           </div>
