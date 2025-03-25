@@ -6,7 +6,13 @@ import {
   VITE_API_BASE_URL,
 } from "@/constants/service";
 import { TResponse } from "@/types/common";
-import { TAuth, TSignIn, TSignUp } from "../types/auth";
+import {
+  TAuth,
+  TChangePassword,
+  TForgotPassword,
+  TSignIn,
+  TSignUp,
+} from "../types/auth";
 import { APIService } from "./api.service";
 
 export class AuthService extends APIService {
@@ -49,7 +55,10 @@ export class AuthService extends APIService {
 
   signUp = async (req: TSignUp): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.post<TResponse<[]>>("/auth/sign-up", req);
+      const { data } = await this.post<TResponse<[]>>(
+        "/auth/change-password",
+        req
+      );
 
       return data;
     } catch (error) {
@@ -66,6 +75,64 @@ export class AuthService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to sign up due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      }
+    }
+  };
+
+  forgotPassword = async (req: TForgotPassword): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.post<TResponse<[]>>(
+        `/auth/forgot-password`,
+        req
+      );
+
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("FORGOT_PASSWORD_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to forgot password due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to forgot password due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      }
+    }
+  };
+
+  changePassword = async (req: TChangePassword): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.put<TResponse<[]>>(
+        "/auth/change-password",
+        req
+      );
+
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("CHANGE_PASSWORD_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to change password due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to change password due to an unknown error",
           status: "error",
           data: [],
         };

@@ -1,10 +1,16 @@
 import { AxiosError } from "axios";
 
 import { SERVICE_CONFIG_ACCESS_KEY, VITE_API_BASE_URL } from "@/constants";
-import { setParts } from "@/store/features/parts.features";
+import { setParts } from "@/store/features/part.features";
 import { useAppDispatch } from "@/store/hook";
-import { TPart, TResponse } from "@/types";
-import { localStorageCryptoUtils } from "@/utils";
+import {
+  TCreatePart,
+  TPart,
+  TPartChangeHistory,
+  TPartDetails,
+  TResponse,
+  TUpdatePart,
+} from "@/types";
 import { APIService } from "./api.service";
 
 export class PartService extends APIService {
@@ -18,11 +24,9 @@ export class PartService extends APIService {
 
   getParts = async (): Promise<TPart[]> => {
     try {
-      const data = (await (localStorageCryptoUtils?.get("DATA_PART") ??
-        [])) as TPart[];
-
-      this.dispatch(setParts(data || []));
-      return data || [];
+      const { data } = await this.get<TResponse<TPart[]>>(`/parts`);
+      this?.dispatch(setParts(data?.data));
+      return data?.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("GET_PARTS_ERROR", error.response);
@@ -34,41 +38,60 @@ export class PartService extends APIService {
     }
   };
 
-  createPart = async (data: TPart): Promise<TResponse<TPart[]>> => {
+  getPartDetails = async (part_id: string): Promise<TPartDetails> => {
     try {
-      const dataPart = (await (localStorageCryptoUtils?.get("DATA_PART") ??
-        [])) as TPart[];
+      const { data } = await this.get<TResponse<TPartDetails[]>>(
+        `/part/${part_id}/details`
+      );
+      return (data?.data[0] ?? {}) as TPartDetails;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("GET_PART_DETAILS_ERROR", error.response);
+        return {} as TPartDetails;
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {} as TPartDetails;
+      }
+    }
+  };
 
-      const res = await [
-        {
-          ...data,
-          part_id: Math.floor(Date.now() / 1000).toString(),
-          create_at: new Date()?.toISOString(),
-          update_at: new Date()?.toISOString(),
-        },
-      ]?.concat(dataPart);
+  getPartChangeHistorys = async (
+    part_id: string
+  ): Promise<TPartChangeHistory[]> => {
+    try {
+      const { data } = await this.get<TResponse<TPartChangeHistory[]>>(
+        `/part/${part_id}/change-history`
+      );
+      return data?.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("GET_PART_HISTORY_ERROR", error.response);
+        return [];
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return [];
+      }
+    }
+  };
 
-      await localStorageCryptoUtils?.set("DATA_PART", res);
-
-      return {
-        status: "success",
-        message: "Create part successfully",
-        data: res,
-      };
+  createPart = async (req: TCreatePart): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.post<TResponse<[]>>(`/part`, req);
+      return data;
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("CREATE_PART_ERROR", error.response);
         return {
           message:
             error.response?.data?.message ||
-            "Failed to create part in due to an unknown error",
+            "Failed to create part due to an unknown error",
           status: "error",
           data: [],
         };
       } else {
         console.error("UNKNOWN_ERROR", error);
         return {
-          message: "Failed to create part in due to an unknown error",
+          message: "Failed to create part due to an unknown error",
           status: "error",
           data: [],
         };
@@ -76,38 +99,28 @@ export class PartService extends APIService {
     }
   };
 
-  updatePart = async (data: TPart): Promise<TResponse<TPart[]>> => {
+  updatePart = async (req: TUpdatePart): Promise<TResponse<[]>> => {
     try {
-      const dataPart = (await (localStorageCryptoUtils?.get("DATA_PART") ??
-        [])) as TPart[];
-
-      const res = await dataPart?.map((item) =>
-        item?.part_id === data?.part_id
-          ? { ...data, update_at: new Date()?.toISOString() }
-          : item
+      const { data } = await this.put<TResponse<[]>>(
+        `/part/${req?.part_id}`,
+        req
       );
 
-      await localStorageCryptoUtils?.set("DATA_PART", res);
-
-      return {
-        status: "success",
-        message: "Update part successfully",
-        data: res,
-      };
+      return data;
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("UPDATE_PART_ERROR", error.response);
         return {
           message:
             error.response?.data?.message ||
-            "Failed to update part in due to an unknown error",
+            "Failed to update part due to an unknown error",
           status: "error",
           data: [],
         };
       } else {
         console.error("UNKNOWN_ERROR", error);
         return {
-          message: "Failed to update part in due to an unknown error",
+          message: "Failed to update part due to an unknown error",
           status: "error",
           data: [],
         };
@@ -115,34 +128,25 @@ export class PartService extends APIService {
     }
   };
 
-  deletePart = async (part_id: string): Promise<TResponse<TPart[]>> => {
+  deletePart = async (part_id: string): Promise<TResponse<[]>> => {
     try {
-      const dataPart = (await (localStorageCryptoUtils?.get("DATA_PART") ??
-        [])) as TPart[];
+      const { data } = await this.delete<TResponse<[]>>(`/part/${part_id}`);
 
-      const res = await dataPart?.filter((item) => item?.part_id !== part_id);
-
-      await localStorageCryptoUtils?.set("DATA_PART", res);
-
-      return {
-        status: "success",
-        message: "Delete part successfully",
-        data: res,
-      };
+      return data;
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error("DELETE_PART_ERROR", error.response);
         return {
           message:
             error.response?.data?.message ||
-            "Failed to delete part in due to an unknown error",
+            "Failed to delete part due to an unknown error",
           status: "error",
           data: [],
         };
       } else {
         console.error("UNKNOWN_ERROR", error);
         return {
-          message: "Failed to delete part in due to an unknown error",
+          message: "Failed to delete part due to an unknown error",
           status: "error",
           data: [],
         };

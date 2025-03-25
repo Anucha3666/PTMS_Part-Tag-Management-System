@@ -6,7 +6,6 @@ export type TAccount = {
   first_name: string;
   last_name: string;
   username: string;
-  password: string;
   role: TRole;
   position: string;
   profile_picture: string;
@@ -19,4 +18,34 @@ export type TAccount = {
   is_deleted: boolean;
   deleted_at: boolean;
   deleted_by: string;
+};
+
+export type TCreateAccount = {
+  employee_number: string;
+  first_name: string;
+  last_name: string;
+  username: string;
+  position?: string;
+  profile_picture?: string | null;
+  role: TRole;
+};
+
+export type TChangeRole = {
+  account_id: string;
+  role: TRole;
+};
+
+export type TUpdateAccount = {
+  account_id: string;
+  first_name?: string;
+  last_name?: string;
+  position?: string;
+  profile_picture?: string | null;
+};
+
+export type TIntroduceAccount = {
+  first_name: string;
+  last_name: string;
+  position: string;
+  profile_picture: string;
 };

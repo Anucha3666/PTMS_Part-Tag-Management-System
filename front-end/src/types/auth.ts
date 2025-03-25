@@ -6,12 +6,6 @@ export type TSignIn = {
   remember?: string;
 };
 
-export type TChangePassword = {
-  username: string;
-  old_password: string;
-  new_password: string;
-};
-
 export type TLogin = {
   username: string;
   password: string;
@@ -40,27 +34,12 @@ export type TAuth = {
   token: string;
 };
 
-export type TCreateTempEmployee = {
+export type TForgotPassword = {
+  employee_number: string;
   username: string;
-  prior_name: string;
-  first_name: string;
-  last_name: string;
-  section: string;
-  department: string;
-  position: string;
-  company_code: string;
-  job_start: string; //! "2024-01-01";
-  // resign_status: "1";
 };
 
-export type TCreateUpdateUser = {
-  username: string;
-  role: TRole;
-};
-
-export type TDataLoginShortcut = {
-  username: string;
+export type TChangePassword = {
   password: string;
-  full_name: string;
-  pin: string;
+  new_password: string;
 };

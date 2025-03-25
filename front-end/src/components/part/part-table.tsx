@@ -1,4 +1,4 @@
-import { setPrintTags } from "@/store/features/print.features";
+import { setPrintTags } from "@/store/features/printed.features";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import type { TableProps } from "antd";

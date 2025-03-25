@@ -5,9 +5,13 @@ import { TAccount } from "@/types";
 import { Empty, Table, TableProps } from "antd";
 import MenuItem from "antd/es/menu/MenuItem";
 import { CirclePlus } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
-export const AccountTable = () => {
+export type TAccountTableProps = {
+  search?: string;
+};
+
+export const AccountTable: FC<TAccountTableProps> = ({ search }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const { className, rowClassName, rootClassName } =
     getCustomTableDarkThemeProps();
@@ -80,10 +84,8 @@ export const AccountTable = () => {
   }, []);
 
   return (
-    <div
-      ref={divRef}
-      className=' w-full h-full  overflow-hidden bg-[#F1F1F1] dark:bg-[#101010]'>
-      <div className='w-full h-min bg-white max-h-full rounded-md dark:shadow-md-dark'>
+    <div ref={divRef} className=' w-full h-full  overflow-hidden'>
+      <div className='w-full h-min bg-white max-h-full rounded-md'>
         <Table<TAccount>
           columns={columns}
           className={className}
@@ -123,7 +125,11 @@ export const AccountTable = () => {
               />
             </div>
           )}
-          scroll={{ x: "max-content", y: `${height - 175}px` }}
+          scroll={
+            search === undefined
+              ? { x: "max-content" }
+              : { x: "max-content", y: `${height - 110}px` }
+          }
         />
       </div>
     </div>

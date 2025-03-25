@@ -1,29 +1,17 @@
-import { GET_PRINTING_HISTORYS } from "@/constants";
+import { GET_PRINTEDS } from "@/constants";
 import { useMutationWithNotification } from "@/hooks";
-import { TPrintingHistorys, TPrintTag } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import { PrintService } from "../print.service";
 
 export const usePrint = () => {
-  const { getPrintingHistorys, print } = new PrintService();
+  const { printTags } = new PrintService();
 
-  const useGetPrintingHistorys = () => {
-    return useQuery({
-      queryKey: [GET_PRINTING_HISTORYS],
-      queryFn: async (): Promise<TPrintingHistorys[]> =>
-        await getPrintingHistorys(),
-      refetchInterval: 300000,
-    });
-  };
-
-  const { mutateAsync: mutatePrint } = useMutationWithNotification(
-    async (data: TPrintTag[]) => await print(data),
+  const { mutateAsync: mutatePrintTags } = useMutationWithNotification(
+    async (data: string[]) => await printTags(data),
     "Printing...",
-    [GET_PRINTING_HISTORYS]
+    [GET_PRINTEDS]
   );
 
   return {
-    useGetPrintingHistorys,
-    mutatePrint,
+    mutatePrintTags,
   };
 };

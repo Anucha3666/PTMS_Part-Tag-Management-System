@@ -5,7 +5,7 @@ import { TAuth } from "@/types";
 import { cookieCryptoUtils } from "@/utils";
 import { FC, ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePart, usePrint } from "../hooks";
+import { useAccount, usePart, usePrinted, useTag } from "../hooks";
 
 export type TAppWrapperProps = {
   children: ReactNode;
@@ -14,15 +14,18 @@ export type TAppWrapperProps = {
 export const AppWrapper: FC<TAppWrapperProps> = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { useGetAccounts } = useAccount();
   const { useGetParts } = usePart();
-  const { useGetPrintingHistorys } = usePrint();
+  const { useGetPrinteds } = usePrinted();
+  const { useGetTags } = useTag();
 
+  useGetAccounts();
   useGetParts();
-  useGetPrintingHistorys();
+  useGetPrinteds();
+  useGetTags();
 
   useEffect(() => {
     const dataUser = cookieCryptoUtils?.get(SERVICE_CONFIG_DATA_USER) as TAuth;
-
     console.log("cookieCryptoUtils", dataUser);
 
     if ((dataUser?.token ?? "") === "" || (dataUser?.role ?? "") === "") {
@@ -31,5 +34,6 @@ export const AppWrapper: FC<TAppWrapperProps> = ({ children }) => {
 
     dispatch(setDataUser(dataUser));
   }, [dispatch, navigate]);
+
   return <>{children}</>;
 };
