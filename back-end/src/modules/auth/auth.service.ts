@@ -8,10 +8,10 @@ import { AccountHelper, AuthHelper } from 'src/helpers';
 import { TRESSignIn } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
 import { BcryptUtils, ValidatorUtils } from 'src/utils';
-import { Account, AccountDocument } from '../accounts/account.entity';
+import { Account, AccountDocument } from '../account/account.entity';
 import {
   ChangePasswordDto,
-  ChangeRoleDto,
+  ForgotPasswordDto,
   SignInDto,
   SignUpDto,
 } from './auth.dto';
@@ -46,16 +46,11 @@ export class AuthService {
           this?.accountModel,
           req?.username,
         );
-      if (!existingAccount) {
-        throw new HttpException(
-          {
-            status: 'error',
-            message: `No account found with this id.`,
-            data: [],
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+
+      await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
+      await this?.accountHelper?.class?.isForgotPassword(
+        existingAccount?.password === '',
+      );
 
       const isVedifind = await BcryptUtils?.comparePassword(
         req?.password,
@@ -97,7 +92,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
-        { status: 'error', message: `Sign in: ${error.message}`, data: [] },
+        { status: 'error', message: `${error.message}`, data: [] },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -159,86 +154,33 @@ export class AuthService {
     } catch (error) {
       if (error instanceof HttpException) throw error;
       throw new HttpException(
-        { status: 'error', message: `Sign up: ${error.message}`, data: [] },
+        { status: 'error', message: `${error.message}`, data: [] },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
 
-  async changeRole(
-    account_id: string,
-    req: ChangeRoleDto,
+  async forgotPassword(
+    req: ForgotPasswordDto,
   ): Promise<ResponseFormat<AccountDocument>> {
     try {
-      await ValidatorUtils.validate(ChangeRoleDto, req);
+      await ValidatorUtils.validate(ForgotPasswordDto, req);
 
       const existingAccount =
-        await this.accountHelper.class.findAccountByAccountID(
+        await this.accountHelper.class.findAccountByEmployeeNumber(
           this?.accountModel,
-          account_id,
+          req?.employee_number,
         );
-      if (!existingAccount) {
-        throw new HttpException(
-          {
-            status: 'error',
-            message: `No account found with this id.`,
-            data: [],
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
 
-      const dto = await ChangeRoleDto?.changeWithRole(req);
-      const updatedAccount = await this.accountModel
-        .findByIdAndUpdate(account_id, dto, { new: true })
-        .select('-password')
-        .lean()
-        .exec();
-      const result = [updatedAccount].map(this.accountHelper.map);
-
-      return {
-        status: 'success',
-        message: 'Changed role successfully.',
-        data: result,
-      };
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `Change role: ${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
+      await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
+      await this?.accountHelper?.class?.isForgotPassword(
+        existingAccount?.password === '',
       );
-    }
-  }
 
-  async resetPassword(
-    account_id: string,
-  ): Promise<ResponseFormat<AccountDocument>> {
-    try {
-      const existingAccount =
-        await this.accountHelper.class.findAccountByAccountID(
-          this?.accountModel,
-          account_id,
-        );
-      if (!existingAccount) {
-        throw new HttpException(
-          {
-            status: 'error',
-            message: `No account found with this id.`,
-            data: [],
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      const hashedPassword = await BcryptUtils.hashPassword('111111');
       const updatedAccount = await this.accountModel
         .findByIdAndUpdate(
-          account_id,
-          { password: hashedPassword },
+          existingAccount?._id,
+          { password: '' },
           { new: true },
         )
         .select('-password')
@@ -248,7 +190,7 @@ export class AuthService {
 
       return {
         status: 'success',
-        message: 'Reset password successfully.',
+        message: 'Forgot password successfully.',
         data: result,
       };
     } catch (error) {
@@ -256,7 +198,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: 'error',
-          message: `Change role: ${error.message}`,
+          message: `${error.message}`,
           data: [],
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -276,16 +218,11 @@ export class AuthService {
           this?.accountModel,
           account_id,
         );
-      if (!existingAccount) {
-        throw new HttpException(
-          {
-            status: 'error',
-            message: `No account found with this id.`,
-            data: [],
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      }
+
+      await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
+      await this?.accountHelper?.class?.isForgotPassword(
+        existingAccount?.password === '',
+      );
 
       const isVedifind = await BcryptUtils?.comparePassword(
         req?.password,
@@ -324,7 +261,7 @@ export class AuthService {
       throw new HttpException(
         {
           status: 'error',
-          message: `Change role: ${error.message}`,
+          message: `${error.message}`,
           data: [],
         },
         HttpStatus.INTERNAL_SERVER_ERROR,

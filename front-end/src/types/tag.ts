@@ -1,5 +1,3 @@
-import { TIntroduceAccount } from "./account";
-
 export type TTag = {
   tag_id: string;
   tag_number: string;
@@ -10,5 +8,5 @@ export type TTag = {
   picture_std: string;
   is_checked: boolean;
   checked_at: string;
-  checked_by: TIntroduceAccount;
+  checked_by: string;
 };

@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { TRole } from 'src/types';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { BcryptUtils } from 'src/utils';
 
 export class SignInDto {
@@ -34,14 +33,6 @@ export class SignUpDto {
   @IsNotEmpty()
   readonly password: string;
 
-  @IsOptional()
-  @IsDate()
-  readonly created_at?: Date;
-
-  @IsOptional()
-  @IsDate()
-  readonly updated_at?: Date;
-
   constructor(data: Partial<SignUpDto>) {
     Object.assign(this, data);
   }
@@ -53,38 +44,26 @@ export class SignUpDto {
     return plainToClass(SignUpDto, {
       ...data,
       password: hashedPassword,
-      role: null,
-    });
-  }
-}
-
-export class ChangeRoleDto {
-  @IsString()
-  readonly role: TRole;
-
-  @IsOptional()
-  @IsDate()
-  readonly updated_at?: Date;
-
-  constructor(data: Partial<ChangeRoleDto>) {
-    Object.assign(this, data);
-  }
-
-  static async changeWithRole(
-    data: Partial<ChangeRoleDto>,
-  ): Promise<ChangeRoleDto> {
-    return plainToClass(ChangeRoleDto, {
-      role: data?.role,
-      updated_at: new Date(),
     });
   }
 }
 
 export class ChangePasswordDto {
+  @IsString()
+  @IsNotEmpty()
   readonly password: string;
+
+  @IsString()
+  @IsNotEmpty()
   readonly new_password: string;
 }
 
-export class ResetPasswordDto {
-  readonly account_id: string;
+export class ForgotPasswordDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly employee_number: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly username: string;
 }

@@ -1,5 +1,3 @@
-import { TIntroduceAccount } from "./account";
-
 export type TPart = {
   part_id: string;
   part_no: string;
@@ -23,13 +21,13 @@ export type TPartDetails = {
   packing: string;
   more_pictures: string[];
   created_at: string;
-  created_by: TIntroduceAccount;
+  created_by: string;
   is_log: boolean;
   updated_at: string;
-  updated_by: TIntroduceAccount;
+  updated_by: string;
   is_deleted: boolean;
   deleted_at: string;
-  deleted_by: TIntroduceAccount;
+  deleted_by: string;
 };
 
 export type TPartChangeHistory = {
@@ -42,13 +40,13 @@ export type TPartChangeHistory = {
   packing: string;
   more_pictures: string[];
   created_at: string;
-  created_by: TIntroduceAccount;
+  created_by: string;
   is_log: boolean;
   updated_at: string;
-  updated_by: TIntroduceAccount;
+  updated_by: string;
   is_deleted: boolean;
   deleted_at: string;
-  deleted_by: TIntroduceAccount;
+  deleted_by: string;
 };
 
 export type TCreatePart = {

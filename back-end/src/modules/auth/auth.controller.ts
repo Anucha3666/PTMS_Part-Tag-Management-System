@@ -1,19 +1,16 @@
 import {
   Body,
   Controller,
-  Param,
+  Patch,
   Post,
-  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { Roles } from '../guards/roles.decorator';
-import { RolesGuard } from '../guards/roles.guard';
 import {
   ChangePasswordDto,
-  ChangeRoleDto,
+  ForgotPasswordDto,
   SignInDto,
   SignUpDto,
 } from './auth.dto';
@@ -33,27 +30,15 @@ export class AuthController {
     return this.authService.signUp(signUpDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'owner')
-  @Post('change-role/:account_id')
-  changeRole(
-    @Param('account_id') account_id: string,
-    @Body() changeRoleDto: ChangeRoleDto,
-  ) {
-    return this.authService.changeRole(account_id, changeRoleDto);
+  @Patch('forgot-password')
+  forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(forgotPasswordDto);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('change-password')
+  @Patch('change-password')
   update(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
     const account_id = req.user.account_id;
     return this.authService.changePassword(account_id, changePasswordDto);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('owner')
-  @Post('reset-password/:account_id')
-  resetPassword(@Param('account_id') account_id: string) {
-    return this.authService.resetPassword(account_id);
   }
 }

@@ -1,5 +1,6 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { AccountDocument } from 'src/modules/accounts/account.entity';
+import { AccountDocument } from 'src/modules/account/account.entity';
 import { TRole } from 'src/types';
 
 export class ClassAccountHelper {
@@ -50,6 +51,33 @@ export class ClassAccountHelper {
       })
       .exec();
   }
+
+  async isNoAccountFound(isNoAccountFound: boolean) {
+    if (isNoAccountFound) {
+      throw new HttpException(
+        {
+          status: 'error',
+          message: `No account found with this id.`,
+          data: [],
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
+  async isForgotPassword(isForgotPassword: boolean) {
+    if (isForgotPassword) {
+      throw new HttpException(
+        {
+          status: 'error',
+          message:
+            'This account is currently undergoing password reset review. Please wait for confirmation from the administrator.',
+          data: [],
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+  }
 }
 
 export const mapAccountToTRESSignIn = (account: any) => ({
@@ -69,11 +97,8 @@ export const mapAccountToTRESSignIn = (account: any) => ({
 export const mapAccountToTRESAccount = (account: any) => ({
   account_id: account._id.toString(),
   ...account,
-  profile_picture: account.profile_picture ?? null,
-  role: account.role ?? null,
-  created_at: account.created_at ?? null,
-  updated_at: account.updated_at ?? null,
   _id: undefined,
+  password: undefined,
 });
 
 export const AccountHelper = {

@@ -15,13 +15,16 @@ export class Account {
   @Prop({ required: true })
   last_name: string;
 
+  @Prop({ default: () => '' })
+  position: string;
+
   @Prop({ required: true, unique: true })
   username: string;
 
   @Prop({ required: true })
   password: string;
 
-  @Prop({ default: () => null })
+  @Prop({ default: () => 'viewer' })
   role?: TRole;
 
   @Prop({ default: () => null })
