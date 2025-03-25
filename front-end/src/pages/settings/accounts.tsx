@@ -4,7 +4,7 @@ import { Input } from "antd";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
-export const SettingMembersPage = () => {
+export const SettingAccountsPage = () => {
   const { accounts } = useAppSelector((store) => store?.account);
   const [search, setSearch] = useState<string>("");
 

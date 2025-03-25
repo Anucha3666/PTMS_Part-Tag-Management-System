@@ -18,7 +18,7 @@ export class PrintService extends APIService {
     try {
       const { data } = await this.post<TResponse<TPrintedTag[]>>(
         `/print/tags`,
-        req
+        { prints: req }
       );
       return data;
     } catch (error) {
