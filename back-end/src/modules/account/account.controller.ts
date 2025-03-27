@@ -23,13 +23,12 @@ import {
 import { AccountsService } from './account.service';
 
 @Controller('account')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin', 'owner')
 export class AccountController {
   constructor(private readonly accountsService: AccountsService) {}
 
   @Post()
-  @UseGuards(RolesGuard)
-  @Roles('admin', 'owner')
   create(@Request() req, @Body() createAccountDto: CreateAccountDto) {
     const account_id = req.user.account_id;
 
@@ -45,24 +44,18 @@ export class AccountController {
     return this.accountsService.findOne(account_id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'owner')
   @Patch(':account_id/approve')
   approve(@Request() req: TRequest, @Param('account_id') account_id: string) {
     const approved_by = req.user.account_id;
     return this.accountsService.approve(approved_by, account_id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'owner')
   @Patch(':account_id/reject')
   reject(@Request() req: TRequest, @Param('account_id') account_id: string) {
     const approved_by = req.user.account_id;
     return this.accountsService.reject(approved_by, account_id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'owner')
   @Patch(':account_id/role')
   changeRole(
     @Request() req: TRequest,
@@ -78,22 +71,17 @@ export class AccountController {
     );
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'owner')
   @Patch(':account_id/reset-password')
   resetPassword(@Param('account_id') account_id: string) {
     return this.accountsService.resetPassword(account_id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put()
   update(@Request() req: TRequest, @Body() updateAccountDto: UpdateAccountDto) {
     const account_id = req?.user?.account_id;
     return this.accountsService.update(account_id, updateAccountDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'owner')
   @Delete(':account_id')
   delete(@Request() req: TRequest, @Param('account_id') account_id: string) {
     const deleted_by = req?.user?.account_id;
@@ -102,7 +90,8 @@ export class AccountController {
 }
 
 @Controller('accounts')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin', 'owner')
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 

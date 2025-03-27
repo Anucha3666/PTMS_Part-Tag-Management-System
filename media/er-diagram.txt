@@ -1,0 +1,67 @@
+Table Account {
+  _id varchar [pk, note: 'MongoDB ObjectId']
+  employee_number varchar [unique, not null]
+  first_name varchar [not null]
+  last_name varchar [not null]
+  username varchar [unique, not null]
+  password varchar [not null]
+  role varchar [not null, note: '"", "viewer", "user", "admin", owner']
+  position varchar
+  profile_picture varchar
+  created_by varchar
+  created_at datetime [default: `now()`]
+  updated_at datetime [default: `now()`]
+  is_approved boolean [default: false]
+  approved_at datetime [default: `now()`]
+  approved_by varchar
+  is_deleted boolean [default: false, note: 'soft delete flag']
+  deleted_at datetime [note: 'timestamp when deleted']
+  deleted_by varchar [note: 'ref to Account._id who deleted']
+}
+
+Ref: Account.approved_by > Account._id
+Ref: Account.created_by > Account._id
+Ref: Account.deleted_by > Account._id
+
+Table Part {
+  _id varchar [pk, note: 'MongoDB ObjectId']
+  part_no varchar [unique, not null]
+  part_name varchar [not null]
+  packing_std int [not null]
+  picture_std varchar [not null]
+  q_point varchar [not null]
+  packing varchar [not null]
+  more_pictures varchar[] [note: 'Array of additional pictures']
+  created_at datetime [default: `now()`]
+  created_by varchar [not null, note: 'ref to Account._id who created']
+  is_log boolean [default: false]
+  updated_at datetime [default: `now()`]
+  updated_by varchar [not null, note: 'ref to Account._id who created']
+  is_deleted boolean [default: false, note: 'soft delete flag']
+  deleted_at datetime [note: 'timestamp when deleted']
+  deleted_by varchar [note: 'ref to Account._id who deleted']
+}
+
+Ref: Part.updated_by > Account._id
+Ref: Part.created_by > Account._id
+Ref: Part.deleted_by > Account._id
+
+Table Tag {
+  _id varchar [pk, note: 'MongoDB ObjectId']
+  printed_id varchar
+  tag_number int [unique, not null]
+  part_id varchar
+  is_checked boolean [default: false]
+  checked_at datetime [default: `now()`]
+  checked_by varchar [not null, note: 'ref to Account._id who created']
+}
+
+Ref: Tag.printed_id > Printed._id
+Ref: Tag.part_id > Part._id
+
+
+Table Printed {
+  _id varchar [pk, note: 'MongoDB ObjectId']
+  printed_by varchar [not null, note: 'ref to Account._id who printed']
+  created_at datetime [default: `now()`]
+}

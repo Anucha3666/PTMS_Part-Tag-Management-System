@@ -50,7 +50,7 @@ export class CreateAccountDto {
     Object.assign(this, data);
   }
 
-  static async createWithHashedPassword(
+  static async format(
     data: Partial<CreateAccountDto>,
   ): Promise<CreateAccountDto> {
     const hashedPassword = await BcryptUtils.hashPassword(data.password);
@@ -62,11 +62,11 @@ export class CreateAccountDto {
       password: hashedPassword,
       role: data.role,
       position: data.position,
-      profile_picture: data.profile_picture,
+      profile_picture: null,
+      created_by: data?.created_by,
       is_approved: true,
       approved_by: data?.approved_by,
       approved_at: new Date(),
-      created_by: true,
     };
 
     return plainToClass(CreateAccountDto, cleanData);
@@ -114,7 +114,7 @@ export class UpdateAccountDto {
     Object.assign(this, data);
   }
 
-  static async createWithUpdatedAt(
+  static async format(
     data: Partial<UpdateAccountDto>,
   ): Promise<UpdateAccountDto> {
     const cleanData = {

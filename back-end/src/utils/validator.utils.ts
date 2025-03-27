@@ -20,3 +20,10 @@ export class ValidatorUtils {
     }
   }
 }
+
+// const buffer = await Buffer.from(base64String, 'base64');
+// return buffer.toString('base64') === base64String;
+export const isValidBase64 = (base64String: string): boolean => {
+  const matches = base64String.match(/^data:(.+);base64,(.+)$/);
+  return matches !== null && matches.length > 1;
+};

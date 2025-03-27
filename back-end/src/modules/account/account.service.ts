@@ -3,10 +3,16 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
+import { CommonHelper } from 'src/helpers';
 import { AccountHelper } from 'src/helpers/accounts.helper';
 import { TRESAccunt } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
-import { BcryptUtils, ValidatorUtils } from 'src/utils';
+import {
+  BcryptUtils,
+  FileUitils,
+  isValidBase64,
+  ValidatorUtils,
+} from 'src/utils';
 import {
   ChangeRoleDto,
   CreateAccountDto,
@@ -16,6 +22,7 @@ import { Account, AccountDocument } from './account.entity';
 
 @Injectable()
 export class AccountsService {
+  commonHelper = CommonHelper;
   accountHelper = AccountHelper;
 
   constructor(
@@ -23,9 +30,7 @@ export class AccountsService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async create(
-    req: CreateAccountDto,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  async create(req: CreateAccountDto): Promise<ResponseFormat<TRESAccunt>> {
     try {
       await ValidatorUtils.validate(CreateAccountDto, req);
 
@@ -52,16 +57,45 @@ export class AccountsService {
           {
             status: 'error',
             message: `${duplicateField} is already in use. Please choose a different one.`,
-            data: [existingAccount],
+            data: [existingAccount]?.map(this.accountHelper.map),
           },
           HttpStatus.BAD_REQUEST,
         );
       }
 
-      const dto = await CreateAccountDto.createWithHashedPassword(req);
+      const dto = await CreateAccountDto.format(req);
       const account = new this.accountModel({ ...dto });
       const savedAccount = await account.save();
-      const result = [savedAccount?.toObject()].map(this.accountHelper.map);
+      const result = [savedAccount].map(this.accountHelper.map);
+
+      if (isValidBase64(req?.profile_picture ?? '')) {
+        const profile_picture = await FileUitils.upload(
+          req?.profile_picture,
+          'profile',
+          savedAccount?._id.toString() ?? '',
+        );
+
+        const updatedAccount = await this.accountModel
+          .findByIdAndUpdate(
+            savedAccount?._id,
+            { profile_picture },
+            { new: true },
+          )
+          .lean()
+          .exec();
+        const result = [updatedAccount].map(this.accountHelper.map);
+
+        await this.cacheManager.del('accounts');
+        await this.cacheManager.del(
+          `account_by_account_id_${result[0]?.account_id}`,
+        );
+
+        return {
+          status: 'success',
+          message: 'Account created successfully.',
+          data: result,
+        };
+      }
 
       await this.cacheManager.del('accounts');
       await this.cacheManager.del(
@@ -70,19 +104,14 @@ export class AccountsService {
 
       return {
         status: 'success',
-        message: 'Account created successfully.',
+        message:
+          (req?.profile_picture ?? '' !== '')
+            ? 'Account created successfully. But profile picture is not valid.'
+            : 'Account created successfully.',
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
@@ -123,15 +152,7 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
@@ -164,22 +185,14 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
   async approve(
     approved_by: string,
     account_id: string,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  ): Promise<ResponseFormat<TRESAccunt>> {
     try {
       const existingAccount = await this.accountModel
         .findById(account_id)
@@ -226,22 +239,14 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
   async reject(
     approved_by: string,
     account_id: string,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  ): Promise<ResponseFormat<TRESAccunt>> {
     try {
       const existingAccount = await this.accountModel
         .findById(account_id)
@@ -287,15 +292,7 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
@@ -303,7 +300,7 @@ export class AccountsService {
     change_by: string,
     account_id: string,
     req: ChangeRoleDto,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  ): Promise<ResponseFormat<TRESAccunt>> {
     try {
       await ValidatorUtils.validate(ChangeRoleDto, req);
 
@@ -366,21 +363,11 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
-  async resetPassword(
-    account_id: string,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  async resetPassword(account_id: string): Promise<ResponseFormat<TRESAccunt>> {
     try {
       const existingAccount =
         await this.accountHelper.class.findAccountByAccountID(
@@ -418,15 +405,7 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
@@ -440,15 +419,32 @@ export class AccountsService {
       const existingAccount = await this.accountModel
         .findById(account_id)
         .select(
-          '-password -_id -created_at -updated_at -username -role -employee_number',
+          '-password -_id -created_at -updated_at -username -role -employee_number -deleted_by -deleted_at -is_deleted -approved_by -approved_at -is_approved -created_by',
         )
         .exec();
       await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
 
-      const dto = await UpdateAccountDto?.createWithUpdatedAt(req);
+      let profile_picture =
+        req?.profile_picture === null ? null : existingAccount?.profile_picture;
+
+      if (isValidBase64(req?.profile_picture ?? '')) {
+        profile_picture = await FileUitils.upload(
+          req?.profile_picture,
+          'profile',
+          account_id,
+        );
+      }
+
+      const dto = await UpdateAccountDto?.format({ ...req, profile_picture });
       const isSame = Object.keys(existingAccount.toObject()).every((key) => {
-        return existingAccount[key] === dto[key];
+        return key === 'profile_picture'
+          ? req[key]?.includes(existingAccount[key]) ||
+              (!isValidBase64(req?.profile_picture ?? '') &&
+                req?.profile_picture !== null) ||
+              existingAccount[key] === dto[key]
+          : existingAccount[key] === dto[key];
       });
+
       if (isSame) {
         return {
           status: 'success',
@@ -474,22 +470,14 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `Update account: ${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 
   async delete(
     deleted_by: string,
     account_id: string,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  ): Promise<ResponseFormat<TRESAccunt>> {
     try {
       const existingAccount = await this.accountModel
         .findById(account_id)
@@ -547,15 +535,7 @@ export class AccountsService {
         data: result,
       };
     } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException(
-        {
-          status: 'error',
-          message: `${error.message}`,
-          data: [],
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      this.commonHelper.handleError(error);
     }
   }
 }

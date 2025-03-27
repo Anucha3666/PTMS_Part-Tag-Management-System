@@ -1,13 +1,15 @@
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { databaseConfig } from './configs/database.config';
-import { AccountsModule } from './modules/account/account.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { DatabaseModule } from './modules/database/database.module';
-import { MongooseSchemaModule } from './modules/database/mongoose-schema.module';
+import { AppController, AppService } from '.';
+import { databaseConfig } from './configs';
+import {
+  AccountsModule,
+  AuthModule,
+  DatabaseModule,
+  MongooseSchemaModule,
+  PartModule,
+} from './modules';
 
 @Module({
   imports: [
@@ -22,8 +24,9 @@ import { MongooseSchemaModule } from './modules/database/mongoose-schema.module'
     }),
     MongooseSchemaModule,
     DatabaseModule,
-    AccountsModule,
     AuthModule,
+    AccountsModule,
+    PartModule,
   ],
   controllers: [AppController],
   providers: [AppService],

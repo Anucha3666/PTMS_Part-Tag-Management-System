@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { AccountHelper, AuthHelper } from 'src/helpers';
-import { TRESSignIn } from 'src/types';
+import { TRESAccunt, TRESSignIn } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
 import { BcryptUtils, ValidatorUtils } from 'src/utils';
 import { Account, AccountDocument } from '../account/account.entity';
@@ -98,7 +98,7 @@ export class AuthService {
     }
   }
 
-  async signUp(req: SignUpDto): Promise<ResponseFormat<AccountDocument>> {
+  async signUp(req: SignUpDto): Promise<ResponseFormat<TRESAccunt>> {
     try {
       await ValidatorUtils.validate(SignUpDto, req);
 
@@ -162,7 +162,7 @@ export class AuthService {
 
   async forgotPassword(
     req: ForgotPasswordDto,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  ): Promise<ResponseFormat<TRESAccunt>> {
     try {
       await ValidatorUtils.validate(ForgotPasswordDto, req);
 
@@ -209,7 +209,7 @@ export class AuthService {
   async changePassword(
     account_id: string,
     req: ChangePasswordDto,
-  ): Promise<ResponseFormat<AccountDocument>> {
+  ): Promise<ResponseFormat<TRESAccunt>> {
     try {
       await ValidatorUtils.validate(ChangePasswordDto, req);
 

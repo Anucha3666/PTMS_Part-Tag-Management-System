@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { DatabaseController } from './database.controller';
-import { DatabaseService } from './database.service';
 
 @Module({
   imports: [
@@ -18,7 +16,5 @@ import { DatabaseService } from './database.service';
       inject: [ConfigService],
     }),
   ],
-  controllers: [DatabaseController],
-  providers: [DatabaseService],
 })
 export class DatabaseModule {}

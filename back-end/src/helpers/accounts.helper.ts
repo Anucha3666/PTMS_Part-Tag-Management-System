@@ -86,7 +86,9 @@ export const mapAccountToTRESSignIn = (account: any) => ({
   first_name: account.first_name,
   last_name: account.last_name,
   username: account.username,
-  profile_picture: account.profile_picture ?? null,
+  profile_picture: account.profile_picture
+    ? `${process.env.BASE_FILE_IMAGES}/images/profile/${account.profile_picture}`
+    : null,
   role: account.role ?? null,
   created_at: account.created_at ?? null,
   updated_at: account.updated_at ?? null,
@@ -96,9 +98,23 @@ export const mapAccountToTRESSignIn = (account: any) => ({
 
 export const mapAccountToTRESAccount = (account: any) => ({
   account_id: account._id.toString(),
-  ...account,
-  _id: undefined,
-  password: undefined,
+  employee_number: account.employee_number,
+  first_name: account.first_name,
+  last_name: account.last_name,
+  username: account.username,
+  is_approved: account.is_approved,
+  is_deleted: account.is_deleted,
+  role: account.role,
+  profile_picture: account.profile_picture
+    ? `${process.env.BASE_FILE_IMAGES}/images/profile/${account.profile_picture}`
+    : null,
+  created_at: account.created_at,
+  updated_at: account.updated_at,
+  created_by: account.created_by,
+  approved_at: account.approved_at,
+  approved_by: account.approved_by,
+  deleted_at: account.deleted_at,
+  deleted_by: account.deleted_by,
 });
 
 export const AccountHelper = {
