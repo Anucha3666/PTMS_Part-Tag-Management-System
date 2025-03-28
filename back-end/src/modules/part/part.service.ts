@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { CommonHelper, PartHelper } from 'src/helpers';
 import { TRESPart } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
-import { ValidatorUtils } from 'src/utils';
+import { FileUitils, isValidBase64, ValidatorUtils } from 'src/utils';
 import { CreatePartDto, UpdatePartDto } from './part.dto';
 import { Part, PartDocument } from './part.entity';
 
@@ -19,6 +19,12 @@ export class PartService {
     @InjectModel(Part.name) private partModel: Model<PartDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  async handleUploadIfValid(base64: string | undefined, category: string) {
+    return isValidBase64(base64 ?? '')
+      ? await FileUitils.upload(base64, category)
+      : '';
+  }
 
   async create(req: CreatePartDto): Promise<ResponseFormat<PartDocument>> {
     try {
@@ -43,6 +49,45 @@ export class PartService {
       const part = new this.partModel(dto);
       const savedPart = await part.save();
       const result = [savedPart?.toObject()].map(this.partHelper.map.res);
+
+      if (
+        isValidBase64(req?.picture_std ?? '') ||
+        isValidBase64(req?.packing ?? '') ||
+        isValidBase64(req?.q_point ?? '') ||
+        (req?.more_pictures?.some((pic) => isValidBase64(pic)) ?? false)
+      ) {
+        const picture_std = await this.handleUploadIfValid(
+          req?.picture_std,
+          'picture_std',
+        );
+        const packing = await this.handleUploadIfValid(req?.packing, 'packing');
+        const q_point = await this.handleUploadIfValid(req?.q_point, 'q_point');
+        const more_pictures = await Promise.all(
+          req?.more_pictures?.map((pic) =>
+            this.handleUploadIfValid(pic, 'more_pictures'),
+          ) ?? [],
+        );
+
+        const updatedPart = await this.partModel
+          .findByIdAndUpdate(
+            savedPart?._id,
+            { picture_std, packing, q_point, more_pictures },
+            { new: true },
+          )
+          .lean()
+          .exec();
+
+        const result = [updatedPart].map(this.partHelper.map.res);
+
+        await this.cacheManager.del('parts');
+        await this.cacheManager.del(`part_by_part_id_${result[0]?.part_id}`);
+
+        return {
+          status: 'success',
+          message: 'Part created successfully.',
+          data: result,
+        };
+      }
 
       await this.cacheManager.del('parts');
       await this.cacheManager.del(`part_by_part_id_${result[0]?.part_id}`);
