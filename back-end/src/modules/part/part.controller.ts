@@ -44,10 +44,17 @@ export class PartController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('user', 'admin', 'owner')
-  @Put()
-  update(@Request() req: TRequest, @Body() body: UpdatePartDto) {
+  @Put(':part_id')
+  update(
+    @Request() req: TRequest,
+    @Param('part_id') part_id: string,
+    @Body() body: UpdatePartDto,
+  ) {
     const account_id = req?.user?.account_id;
-    return this.partService.update(account_id, body);
+    return this.partService.update(part_id, {
+      ...body,
+      created_by: account_id,
+    });
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

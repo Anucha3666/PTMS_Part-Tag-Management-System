@@ -3,9 +3,10 @@ import { Document } from 'mongoose';
 
 export type PartDocument = Part & Document;
 
+// @Prop({ required: true, unique: true })
 @Schema({ versionKey: false })
 export class Part {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   part_no: string;
 
   @Prop({ required: true })

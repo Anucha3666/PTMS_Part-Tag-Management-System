@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { CommonHelper, PartHelper } from 'src/helpers';
-import { TRESPart } from 'src/types';
+import { TRESPart, TRESPartChangeHistory } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
 import { FileUitils, isValidBase64, ValidatorUtils } from 'src/utils';
 import { CreatePartDto, UpdatePartDto } from './part.dto';
@@ -20,13 +20,21 @@ export class PartService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  async handleUploadIfValid(base64: string | undefined, category: string) {
-    return isValidBase64(base64 ?? '')
+  async handleUploadIfValid(
+    base64: string | undefined,
+    category: string,
+    init: string = '',
+  ) {
+    if (!base64) return init;
+    const res = (await isValidBase64(base64 ?? ''))
       ? await FileUitils.upload(base64, category)
-      : '';
+      : init;
+    return res;
   }
 
-  async create(req: CreatePartDto): Promise<ResponseFormat<PartDocument>> {
+  async create(
+    req: CreatePartDto,
+  ): Promise<ResponseFormat<PartDocument | TRESPart>> {
     try {
       await ValidatorUtils.validate(CreatePartDto, req);
 
@@ -116,9 +124,10 @@ export class PartService {
       const parts = await this.partModel
         .find({ is_log: { $ne: true } })
         .select('-is_log')
+        .sort({ created_at: -1 })
         .lean()
         .exec();
-      await this?.partHelper?.class?.isNoAccountFound(!parts);
+      await this?.partHelper?.class?.isNoPartFound(!parts);
 
       const result = parts.map(this.partHelper.map.res);
       await this.cacheManager.set('parts', result);
@@ -149,8 +158,9 @@ export class PartService {
       const part = await this.partModel
         .findOne({ _id: part_id, is_log: { $ne: true } })
         .select('-is_log')
+        .sort({ created_at: -1 })
         .exec();
-      await this?.partHelper?.class?.isNoAccountFound(!part);
+      await this?.partHelper?.class?.isNoPartFound(!part);
 
       const result = [part].map(this.partHelper.map.res);
       await this.cacheManager.set(CACHE_KEY, result);
@@ -167,12 +177,12 @@ export class PartService {
 
   async findHistoryOfChanges(
     part_id: string,
-  ): Promise<ResponseFormat<TRESPart>> {
+  ): Promise<ResponseFormat<TRESPartChangeHistory>> {
     try {
       const CACHE_KEY = `history_of_changes_by_part_id_${part_id}`;
 
       const cachedHistoryOfChanges =
-        await this.cacheManager.get<TRESPart[]>(CACHE_KEY);
+        await this.cacheManager.get<TRESPartChangeHistory[]>(CACHE_KEY);
       if (cachedHistoryOfChanges) {
         return {
           status: 'success',
@@ -184,13 +194,14 @@ export class PartService {
       const part = await this.partModel
         .findOne({ _id: part_id, is_log: { $ne: true } })
         .exec();
-      await this?.partHelper?.class?.isNoAccountFound(!part);
+      await this?.partHelper?.class?.isNoPartFound(!part);
 
       const historyOfChanges = await this.partModel
         .find({ part_no: part.part_no })
+        .sort({ created_at: -1 })
         .exec();
 
-      const result = historyOfChanges.map(this.partHelper.map.res);
+      const result = historyOfChanges.map(this.partHelper.map.resChangeHistory);
       await this.cacheManager.set(CACHE_KEY, result);
 
       return {
@@ -210,22 +221,87 @@ export class PartService {
     try {
       await ValidatorUtils.validate(UpdatePartDto, req);
 
-      const part = await this.partModel
+      const existingPart = await this.partModel
         .findById(part_id)
-        .select(
-          '-part_no -_id -is_log -created_at -created_by -is_deleted -deleted_at -deleted_by ',
-        )
+        .select('-created_at -created_by -is_deleted -deleted_at -deleted_by ')
         .exec();
-      await this?.partHelper?.class?.isNoAccountFound(!part);
-      const isSame = Object.keys(part.toObject()).every((key) => {
-        return part[key] === req[key];
+      if (existingPart?.is_log) {
+        throw new HttpException(
+          {
+            status: 'error',
+            message: `Cannot update the part because it is logged.`,
+            data: [existingPart].map(this.partHelper.map.res),
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const picture_std =
+        (req?.picture_std ?? '') === ''
+          ? null
+          : await this.handleUploadIfValid(
+              req?.picture_std,
+              'picture_std',
+              existingPart?.picture_std,
+            );
+      const q_point =
+        (req?.q_point ?? '') === ''
+          ? null
+          : await this.handleUploadIfValid(
+              req?.q_point,
+              'q_point',
+              existingPart?.q_point,
+            );
+      const packing =
+        (req?.packing ?? '') === ''
+          ? null
+          : await this.handleUploadIfValid(
+              req?.packing,
+              'packing',
+              existingPart?.packing,
+            );
+      const lengthBaseFileImages = process.env.BASE_FILE_IMAGES?.length;
+      const existingMorePictures = req?.more_pictures
+        ?.filter(
+          (pic) =>
+            pic.slice(0, lengthBaseFileImages) === process.env.BASE_FILE_IMAGES,
+        )
+        ?.map((pic) => pic.slice(lengthBaseFileImages + 22));
+      const morePicturesBase64 = req?.more_pictures?.filter((pic) =>
+        isValidBase64(pic),
+      );
+      const more_pictures = existingMorePictures?.concat(
+        await Promise.all(
+          morePicturesBase64?.map((pic) =>
+            this.handleUploadIfValid(pic, 'more_pictures'),
+          ) ?? [],
+        ),
+      );
+
+      await this?.partHelper?.class?.isNoPartFound(!existingPart);
+      const isSame = Object.keys(existingPart.toObject()).every((key) => {
+        return key === 'part_no' || key === 'is_log' || key === '_id'
+          ? true
+          : key === 'picture_std' || key === 'q_point' || key === 'packing'
+            ? existingPart[key] === req[key] ||
+              req[key] ===
+                `${process.env.BASE_FILE_IMAGES}/images/${key}/${existingPart[key]}`
+            : key === 'more_pictures'
+              ? ((existingPart?.more_pictures ?? [])?.filter((pic, i) => {
+                  return (
+                    req?.more_pictures[i] ===
+                    `${process.env.BASE_FILE_IMAGES}/images/${key}/${pic}`
+                  );
+                })?.length ?? 0) === (existingPart?.more_pictures?.length ?? 0)
+              : existingPart[key] === req[key];
       });
+
       if (isSame) {
         return {
           status: 'success',
           message:
             'Unable to update information because the information has not changed.',
-          data: [part],
+          data: [existingPart].map(this.partHelper.map.res),
         };
       }
 
@@ -234,7 +310,14 @@ export class PartService {
         .lean()
         .exec();
 
-      const dto = await CreatePartDto.format({ ...req, part_no: part.part_no });
+      const dto = await CreatePartDto.format({
+        ...req,
+        picture_std,
+        q_point,
+        packing,
+        more_pictures,
+        part_no: existingPart.part_no,
+      });
       const createPart = new this.partModel(dto);
       const savedPart = await createPart.save();
       const result = [savedPart?.toObject()].map(this.partHelper.map.res);
@@ -255,17 +338,27 @@ export class PartService {
   async delete(
     deleted_by: string,
     part_id: string,
-  ): Promise<ResponseFormat<PartDocument>> {
+  ): Promise<ResponseFormat<PartDocument | TRESPart>> {
     try {
       const existingPart = await this.partModel.findById(part_id).exec();
-      await this?.partHelper?.class?.isNoAccountFound(!existingPart);
+      await this?.partHelper?.class?.isNoPartFound(!existingPart);
+      if (existingPart?.is_log) {
+        throw new HttpException(
+          {
+            status: 'error',
+            message: `Cannot delete the part because it is logged.`,
+            data: [existingPart].map(this.partHelper.map.res),
+          },
+          HttpStatus.FORBIDDEN,
+        );
+      }
 
       if (existingPart.is_deleted) {
         throw new HttpException(
           {
             status: 'error',
             message: 'Part is already deleted.',
-            data: [],
+            data: [existingPart].map(this.partHelper.map.res),
           },
           HttpStatus.BAD_REQUEST,
         );
