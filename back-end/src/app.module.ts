@@ -10,6 +10,9 @@ import {
   MongooseSchemaModule,
   PartModule,
 } from './modules';
+import { PrintModule } from './modules/print/print.module';
+import { PrintedModule } from './modules/printed/printed.module';
+import { TagModule } from './modules/tag/Tag.module';
 
 @Module({
   imports: [
@@ -27,6 +30,9 @@ import {
     AuthModule,
     AccountsModule,
     PartModule,
+    PrintModule,
+    PrintedModule,
+    TagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
