@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 
 import { CommonHelper } from 'src/helpers';
-import { TRequest } from 'src/types';
+import { TREQTagValidationBody, TRequest } from 'src/types';
 import { JwtAuthGuard } from '../guards';
 import { TagService } from './tag.service';
 
@@ -27,12 +27,16 @@ export class TagController {
   validationTag(
     @Request() req: TRequest,
     @Param('tag_no') tag_no: string,
-    @Body() body: { type: string; ref_tag: string },
+    @Body() body: TREQTagValidationBody,
   ) {
-    // const account_id = req.user.account_id;
+    const account_id = req.user.account_id;
 
     if (body?.type === 'daikin') {
-      return this.tagService.validationTagDaikin(tag_no);
+      return this.tagService.validationTagDaikin({
+        tag_no: tag_no,
+        ...body,
+        checked_by: account_id,
+      });
     } else {
       this?.commonHelper?.httpExceptionError(`Unsupported type: ${body?.type}`);
     }

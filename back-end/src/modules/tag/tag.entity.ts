@@ -11,7 +11,7 @@ export class Tag {
   @Prop({ required: true })
   part_id: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   tag_no: string;
 
   @Prop({ default: () => null })

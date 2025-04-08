@@ -17,3 +17,20 @@ export type TRESTag = {
   checked_at: string;
   checked_by: string;
 };
+
+export type TRESTagValidation = {
+  tag_id: string;
+  printed_id: string;
+  part_id: string;
+  tag_no: string;
+  ref_tag: string;
+  checked_at: string;
+  checked_by: string;
+};
+
+export type TREQTagValidationBody = { type: string; ref_tag: string };
+
+export type TREQTagValidation = TREQTagValidationBody & {
+  tag_no: string;
+  checked_by: string;
+};

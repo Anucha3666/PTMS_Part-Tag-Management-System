@@ -2,10 +2,13 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
+import dayjs from 'dayjs';
 import { Model } from 'mongoose';
 import { CommonHelper, TagHelper } from 'src/helpers';
-import { TRESTag } from 'src/types';
+import { TRESTag, TRESTagValidation } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
+import { ValidatorUtils } from 'src/utils';
+import { ValidationTagDto } from './tag.dto';
 import { Tag, TagDocument } from './tag.entity';
 
 @Injectable()
@@ -70,51 +73,27 @@ export class TagService {
 
   async findOne(tag_no: string): Promise<ResponseFormat<TRESTag>> {
     try {
-      const cachedTag = await this.cacheManager.get<TRESTag[]>(`tag_${tag_no}`);
+      const cachedTag = await this.cacheManager.get<TRESTag>(`tag_${tag_no}`);
       if (cachedTag) {
         return {
           status: 'success',
           message: 'Tag retrieved from cache.',
-          data: cachedTag,
+          data: [cachedTag],
         };
       }
 
-      const tag = await this.tagModel
-        .aggregate([
-          {
-            $match: { tag_no: tag_no },
-          },
-          {
-            $addFields: {
-              part_id: { $toObjectId: '$part_id' },
-            },
-          },
-          {
-            $lookup: {
-              from: 'parts',
-              localField: 'part_id',
-              foreignField: '_id',
-              as: 'part_info',
-            },
-          },
-          {
-            $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
-          },
-        ])
-        .exec();
+      const result = await this?.tagHelper?.class?.findTagAndJoinPartByTagID(
+        this.tagModel,
+        tag_no,
+      );
 
-      if (!tag || tag.length === 0) {
-        throw new Error('Tag not found');
-      }
-
-      const result = tag.map(this.tagHelper.map.res);
-
+      this?.tagHelper?.class?.isNoTagFound(!result);
       await this.cacheManager.set(`tag_${tag_no}`, result);
 
       return {
         status: 'success',
         message: 'Tag retrieved successfully.',
-        data: result,
+        data: [result],
       };
     } catch (error) {
       this.commonHelper.handleError(error);
@@ -126,52 +105,45 @@ export class TagService {
     }
   }
 
-  async validationTagDaikin(tag_no: string): Promise<ResponseFormat<TRESTag>> {
+  async validationTagDaikin(
+    req: ValidationTagDto,
+  ): Promise<ResponseFormat<TRESTagValidation>> {
     try {
-      const cachedTag = await this.cacheManager.get<TRESTag[]>(`tag_${tag_no}`);
-      if (cachedTag) {
-        return {
-          status: 'success',
-          message: 'Tag retrieved from cache.',
-          data: cachedTag,
-        };
+      await ValidatorUtils.validate(ValidationTagDto, req);
+
+      const existingTag =
+        await this?.tagHelper?.class?.findTagAndJoinPartByTagID(
+          this.tagModel,
+          req?.tag_no,
+        );
+      await this?.tagHelper?.class?.isNoTagFound(!existingTag);
+
+      if (existingTag?.checked_at) {
+        const formattedDate = dayjs(existingTag.checked_at).format(
+          'DD/MM/YYYY HH:mm',
+        );
+        this?.commonHelper?.httpExceptionError(
+          `Tag already validated at ${formattedDate}`,
+        );
       }
 
-      const tag = await this.tagModel
-        .aggregate([
-          {
-            $match: { tag_no: tag_no },
-          },
-          {
-            $addFields: {
-              part_id: { $toObjectId: '$part_id' },
-            },
-          },
-          {
-            $lookup: {
-              from: 'parts',
-              localField: 'part_id',
-              foreignField: '_id',
-              as: 'part_info',
-            },
-          },
-          {
-            $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
-          },
-        ])
+      const parts = req?.ref_tag.split('|');
+      if (`${parts[1]}${parts[2]}` !== existingTag?.part_no) {
+        this?.commonHelper?.httpExceptionError(
+          `Tag part number ${existingTag?.part_no} does not match with ref_tag part number ${parts[1]}${parts[2]}`,
+        );
+      }
+
+      const dto = await ValidationTagDto?.format(req);
+      const updatedAccount = await this.tagModel
+        .findByIdAndUpdate(existingTag?.part_id, dto, { new: true })
+        .lean()
         .exec();
-
-      if (!tag || tag.length === 0) {
-        throw new Error('Tag not found');
-      }
-
-      const result = tag.map(this.tagHelper.map.res);
-
-      await this.cacheManager.set(`tag_${tag_no}`, result);
+      const result = [updatedAccount].map(this.tagHelper.map.resValidation);
 
       return {
         status: 'success',
-        message: 'Tag retrieved successfully.',
+        message: 'Tag validated successfully.',
         data: result,
       };
     } catch (error) {
