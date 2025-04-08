@@ -17,6 +17,18 @@ export class ClassPartHelper {
     return partModel.findOne({ _id }).exec();
   }
 
+  async findleanPartByPartID(
+    partModel: Model<PartDocument>,
+    partIds: string[],
+  ): Promise<PartDocument[] | null> {
+    return partModel
+      .find({
+        _id: { $in: partIds },
+      })
+      .select('_id')
+      .lean();
+  }
+
   async isNoPartFound(isNoPartFound: boolean) {
     if (isNoPartFound) {
       throw new HttpException(

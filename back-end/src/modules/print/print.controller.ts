@@ -11,13 +11,13 @@ export class PrintController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('user', 'admin', 'owner')
-  @Post()
+  @Post('/tags')
   printTags(@Request() req: TRequest, @Body() body: CreatePrintDto) {
     const account_id = req.user.account_id;
 
     return this.printService.printTags({
       ...body,
-      printed_by: account_id,
+      print_by: account_id,
     });
   }
 }

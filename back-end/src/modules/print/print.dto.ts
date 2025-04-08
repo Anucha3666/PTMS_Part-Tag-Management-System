@@ -1,26 +1,58 @@
-import { plainToClass } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { plainToClass, Type } from 'class-transformer';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { TPrintedSummary } from 'src/types';
+import { CreatePrintedDto, PrintedSummaryDto } from '../printed/printed.dto';
+import { Tag } from '../tag/tag.entity';
 
 export class CreatePrintDto {
   @IsString()
   @IsNotEmpty()
-  readonly printed_by: string;
+  readonly print_by: string;
 
-  @IsString()
+  @IsOptional()
   @IsArray()
-  @IsNotEmpty()
-  readonly part_ids: string[];
+  @ValidateNested({ each: true })
+  @Type(() => PrintedSummaryDto)
+  readonly parts: TPrintedSummary[];
 
   constructor(data: Partial<CreatePrintDto>) {
     Object.assign(this, data);
   }
 
-  static async format(data: Partial<CreatePrintDto>): Promise<CreatePrintDto> {
+  static async formatCreatePrinted(
+    data: Partial<CreatePrintDto>,
+  ): Promise<CreatePrintedDto> {
     const cleanData = {
-      printed_by: data.printed_by,
-      part_ids: data.part_ids ?? [],
+      printed_by: data.print_by,
+      tags: [],
+      summary: data?.parts,
     };
 
-    return plainToClass(CreatePrintDto, cleanData);
+    return plainToClass(CreatePrintedDto, cleanData);
+  }
+
+  static async formatCreateTags(printedId: string, parts: TPrintedSummary[]) {
+    const tagsToCreate: Omit<
+      Tag,
+      '_id' | 'ref_tag' | 'checked_by' | 'checked_at'
+    >[] = [];
+
+    for (const part of parts) {
+      for (let i = 1; i <= part.number_of_tags; i++) {
+        tagsToCreate.push({
+          printed_id: printedId,
+          part_id: part.part_id,
+          tag_no: '',
+        });
+      }
+    }
+
+    return tagsToCreate;
   }
 }

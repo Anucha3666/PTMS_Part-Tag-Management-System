@@ -12,7 +12,7 @@ export class Tag {
   part_id: string;
 
   @Prop({ required: true })
-  tag_number: string;
+  tag_no: string;
 
   @Prop({ default: () => null })
   ref_tag: string;

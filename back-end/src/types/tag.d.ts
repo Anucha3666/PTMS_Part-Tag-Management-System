@@ -12,7 +12,7 @@ export type TRESTag = {
   created_by: string;
   printed_by: string;
   printed_at: string;
-  tag_number: number;
+  tag_no: string;
   ref_tag: string;
   checked_at: string;
   checked_by: string;

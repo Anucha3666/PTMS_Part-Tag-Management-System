@@ -20,29 +20,47 @@ export class TagService {
 
   async findAll(): Promise<ResponseFormat<TRESTag>> {
     try {
-      const cachedParts = await this.cacheManager.get<TRESTag[]>('parts');
-      if (cachedParts) {
+      const cachedTags = await this.cacheManager.get<TRESTag[]>('tags');
+      if (cachedTags) {
         return {
           status: 'success',
-          message: 'Parts retrieved from cache.',
-          data: cachedParts,
+          message: 'Tags retrieved from cache.',
+          data: cachedTags,
         };
       }
 
-      const parts = await this.tagModel
-        .find({ is_log: { $ne: true } })
-        .select('-is_log')
-        .sort({ created_at: -1 })
-        .lean()
+      const tags = await this.tagModel
+        .aggregate([
+          {
+            $sort: { created_at: -1 },
+          },
+          {
+            $addFields: {
+              part_id: { $toObjectId: '$part_id' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'parts',
+              localField: 'part_id',
+              foreignField: '_id',
+              as: 'part_info',
+            },
+          },
+          {
+            $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
+          },
+        ])
         .exec();
-      await this?.tagHelper?.class?.isNoTagFound(!parts);
 
-      const result = parts.map(this.tagHelper.map.res);
-      await this.cacheManager.set('parts', result);
+      await this?.tagHelper?.class?.isNoTagFound(!tags);
+
+      const result = tags.map(this.tagHelper.map.res);
+      await this.cacheManager.set('tags', result);
 
       return {
         status: 'success',
-        message: 'Parts retrieved successfully.',
+        message: 'Tags retrieved successfully.',
         data: [],
       };
     } catch (error) {
@@ -50,36 +68,119 @@ export class TagService {
     }
   }
 
-  async findOne(part_id: string): Promise<ResponseFormat<TRESTag>> {
+  async findOne(tag_no: string): Promise<ResponseFormat<TRESTag>> {
     try {
-      const CACHE_KEY = `part_by_part_id_${part_id}`;
-
-      const cachedAccount = await this.cacheManager.get<TRESTag[]>(CACHE_KEY);
-      if (cachedAccount) {
+      const cachedTag = await this.cacheManager.get<TRESTag[]>(`tag_${tag_no}`);
+      if (cachedTag) {
         return {
           status: 'success',
-          message: 'Account retrieved from cache.',
-          data: cachedAccount,
+          message: 'Tag retrieved from cache.',
+          data: cachedTag,
         };
       }
 
-      const part = await this.tagModel
-        .findOne({ _id: part_id, is_log: { $ne: true } })
-        .select('-is_log')
-        .sort({ created_at: -1 })
+      const tag = await this.tagModel
+        .aggregate([
+          {
+            $match: { tag_no: tag_no },
+          },
+          {
+            $addFields: {
+              part_id: { $toObjectId: '$part_id' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'parts',
+              localField: 'part_id',
+              foreignField: '_id',
+              as: 'part_info',
+            },
+          },
+          {
+            $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
+          },
+        ])
         .exec();
-      await this?.tagHelper?.class?.isNoTagFound(!part);
 
-      const result = [part].map(this.tagHelper.map.res);
-      await this.cacheManager.set(CACHE_KEY, result);
+      if (!tag || tag.length === 0) {
+        throw new Error('Tag not found');
+      }
+
+      const result = tag.map(this.tagHelper.map.res);
+
+      await this.cacheManager.set(`tag_${tag_no}`, result);
 
       return {
         status: 'success',
-        message: 'Part retrieved successfully.',
-        data: [],
+        message: 'Tag retrieved successfully.',
+        data: result,
       };
     } catch (error) {
       this.commonHelper.handleError(error);
+      return {
+        status: 'error',
+        message: error.message || 'An error occurred.',
+        data: [],
+      };
+    }
+  }
+
+  async validationTagDaikin(tag_no: string): Promise<ResponseFormat<TRESTag>> {
+    try {
+      const cachedTag = await this.cacheManager.get<TRESTag[]>(`tag_${tag_no}`);
+      if (cachedTag) {
+        return {
+          status: 'success',
+          message: 'Tag retrieved from cache.',
+          data: cachedTag,
+        };
+      }
+
+      const tag = await this.tagModel
+        .aggregate([
+          {
+            $match: { tag_no: tag_no },
+          },
+          {
+            $addFields: {
+              part_id: { $toObjectId: '$part_id' },
+            },
+          },
+          {
+            $lookup: {
+              from: 'parts',
+              localField: 'part_id',
+              foreignField: '_id',
+              as: 'part_info',
+            },
+          },
+          {
+            $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
+          },
+        ])
+        .exec();
+
+      if (!tag || tag.length === 0) {
+        throw new Error('Tag not found');
+      }
+
+      const result = tag.map(this.tagHelper.map.res);
+
+      await this.cacheManager.set(`tag_${tag_no}`, result);
+
+      return {
+        status: 'success',
+        message: 'Tag retrieved successfully.',
+        data: result,
+      };
+    } catch (error) {
+      this.commonHelper.handleError(error);
+      return {
+        status: 'error',
+        message: error.message || 'An error occurred.',
+        data: [],
+      };
     }
   }
 }

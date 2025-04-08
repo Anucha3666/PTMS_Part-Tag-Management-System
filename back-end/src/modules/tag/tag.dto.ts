@@ -12,7 +12,7 @@ export class CreateTagDto {
 
   @IsString()
   @IsNotEmpty()
-  readonly tag_number: string;
+  readonly tag_no: string;
 
   constructor(data: Partial<CreateTagDto>) {
     Object.assign(this, data);
@@ -22,7 +22,7 @@ export class CreateTagDto {
     const cleanData = {
       printed_id: data.printed_id,
       part_id: data.part_id,
-      tag_number: data.tag_number,
+      tag_no: data.tag_no,
     };
 
     return plainToClass(CreateTagDto, cleanData);
