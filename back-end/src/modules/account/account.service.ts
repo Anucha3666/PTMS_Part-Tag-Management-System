@@ -316,13 +316,6 @@ export class AccountsService {
         );
       }
 
-      const existingAccount =
-        await this.accountHelper.class.findAccountByAccountID(
-          this?.accountModel,
-          account_id,
-        );
-      await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
-
       if (change_by === 'admin' && req.role === 'owner') {
         throw new HttpException(
           {
@@ -333,6 +326,14 @@ export class AccountsService {
           HttpStatus.FORBIDDEN,
         );
       }
+
+      const existingAccount =
+        await this.accountHelper.class.findAccountByAccountID(
+          this?.accountModel,
+          account_id,
+        );
+      await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
+
       if (existingAccount.role === req.role) {
         throw new HttpException(
           {
