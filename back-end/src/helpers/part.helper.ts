@@ -25,8 +25,7 @@ export class ClassPartHelper {
       .find({
         _id: { $in: partIds },
       })
-      .select('_id')
-      .lean();
+      .exec();
   }
 
   async isNoPartFound(isNoPartFound: boolean) {

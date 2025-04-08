@@ -2,7 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { Model } from 'mongoose';
 import { CommonHelper, TagHelper } from 'src/helpers';
 import { TRESTag, TRESTagValidation } from 'src/types';
@@ -116,13 +116,16 @@ export class TagService {
           this.tagModel,
           req?.tag_no,
         );
+
+      console.log(existingTag);
+
       await this?.tagHelper?.class?.isNoTagFound(!existingTag);
 
       if (existingTag?.checked_at) {
         const formattedDate = dayjs(existingTag.checked_at).format(
           'DD/MM/YYYY HH:mm',
         );
-        this?.commonHelper?.httpExceptionError(
+        this.commonHelper.httpExceptionError(
           `Tag already validated at ${formattedDate}`,
         );
       }
@@ -135,11 +138,11 @@ export class TagService {
       }
 
       const dto = await ValidationTagDto?.format(req);
-      const updatedAccount = await this.tagModel
-        .findByIdAndUpdate(existingTag?.part_id, dto, { new: true })
+      const updatedTag = await this.tagModel
+        .findByIdAndUpdate(existingTag?.tag_id, dto, { new: true })
         .lean()
         .exec();
-      const result = [updatedAccount].map(this.tagHelper.map.resValidation);
+      const result = [updatedTag].map(this.tagHelper.map.resValidation);
 
       return {
         status: 'success',

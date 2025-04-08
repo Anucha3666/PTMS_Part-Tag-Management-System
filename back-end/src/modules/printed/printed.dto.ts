@@ -45,20 +45,20 @@ export class PrintedSummaryDto {
   @IsNotEmpty()
   part_id: string;
 
-  @IsString()
-  @IsNotEmpty()
-  part_no: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // part_no: string;
 
-  @IsString()
-  @IsNotEmpty()
-  part_name: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // part_name: string;
 
-  @IsString()
-  @IsNotEmpty()
-  picture_std: string;
+  // @IsString()
+  // @IsNotEmpty()
+  // picture_std: string;
 
-  @IsNumber()
-  packing_std: number;
+  // @IsNumber()
+  // packing_std: number;
 
   @IsNumber()
   number_of_tags: number;

@@ -26,10 +26,13 @@ export class ClassTagHelper {
     tagModel: Model<TagDocument>,
     tag_no: string,
   ): Promise<TRESTag | null> {
-    const tag = tagModel
+    const tag = await tagModel
       .aggregate([
         {
-          $match: { tag_no: tag_no },
+          $match: {
+            tag_no: tag_no,
+            part_id: { $exists: true, $ne: null },
+          },
         },
         {
           $addFields: {
@@ -53,9 +56,8 @@ export class ClassTagHelper {
       ])
       .exec();
 
-    const result = [tag].map(mapRES);
-
-    return result[0];
+    const result = tag.map(mapRES);
+    return result[0] || null;
   }
 
   async isNoTagFound(isNoTagFound: boolean) {

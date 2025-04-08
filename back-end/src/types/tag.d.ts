@@ -1,4 +1,5 @@
 export type TRESTag = {
+  tag_id: string;
   printed_id: string;
   part_id: string;
   part_no: string;

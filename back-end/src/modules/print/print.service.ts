@@ -56,7 +56,23 @@ export class PrintService {
         );
       }
 
-      const dto = await CreatePrintDto.formatCreatePrinted(req);
+      const dto = await CreatePrintDto.formatCreatePrinted({
+        ...req,
+        parts: req.parts?.map((part) => {
+          const data = existingParts?.find(
+            (info) => info._id.toString() === part.part_id,
+          );
+
+          return {
+            part_id: part.part_id,
+            part_no: data.part_no,
+            part_name: data.part_name,
+            packing_std: data.packing_std,
+            picture_std: data.picture_std,
+            number_of_tags: part.number_of_tags,
+          };
+        }),
+      });
       const parted = new this.printedModel(dto);
       const savedParted = await parted.save();
       const dataPrinted = [savedParted?.toObject()].map(
@@ -74,9 +90,6 @@ export class PrintService {
         const createdTag = await this.createTag(tag);
         tags.push(createdTag.tag_no);
       }
-
-      console.log(dataPrinted?.printed_id);
-      console.log(tags);
 
       const updatedParted = await this.printedModel.findByIdAndUpdate(
         dataPrinted?.printed_id,

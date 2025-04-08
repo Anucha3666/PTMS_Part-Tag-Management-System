@@ -10,7 +10,7 @@ import {
 
 import { CommonHelper } from 'src/helpers';
 import { TREQTagValidationBody, TRequest } from 'src/types';
-import { JwtAuthGuard } from '../guards';
+import { JwtAuthGuard, Roles, RolesGuard } from '../guards';
 import { TagService } from './tag.service';
 
 @Controller('tag')
@@ -23,7 +23,9 @@ export class TagController {
     return this.tagService.findOne(tag_no);
   }
 
-  @Patch(':tag_no')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('user', 'admin', 'owner')
+  @Patch(':tag_no/validation')
   validationTag(
     @Request() req: TRequest,
     @Param('tag_no') tag_no: string,
