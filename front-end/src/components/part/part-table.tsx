@@ -1,5 +1,3 @@
-import { setPrintTags } from "@/store/features/printed.features";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import type { TableProps } from "antd";
 import { Empty, Table } from "antd";
@@ -14,9 +12,7 @@ type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 
 export const PartTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
 
-  const { parts } = useAppSelector((state) => state.parts);
   const [height, setHeight] = useState(0);
   const [dataModal, setDataModal] = useState<TDataModalPart>(
     {} as TDataModalPart
@@ -60,7 +56,7 @@ export const PartTable: FC = () => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
                   }}
                 />
               </div>
@@ -86,7 +82,7 @@ export const PartTable: FC = () => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
                   }}
                 />
               </div>
@@ -112,7 +108,7 @@ export const PartTable: FC = () => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
                   }}
                 />
               </div>
@@ -140,7 +136,7 @@ export const PartTable: FC = () => {
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src =
-                          "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                          "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
                       }}
                     />
                   </div>
@@ -185,9 +181,10 @@ export const PartTable: FC = () => {
 
   const rowSelection: TableProps<TPart>["rowSelection"] = {
     onChange: (_: React.Key[], selectedRows: TPart[]) => {
-      dispatch(
-        setPrintTags(selectedRows?.map((item) => ({ ...item, no_tags: 1 })))
-      );
+      // dispatch(
+      //   setPrintTags(selectedRows?.map((item) => ({ ...item, no_tags: 1 })))
+      // );
+      console.log(selectedRows);
     },
     getCheckboxProps: (record: TPart) => ({
       disabled: record.part_no === "Disabled User",
@@ -207,10 +204,10 @@ export const PartTable: FC = () => {
         <div className='w-full h-min bg-white max-h-full rounded-md dark:shadow-md-dark'>
           <Table<TPart>
             columns={columns}
-            dataSource={parts?.map((item) => ({
-              ...item,
-              key: item?.part_id,
-            }))}
+            // dataSource={parts?.map((item) => ({
+            //   ...item,
+            //   key: item?.part_id,
+            // }))}
             className=' w-full !text-nowrap p-2'
             rowSelection={{ type: "checkbox", ...rowSelection, fixed: "left" }}
             components={{
@@ -237,7 +234,7 @@ export const PartTable: FC = () => {
             }}
             scroll={{
               x: "max-content",
-              y: parts?.length < 7 ? "max-content" : `${height - 190}px`,
+              // y: parts?.length < 7 ? "max-content" : `${height - 190}px`,
             }}
           />
         </div>

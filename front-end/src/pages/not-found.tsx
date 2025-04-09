@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import Lottie from "lottie-react";
 import { Button } from "antd";
+import Lottie from "lottie-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const NotFoundPage = () => {
@@ -15,6 +15,11 @@ export const NotFoundPage = () => {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
+      <input
+        type='file'
+        id='files'
+        onChange={(e) => console.log(e?.target?.files)}
+      />
       <div className='w-full max-w-md'>
         {animationData && (
           <Lottie animationData={animationData} loop={true} autoplay={true} />

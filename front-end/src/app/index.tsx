@@ -41,7 +41,7 @@ const AppRoutes: FC = () => {
         </Route>
       </Route>
 
-      <Route path='/:tag_id' element={<ViewPartPage />} />
+      <Route path='/tag/:tag_no' element={<ViewPartPage />} />
       <Route path='*' element={<NotFoundPage />} />
     </Routes>
   );

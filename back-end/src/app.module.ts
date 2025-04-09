@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -12,7 +13,7 @@ import {
 } from './modules';
 import { PrintModule } from './modules/print/print.module';
 import { PrintedModule } from './modules/printed/printed.module';
-import { TagModule } from './modules/tag/Tag.module';
+import { TagModule } from './modules/tag/tag.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TagModule } from './modules/tag/Tag.module';
     }),
     MongooseSchemaModule,
     DatabaseModule,
+    HttpModule,
     AuthModule,
     AccountsModule,
     PartModule,

@@ -106,7 +106,7 @@ export const mapAccountToTRESAccount = (account: any) => ({
   is_deleted: account.is_deleted,
   role: account.role,
   profile_picture: account.profile_picture
-    ? `${process.env.BASE_FILE_IMAGES}/images/profile/${account.profile_picture}`
+    ? `${process.env.BASE_FILE_IMAGES}/profile/${account.profile_picture}`
     : null,
   created_at: account.created_at,
   updated_at: account.updated_at,

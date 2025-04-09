@@ -1,19 +1,14 @@
-import { setPrintTags } from "@/store/features/printed.features";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { TPrintTag } from "@/types";
 import type { TableProps } from "antd";
 import { Empty, Input, Table } from "antd";
 import { Minus, Plus } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
-type TDataTable = TPrintTag & { index: number };
+type TDataTable = any & { index: number };
 
 export const PrintTable: FC = () => {
   const divRef = useRef<HTMLDivElement>(null);
-  const dispatch = useAppDispatch();
 
-  const { printTags } = useAppSelector((state) => state.print);
   const [height, setHeight] = useState(0);
 
   const columns: TableProps<TDataTable>["columns"] = [
@@ -55,7 +50,7 @@ export const PrintTable: FC = () => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Manager-System/refs/heads/main/media/images/no-picture.png";
+                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
                   }}
                 />
               </div>
@@ -73,55 +68,55 @@ export const PrintTable: FC = () => {
         <div className='flex gap-2 cursor-pointer justify-center items-center'>
           <div className=' bg-slate-100 rounded-md   p-1 flex justify-center items-center'>
             <Plus
-              onClick={() =>
-                dispatch(
-                  setPrintTags(
-                    printTags
-                      ?.slice(0, record?.index)
-                      ?.concat({ ...record, no_tags: record?.no_tags + 1 })
-                      ?.concat(printTags?.slice(record?.index + 1))
-                  )
-                )
-              }
+            // onClick={() =>
+            //   dispatch(
+            //     setPrintTags(
+            //       printTags
+            //         ?.slice(0, record?.index)
+            //         ?.concat({ ...record, no_tags: record?.no_tags + 1 })
+            //         ?.concat(printTags?.slice(record?.index + 1))
+            //     )
+            //   )
+            // }
             />
             <div className=' !w-[3rem] flex '>
               <Input
                 value={record?.no_tags}
                 className=' text-center'
-                onChange={(e) =>
-                  dispatch(
-                    setPrintTags(
-                      printTags
-                        ?.slice(0, record?.index)
-                        ?.concat({
-                          ...record,
-                          no_tags:
-                            isNaN(Number(e?.target?.value)) ||
-                            Number(e?.target?.value) <= 0
-                              ? 0
-                              : Number(e?.target?.value),
-                        })
-                        ?.concat(printTags?.slice(record?.index + 1))
-                    )
-                  )
-                }
+                // onChange={(e) =>
+                //   dispatch(
+                //     setPrintTags(
+                //       printTags
+                //         ?.slice(0, record?.index)
+                //         ?.concat({
+                //           ...record,
+                //           no_tags:
+                //             isNaN(Number(e?.target?.value)) ||
+                //             Number(e?.target?.value) <= 0
+                //               ? 0
+                //               : Number(e?.target?.value),
+                //         })
+                //         ?.concat(printTags?.slice(record?.index + 1))
+                //     )
+                //   )
+                // }
               />
             </div>
             <Minus
-              onClick={() =>
-                dispatch(
-                  setPrintTags(
-                    printTags
-                      ?.slice(0, record?.index)
-                      ?.concat({
-                        ...record,
-                        no_tags:
-                          record?.no_tags - 1 <= 0 ? 0 : record?.no_tags - 1,
-                      })
-                      ?.concat(printTags?.slice(record?.index + 1))
-                  )
-                )
-              }
+            // onClick={() =>
+            //   dispatch(
+            //     setPrintTags(
+            //       printTags
+            //         ?.slice(0, record?.index)
+            //         ?.concat({
+            //           ...record,
+            //           no_tags:
+            //             record?.no_tags - 1 <= 0 ? 0 : record?.no_tags - 1,
+            //         })
+            //         ?.concat(printTags?.slice(record?.index + 1))
+            //     )
+            //   )
+            // }
             />
           </div>
         </div>
@@ -139,9 +134,9 @@ export const PrintTable: FC = () => {
     <div ref={divRef} className='w-full h-full'>
       <Table<TDataTable>
         columns={columns}
-        dataSource={
-          printTags?.map((item, i) => ({ ...item, index: i })) as TDataTable[]
-        }
+        // dataSource={
+        //   printTags?.map((item, i) => ({ ...item, index: i })) as TDataTable[]
+        // }
         className=' w-full h-full !text-nowrap'
         components={{
           header: {

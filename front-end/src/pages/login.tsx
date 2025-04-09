@@ -22,7 +22,7 @@ export const LoginPage: FC = () => {
         <div className=' flex flex-col gap-2 items-center text-white'>
           <img
             src={
-              "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms-white.png"
+              "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/icon-ptms.png"
             }
             alt='icon-ptms'
             className=' w-[6rem] h-max'
@@ -34,7 +34,7 @@ export const LoginPage: FC = () => {
               PTMS
             </p>
             <p className=' -mt-2 text-[1.2rem] font-bold'>
-              Part Tag Manager System
+              Part Tag Management System
             </p>
           </div>
         </div>

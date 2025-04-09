@@ -34,7 +34,7 @@ export class CreateAccountDto {
 
   @IsOptional()
   @IsString()
-  readonly profile_picture: string | null;
+  readonly profile_picture: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsString()
@@ -62,7 +62,7 @@ export class CreateAccountDto {
       password: hashedPassword,
       role: data.role,
       position: data.position,
-      profile_picture: null,
+      profile_picture: data.profile_picture ?? null,
       created_by: data?.created_by,
       is_approved: true,
       approved_by: data?.approved_by,
@@ -108,7 +108,7 @@ export class UpdateAccountDto {
 
   @IsOptional()
   @IsString()
-  readonly profile_picture: string;
+  readonly profile_picture: string | null | Express.Multer.File;
 
   constructor(data: Partial<UpdateAccountDto>) {
     Object.assign(this, data);

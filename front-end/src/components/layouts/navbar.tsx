@@ -22,7 +22,7 @@ export const AppNavbar = () => {
         <div className=' flex gap-2 items-center'>
           <img
             src={
-              "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Manager-System/refs/heads/main/media/images/icon-ptms.png"
+              "https://raw.githubusercontent.com/Anucha3666/PTMS_PartTag-Management-System/refs/heads/main/media/images/icon-ptms.png"
             }
             alt='icon-ptms'
             className=' w-[2.4rem] h-max'
@@ -35,7 +35,7 @@ export const AppNavbar = () => {
               PTMS
             </p>
             <p className=' -mt-2 text-[0.7rem] font-bold'>
-              Part Tag Manager System
+              Part Tag Management System
             </p>
           </div>
         </div>

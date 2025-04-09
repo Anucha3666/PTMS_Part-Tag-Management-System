@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -5,14 +6,10 @@ import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { CommonHelper } from 'src/helpers';
 import { AccountHelper } from 'src/helpers/accounts.helper';
+import { MicroServiceUplode } from 'src/services';
 import { TRESAccunt } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
-import {
-  BcryptUtils,
-  FileUitils,
-  isValidBase64,
-  ValidatorUtils,
-} from 'src/utils';
+import { BcryptUtils, ValidatorUtils } from 'src/utils';
 import {
   ChangeRoleDto,
   CreateAccountDto,
@@ -26,12 +23,28 @@ export class AccountsService {
   accountHelper = AccountHelper;
 
   constructor(
+    private readonly httpService: HttpService,
+    private readonly microServiceUplode: MicroServiceUplode,
     @InjectModel(Account.name) private accountModel: Model<AccountDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async create(req: CreateAccountDto): Promise<ResponseFormat<TRESAccunt>> {
     try {
+      const profilePicture = req?.profile_picture;
+
+      if (
+        profilePicture &&
+        profilePicture instanceof Object &&
+        'buffer' in profilePicture
+      ) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/profile',
+          profilePicture,
+        );
+        req = { ...req, profile_picture: res?.name ?? null };
+      }
+
       await ValidatorUtils.validate(CreateAccountDto, req);
 
       const existingAccount =
@@ -68,39 +81,7 @@ export class AccountsService {
       const savedAccount = await account.save();
       const result = [savedAccount].map(this.accountHelper.map);
 
-      if (isValidBase64(req?.profile_picture ?? '')) {
-        const profile_picture = await FileUitils.upload(
-          req?.profile_picture,
-          'profile',
-          savedAccount?._id.toString() ?? '',
-        );
-
-        const updatedAccount = await this.accountModel
-          .findByIdAndUpdate(
-            savedAccount?._id,
-            { profile_picture },
-            { new: true },
-          )
-          .lean()
-          .exec();
-        const result = [updatedAccount].map(this.accountHelper.map);
-
-        await this.cacheManager.del('accounts');
-        await this.cacheManager.del(
-          `account_by_account_id_${result[0]?.account_id}`,
-        );
-
-        return {
-          status: 'success',
-          message: 'Account created successfully.',
-          data: result,
-        };
-      }
-
       await this.cacheManager.del('accounts');
-      await this.cacheManager.del(
-        `account_by_account_id_${result[0]?.account_id}`,
-      );
 
       return {
         status: 'success',
@@ -415,6 +396,20 @@ export class AccountsService {
     req: UpdateAccountDto,
   ): Promise<ResponseFormat<AccountDocument | TRESAccunt>> {
     try {
+      const profilePicture = req?.profile_picture;
+
+      if (
+        profilePicture &&
+        profilePicture instanceof Object &&
+        'buffer' in profilePicture
+      ) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/profile',
+          profilePicture,
+        );
+        req = { ...req, profile_picture: res?.name ?? '' };
+      }
+
       await ValidatorUtils.validate(UpdateAccountDto, req);
 
       const existingAccount = await this.accountModel
@@ -425,25 +420,20 @@ export class AccountsService {
         .exec();
       await this?.accountHelper?.class?.isNoAccountFound(!existingAccount);
 
-      let profile_picture =
-        req?.profile_picture === null ? null : existingAccount?.profile_picture;
-
-      if (isValidBase64(req?.profile_picture ?? '')) {
-        profile_picture = await FileUitils.upload(
-          req?.profile_picture,
-          'profile',
-          account_id,
-        );
+      if (
+        String(req?.profile_picture)?.includes(
+          `${process.env.BASE_FILE_IMAGES}`,
+        )
+      ) {
+        req = {
+          ...req,
+          profile_picture: existingAccount?.profile_picture,
+        };
       }
 
-      const dto = await UpdateAccountDto?.format({ ...req, profile_picture });
+      const dto = await UpdateAccountDto?.format(req);
       const isSame = Object.keys(existingAccount.toObject()).every((key) => {
-        return key === 'profile_picture'
-          ? req[key]?.includes(existingAccount[key]) ||
-              (!isValidBase64(req?.profile_picture ?? '') &&
-                req?.profile_picture !== null) ||
-              existingAccount[key] === dto[key]
-          : existingAccount[key] === dto[key];
+        return existingAccount[key] === dto[key];
       });
 
       if (isSame) {
@@ -463,7 +453,6 @@ export class AccountsService {
       const result = [updatedAccount].map(this.accountHelper.map);
 
       await this.cacheManager.del('accounts');
-      await this.cacheManager.del(`account_by_account_id_${account_id}`);
 
       return {
         status: 'success',
@@ -528,7 +517,6 @@ export class AccountsService {
       const result = [updatedAccount].map(this.accountHelper.map);
 
       await this.cacheManager.del('accounts');
-      await this.cacheManager.del(`account_by_account_id_${account_id}`);
 
       return {
         status: 'success',

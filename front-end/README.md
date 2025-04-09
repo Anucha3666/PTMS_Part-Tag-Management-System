@@ -1,6 +1,6 @@
-# PTMS_PartTag-Manager-System
+# PTMS_PartTag-Management-System
 
-PTMS | PartTag Manager System
+PTMS | PartTag Management System
 
 # React + TypeScript + Vite
 
