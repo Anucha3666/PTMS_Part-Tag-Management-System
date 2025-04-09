@@ -48,19 +48,19 @@ const mapRES = (part: any) => ({
   part_name: part.part_name,
   packing_std: part.packing_std,
   picture_std: part.picture_std
-    ? `${process.env.BASE_FILE_IMAGES}/images/picture_std/${part.picture_std}`
+    ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
     : null,
   q_point: part.q_point
-    ? `${process.env.BASE_FILE_IMAGES}/images/q_point/${part.q_point}`
+    ? `${process.env.BASE_FILE_IMAGES}/q_point/${part.q_point}`
     : null,
   packing: part.packing
-    ? `${process.env.BASE_FILE_IMAGES}/images/packing/${part.packing}`
+    ? `${process.env.BASE_FILE_IMAGES}/packing/${part.packing}`
     : null,
   more_pictures:
     part?.more_pictures?.length > 0
       ? part?.more_pictures?.map(
           (more_pictures) =>
-            `${process.env.BASE_FILE_IMAGES}/images/more_pictures/${more_pictures}`,
+            `${process.env.BASE_FILE_IMAGES}/more_pictures/${more_pictures}`,
         )
       : [],
   created_by: part.created_by,
@@ -76,19 +76,19 @@ const mapRESChangeHistory = (part: any) => ({
   part_name: part.part_name,
   packing_std: part.packing_std,
   picture_std: part.picture_std
-    ? `${process.env.BASE_FILE_IMAGES}/images/picture_std/${part.picture_std}`
+    ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
     : null,
   q_point: part.q_point
-    ? `${process.env.BASE_FILE_IMAGES}/images/q_point/${part.q_point}`
+    ? `${process.env.BASE_FILE_IMAGES}/q_point/${part.q_point}`
     : null,
   packing: part.packing
-    ? `${process.env.BASE_FILE_IMAGES}/images/packing/${part.packing}`
+    ? `${process.env.BASE_FILE_IMAGES}/packing/${part.packing}`
     : null,
   more_pictures:
     part.more_pictures?.length > 0
       ? part.more_pictures?.map(
           (more_pictures) =>
-            `${process.env.BASE_FILE_IMAGES}/images/more_pictures/${more_pictures}`,
+            `${process.env.BASE_FILE_IMAGES}/more_pictures/${more_pictures}`,
         )
       : [],
 

@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -23,7 +22,6 @@ export class AccountsService {
   accountHelper = AccountHelper;
 
   constructor(
-    private readonly httpService: HttpService,
     private readonly microServiceUplode: MicroServiceUplode,
     @InjectModel(Account.name) private accountModel: Model<AccountDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,

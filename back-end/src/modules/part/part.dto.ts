@@ -22,20 +22,20 @@ export class CreatePartDto {
 
   @IsOptional()
   @IsString()
-  readonly picture_std: string;
+  readonly picture_std: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsString()
-  readonly q_point: string;
+  readonly q_point: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsString()
-  readonly packing: string;
+  readonly packing: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  readonly more_pictures: string[];
+  readonly more_pictures: (string | null | Express.Multer.File)[];
 
   @IsOptional()
   @IsString()
@@ -76,20 +76,20 @@ export class UpdatePartDto {
 
   @IsOptional()
   @IsString()
-  readonly picture_std: string;
+  readonly picture_std: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsString()
-  readonly q_point: string;
+  readonly q_point: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsString()
-  readonly packing: string;
+  readonly packing: string | null | Express.Multer.File;
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  readonly more_pictures: string[];
+  readonly more_pictures: (string | null | Express.Multer.File)[];
 
   @IsOptional()
   @IsString()

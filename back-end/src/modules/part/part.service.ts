@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { CommonHelper, PartHelper } from 'src/helpers';
+import { MicroServiceUplode } from 'src/services';
 import { TRESPart, TRESPartChangeHistory } from 'src/types';
 import { ResponseFormat } from 'src/types/common';
 import { FileUitils, isValidBase64, ValidatorUtils } from 'src/utils';
@@ -16,6 +17,7 @@ export class PartService {
   partHelper = PartHelper;
 
   constructor(
+    private readonly microServiceUplode: MicroServiceUplode,
     @InjectModel(Part.name) private partModel: Model<PartDocument>,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -36,8 +38,6 @@ export class PartService {
     req: CreatePartDto,
   ): Promise<ResponseFormat<PartDocument | TRESPart>> {
     try {
-      await ValidatorUtils.validate(CreatePartDto, req);
-
       const existingPart = await this.partModel
         .findOne({ part_no: req.part_no, is_log: { $ne: true } })
         .select('-is_log')
@@ -53,52 +53,64 @@ export class PartService {
         );
       }
 
+      const pictureSTD = req?.picture_std;
+      const packing = req?.packing;
+      const qPoint = req?.q_point;
+      const morePictures = req?.more_pictures;
+      if (
+        pictureSTD &&
+        pictureSTD instanceof Object &&
+        'buffer' in pictureSTD
+      ) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/picture_std',
+          pictureSTD,
+        );
+        req = { ...req, picture_std: res?.name ?? null };
+      }
+      if (packing && packing instanceof Object && 'buffer' in packing) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/packing',
+          packing,
+        );
+        req = { ...req, packing: res?.name ?? null };
+      }
+      if (qPoint && qPoint instanceof Object && 'buffer' in qPoint) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/q_point',
+          qPoint,
+        );
+        req = { ...req, q_point: res?.name ?? null };
+      }
+      if (Array.isArray(morePictures)) {
+        const updatedMorePictures = [];
+        for (const pic of morePictures) {
+          if (typeof pic === 'string') {
+            updatedMorePictures.push(pic);
+          } else if (pic instanceof Object && 'buffer' in pic) {
+            const res = await this.microServiceUplode.uploadFile(
+              'ptms/images/more_pictures',
+              pic,
+            );
+            updatedMorePictures.push(res?.name ?? null);
+          }
+        }
+        req = {
+          ...req,
+          more_pictures: updatedMorePictures?.filter(
+            (item) => (item ?? '') !== '',
+          ),
+        };
+      }
+
+      await ValidatorUtils.validate(CreatePartDto, req);
+
       const dto = await CreatePartDto.format(req);
       const part = new this.partModel(dto);
       const savedPart = await part.save();
       const result = [savedPart?.toObject()].map(this.partHelper.map.res);
 
-      if (
-        isValidBase64(req?.picture_std ?? '') ||
-        isValidBase64(req?.packing ?? '') ||
-        isValidBase64(req?.q_point ?? '') ||
-        (req?.more_pictures?.some((pic) => isValidBase64(pic)) ?? false)
-      ) {
-        const picture_std = await this.handleUploadIfValid(
-          req?.picture_std,
-          'picture_std',
-        );
-        const packing = await this.handleUploadIfValid(req?.packing, 'packing');
-        const q_point = await this.handleUploadIfValid(req?.q_point, 'q_point');
-        const more_pictures = await Promise.all(
-          req?.more_pictures?.map((pic) =>
-            this.handleUploadIfValid(pic, 'more_pictures'),
-          ) ?? [],
-        );
-
-        const updatedPart = await this.partModel
-          .findByIdAndUpdate(
-            savedPart?._id,
-            { picture_std, packing, q_point, more_pictures },
-            { new: true },
-          )
-          .lean()
-          .exec();
-
-        const result = [updatedPart].map(this.partHelper.map.res);
-
-        await this.cacheManager.del('parts');
-        await this.cacheManager.del(`part_by_part_id_${result[0]?.part_id}`);
-
-        return {
-          status: 'success',
-          message: 'Part created successfully.',
-          data: result,
-        };
-      }
-
       await this.cacheManager.del('parts');
-      await this.cacheManager.del(`part_by_part_id_${result[0]?.part_id}`);
 
       return {
         status: 'success',
@@ -144,17 +156,6 @@ export class PartService {
 
   async findOne(part_id: string): Promise<ResponseFormat<TRESPart>> {
     try {
-      const CACHE_KEY = `part_by_part_id_${part_id}`;
-
-      const cachedAccount = await this.cacheManager.get<TRESPart[]>(CACHE_KEY);
-      if (cachedAccount) {
-        return {
-          status: 'success',
-          message: 'Account retrieved from cache.',
-          data: cachedAccount,
-        };
-      }
-
       const part = await this.partModel
         .findOne({ _id: part_id, is_log: { $ne: true } })
         .select('-is_log')
@@ -163,7 +164,6 @@ export class PartService {
       await this?.partHelper?.class?.isNoPartFound(!part);
 
       const result = [part].map(this.partHelper.map.res);
-      await this.cacheManager.set(CACHE_KEY, result);
 
       return {
         status: 'success',
@@ -219,8 +219,6 @@ export class PartService {
     req: UpdatePartDto,
   ): Promise<ResponseFormat<PartDocument | TRESPart>> {
     try {
-      await ValidatorUtils.validate(UpdatePartDto, req);
-
       const existingPart = await this.partModel
         .findById(part_id)
         .select('-created_at -created_by -is_deleted -deleted_at -deleted_by ')
@@ -236,64 +234,101 @@ export class PartService {
         );
       }
 
-      const picture_std =
-        (req?.picture_std ?? '') === ''
-          ? null
-          : await this.handleUploadIfValid(
-              req?.picture_std,
-              'picture_std',
-              existingPart?.picture_std,
-            );
-      const q_point =
-        (req?.q_point ?? '') === ''
-          ? null
-          : await this.handleUploadIfValid(
-              req?.q_point,
-              'q_point',
-              existingPart?.q_point,
-            );
-      const packing =
-        (req?.packing ?? '') === ''
-          ? null
-          : await this.handleUploadIfValid(
-              req?.packing,
-              'packing',
-              existingPart?.packing,
-            );
-      const lengthBaseFileImages = process.env.BASE_FILE_IMAGES?.length;
-      const existingMorePictures = req?.more_pictures
-        ?.filter(
-          (pic) =>
-            pic.slice(0, lengthBaseFileImages) === process.env.BASE_FILE_IMAGES,
-        )
-        ?.map((pic) => pic.slice(lengthBaseFileImages + 22));
-      const morePicturesBase64 = req?.more_pictures?.filter((pic) =>
-        isValidBase64(pic),
-      );
-      const more_pictures = existingMorePictures?.concat(
-        await Promise.all(
-          morePicturesBase64?.map((pic) =>
-            this.handleUploadIfValid(pic, 'more_pictures'),
-          ) ?? [],
-        ),
-      );
-
       await this?.partHelper?.class?.isNoPartFound(!existingPart);
+
+      const pictureSTD = req?.picture_std;
+      const packing = req?.packing;
+      const qPoint = req?.q_point;
+      const morePictures = req?.more_pictures;
+      if (
+        pictureSTD &&
+        pictureSTD instanceof Object &&
+        'buffer' in pictureSTD
+      ) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/picture_std',
+          pictureSTD,
+        );
+        req = { ...req, picture_std: res?.name ?? null };
+      }
+      if (packing && packing instanceof Object && 'buffer' in packing) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/packing',
+          packing,
+        );
+        req = { ...req, packing: res?.name ?? null };
+      }
+      if (qPoint && qPoint instanceof Object && 'buffer' in qPoint) {
+        const res = await await this.microServiceUplode.uploadFile(
+          'ptms/images/q_point',
+          qPoint,
+        );
+        req = { ...req, q_point: res?.name ?? null };
+      }
+      if (Array.isArray(morePictures)) {
+        const updatedMorePictures = [];
+        for (const pic of morePictures) {
+          if (typeof pic === 'string') {
+            updatedMorePictures.push(pic);
+          } else if (pic instanceof Object && 'buffer' in pic) {
+            const res = await this.microServiceUplode.uploadFile(
+              'ptms/images/more_pictures',
+              pic,
+            );
+            updatedMorePictures.push(res?.name ?? null);
+          }
+        }
+        req = {
+          ...req,
+          more_pictures: updatedMorePictures?.filter(
+            (item) => (item ?? '') !== '',
+          ),
+        };
+      }
+
+      await ValidatorUtils.validate(UpdatePartDto, req);
+
+      if (
+        String(req?.picture_std)?.includes(`${process.env.BASE_FILE_IMAGES}`)
+      ) {
+        req = {
+          ...req,
+          picture_std: existingPart?.picture_std,
+        };
+      }
+      if (String(req?.packing)?.includes(`${process.env.BASE_FILE_IMAGES}`)) {
+        req = {
+          ...req,
+          packing: existingPart?.packing,
+        };
+      }
+      if (String(req?.q_point)?.includes(`${process.env.BASE_FILE_IMAGES}`)) {
+        req = {
+          ...req,
+          q_point: existingPart?.q_point,
+        };
+      }
+      if (Array.isArray(req?.more_pictures)) {
+        const updatedMorePictures = req.more_pictures.map((pic) => {
+          if (String(pic).includes(`${process.env.BASE_FILE_IMAGES}`)) {
+            return (
+              existingPart?.more_pictures?.find((p) =>
+                String(pic).includes(p),
+              ) ?? pic
+            );
+          }
+          return pic;
+        });
+
+        req = { ...req, more_pictures: updatedMorePictures };
+      }
       const isSame = Object.keys(existingPart.toObject()).every((key) => {
         return key === 'part_no' || key === 'is_log' || key === '_id'
           ? true
-          : key === 'picture_std' || key === 'q_point' || key === 'packing'
-            ? existingPart[key] === req[key] ||
-              req[key] ===
-                `${process.env.BASE_FILE_IMAGES}/images/${key}/${existingPart[key]}`
-            : key === 'more_pictures'
-              ? ((existingPart?.more_pictures ?? [])?.filter((pic, i) => {
-                  return (
-                    req?.more_pictures[i] ===
-                    `${process.env.BASE_FILE_IMAGES}/images/${key}/${pic}`
-                  );
-                })?.length ?? 0) === (existingPart?.more_pictures?.length ?? 0)
-              : existingPart[key] === req[key];
+          : key === 'more_pictures'
+            ? JSON.stringify(existingPart[key]) ===
+              JSON.stringify(existingPart?.more_pictures)
+            : existingPart[key] === req[key];
       });
 
       if (isSame) {
@@ -312,10 +347,6 @@ export class PartService {
 
       const dto = await CreatePartDto.format({
         ...req,
-        picture_std,
-        q_point,
-        packing,
-        more_pictures,
         part_no: existingPart.part_no,
       });
       const createPart = new this.partModel(dto);
@@ -323,7 +354,6 @@ export class PartService {
       const result = [savedPart?.toObject()].map(this.partHelper.map.res);
 
       await this.cacheManager.del('parts');
-      await this.cacheManager.del(`part_by_part_id_${part_id}`);
 
       return {
         status: 'success',
@@ -381,7 +411,6 @@ export class PartService {
       const result = [updatedAccount].map(this.partHelper.map.res);
 
       await this.cacheManager.del('parts');
-      await this.cacheManager.del(`part_by_part_id_${part_id}`);
 
       return {
         status: 'success',

@@ -114,7 +114,9 @@ export class AccountController {
   ) {
     const account_id = req?.user?.account_id;
 
-    const profilePicture = files['profile_picture']?.[0] ?? null;
+    const profilePicture = files['profile_picture']?.[0]
+      ? files['profile_picture']?.[0]
+      : (data.profile_picture ?? null);
 
     return await this.accountsService.update(account_id, {
       ...data,

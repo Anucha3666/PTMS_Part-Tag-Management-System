@@ -39,7 +39,16 @@ export class AccountService extends APIService {
 
   createAccount = async (req: TCreateAccount): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.post<TResponse<[]>>(`/account`, req);
+      const formData = new FormData();
+
+      formData.append("employee_number", req?.employee_number);
+      formData.append("employee_number", "test");
+
+      const { data } = await this.post<TResponse<[]>>(`/account`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {
