@@ -84,8 +84,8 @@ const mapRES = (part: any) => ({
   printed_id: part._id.toString() ?? '',
   tags: part?.tags ?? [],
   summary: part.summary ?? [],
-  printed_by: part.printed_by,
   printed_at: part.printed_at,
+  printed_by: part.printed_by,
 });
 
 export const PrintedHelper = {

@@ -1,14 +1,20 @@
 import { TTag } from "./tag";
 
 export type TPrintedTag = {
-  tag_id: string;
-  tag_number: string;
+  printed_id: string;
+  tags: string[];
+  summary: TPrintedTagSummary[];
+  printed_by: string;
+  printed_at: string;
+};
+
+export type TPrintedTagSummary = {
   part_id: string;
   part_no: string;
   part_name: string;
   packing_std: number;
   picture_std: string;
-  created_at: string;
+  number_of_tags: number;
 };
 
 export type TPrinted = {

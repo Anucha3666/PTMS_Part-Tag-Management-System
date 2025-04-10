@@ -1,6 +1,6 @@
 import { SERVICE_CONFIG_ACCESS_KEY, VITE_API_BASE_URL } from "@/constants";
 import { useAppDispatch } from "@/store/hook";
-import { TResponse } from "@/types";
+import { TPrintTag, TResponse } from "@/types";
 import { TPrintedTag } from "@/types/printed";
 import { AxiosError } from "axios";
 import { APIService } from "./api.service";
@@ -14,7 +14,7 @@ export class PrintService extends APIService {
     });
   }
 
-  printTags = async (req: string[]): Promise<TResponse<TPrintedTag[]>> => {
+  printTags = async (req: TPrintTag[]): Promise<TResponse<TPrintedTag[]>> => {
     try {
       const { data } = await this.post<TResponse<TPrintedTag[]>>(
         `/print/tags`,
