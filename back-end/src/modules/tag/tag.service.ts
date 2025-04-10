@@ -78,6 +78,9 @@ export class TagService {
     try {
       const cachedTag = await this.cacheManager.get<TRESTag>(`tag_${tag_no}`);
       if (cachedTag) {
+        await this?.tagHelper?.class?.isNoTagFound(
+          cachedTag?.tag_id !== tag_id,
+        );
         return {
           status: 'success',
           message: 'Tag retrieved from cache.',
