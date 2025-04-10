@@ -61,10 +61,10 @@ export abstract class APIService {
 
   private handleUnauthorizedError = async (): Promise<void> => {
     console.log("401 Unauthorized error");
-    await this.signOut();
+    await this.clearAuthCookies();
   };
 
-  private clearAuthCookies = (): void => {
+  clearAuthCookies = (): void => {
     cookieCryptoUtils.delete(this.accessTokenKey);
     cookieCryptoUtils.delete(this.refreshTokenKey);
     cookieCryptoUtils.delete(this.userIdKey);
@@ -101,10 +101,10 @@ export abstract class APIService {
     cookieCryptoUtils.set(this.roleKey, role);
   };
 
-  signOut = async (): Promise<boolean> => {
-    this.clearAuthCookies();
-    return true;
-  };
+  // signOut = async (): Promise<boolean> => {
+  //   this.clearAuthCookies();
+  //   return true;
+  // };
 
   get = <T>(
     url: string,

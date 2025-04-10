@@ -86,6 +86,7 @@ export const mapAccountToTRESSignIn = (account: any) => ({
   first_name: account.first_name,
   last_name: account.last_name,
   username: account.username,
+  position: account.position,
   profile_picture: account.profile_picture
     ? `${process.env.BASE_FILE_IMAGES}/profile/${account.profile_picture}`
     : null,

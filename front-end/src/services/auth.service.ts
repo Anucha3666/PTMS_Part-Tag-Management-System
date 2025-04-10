@@ -1,11 +1,11 @@
-import { AxiosError } from "axios";
-
 import {
   SERVICE_CONFIG_ACCESS_KEY,
   SERVICE_CONFIG_DATA_USER,
   VITE_API_BASE_URL,
 } from "@/constants/service";
 import { TResponse } from "@/types/common";
+import { setCookieCrypto } from "@/utils";
+import { AxiosError } from "axios";
 import {
   TAuth,
   TChangePassword,
@@ -30,7 +30,10 @@ export class AuthService extends APIService {
         req
       );
 
-      if (data?.status) this?.setDataUser(data?.data[0]);
+      if (data?.status) {
+        this?.setDataUser(data?.data[0]);
+        if (req?.remember) setCookieCrypto("auth_remember", req);
+      }
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -55,10 +58,7 @@ export class AuthService extends APIService {
 
   signUp = async (req: TSignUp): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.post<TResponse<[]>>(
-        "/auth/change-password",
-        req
-      );
+      const { data } = await this.post<TResponse<[]>>("/auth/sign-up", req);
 
       return data;
     } catch (error) {
@@ -75,6 +75,35 @@ export class AuthService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to sign up due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      }
+    }
+  };
+
+  signOut = async (): Promise<TResponse<[]>> => {
+    try {
+      this?.clearAuthCookies();
+      return {
+        status: "success",
+        message: "Logged out successfully.",
+        data: [],
+      };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("SIGN_OUT_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to sign out due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to sign out due to an unknown error",
           status: "error",
           data: [],
         };
@@ -118,6 +147,7 @@ export class AuthService extends APIService {
         req
       );
 
+      this?.signOut();
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {
