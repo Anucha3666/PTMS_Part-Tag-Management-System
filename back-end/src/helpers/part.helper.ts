@@ -63,8 +63,8 @@ const mapRES = (part: any) => ({
             `${process.env.BASE_FILE_IMAGES}/more_pictures/${more_pictures}`,
         )
       : [],
-  created_by: part.created_by,
   created_at: part.created_at,
+  created_by: part.created_by,
   is_deleted: part.is_deleted,
   deleted_at: part.deleted_at,
   deleted_by: part.deleted_by,
@@ -93,8 +93,8 @@ const mapRESChangeHistory = (part: any) => ({
       : [],
 
   is_log: part.is_log,
-  created_by: part.created_by,
   created_at: part.created_at,
+  created_by: part.created_by,
   is_deleted: part.is_deleted,
   deleted_at: part.deleted_at,
   deleted_by: part.deleted_by,

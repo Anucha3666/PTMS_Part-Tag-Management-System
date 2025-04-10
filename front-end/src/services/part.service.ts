@@ -7,7 +7,6 @@ import {
   TCreatePart,
   TPart,
   TPartChangeHistory,
-  TPartDetails,
   TResponse,
   TUpdatePart,
 } from "@/types";
@@ -22,6 +21,21 @@ export class PartService extends APIService {
     });
   }
 
+  getPart = async (part_id: string): Promise<TPart> => {
+    try {
+      const { data } = await this.get<TResponse<TPart[]>>(`/part/${part_id}`);
+      return (data?.data[0] ?? {}) as TPart;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("GET_PART_DETAILS_ERROR", error.response);
+        return {} as TPart;
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {} as TPart;
+      }
+    }
+  };
+
   getParts = async (): Promise<TPart[]> => {
     try {
       const { data } = await this.get<TResponse<TPart[]>>(`/parts`);
@@ -34,23 +48,6 @@ export class PartService extends APIService {
       } else {
         console.error("UNKNOWN_ERROR", error);
         return [];
-      }
-    }
-  };
-
-  getPartDetails = async (part_id: string): Promise<TPartDetails> => {
-    try {
-      const { data } = await this.get<TResponse<TPartDetails[]>>(
-        `/part/${part_id}/details`
-      );
-      return (data?.data[0] ?? {}) as TPartDetails;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error("GET_PART_DETAILS_ERROR", error.response);
-        return {} as TPartDetails;
-      } else {
-        console.error("UNKNOWN_ERROR", error);
-        return {} as TPartDetails;
       }
     }
   };
@@ -76,7 +73,32 @@ export class PartService extends APIService {
 
   createPart = async (req: TCreatePart): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.post<TResponse<[]>>(`/part`, req);
+      const formData = new FormData();
+
+      formData.append("part_no", req?.part_no);
+      formData.append("part_name", req?.part_name);
+      formData.append("packing_std", String(req?.packing_std));
+      if (req?.picture_std) {
+        formData.append("picture_std", req.picture_std);
+      }
+      if (req?.q_point) {
+        formData.append("q_point", req.q_point);
+      }
+      if (req?.packing) {
+        formData.append("packing", req.packing);
+      }
+      if ((req?.more_pictures?.length ?? 0) > 0) {
+        for (const more_picture of req?.more_pictures ?? []) {
+          formData.append("more_pictures", more_picture);
+        }
+      }
+
+      const { data } = await this.post<TResponse<[]>>(`/part`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       return data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -101,9 +123,27 @@ export class PartService extends APIService {
 
   updatePart = async (req: TUpdatePart): Promise<TResponse<[]>> => {
     try {
+      const formData = new FormData();
+
+      formData.append("part_name", req?.part_name);
+      formData.append("packing_std", String(req?.packing_std));
+      formData.append("picture_std", req.picture_std);
+      formData.append("q_point", req.q_point);
+      formData.append("packing", req.packing);
+      if ((req?.more_pictures?.length ?? 0) > 0) {
+        for (const more_picture of req?.more_pictures ?? []) {
+          formData.append("more_pictures", more_picture);
+        }
+      }
+
       const { data } = await this.put<TResponse<[]>>(
         `/part/${req?.part_id}`,
-        req
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
 
       return data;
