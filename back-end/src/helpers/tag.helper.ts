@@ -22,7 +22,7 @@ export class ClassTagHelper {
       .exec();
   }
 
-  async findTagAndJoinPartByTagID(
+  async findTagAndJoinPartByTagNo(
     tagModel: Model<TagDocument>,
     tag_no: string,
   ): Promise<TRESTag | null> {

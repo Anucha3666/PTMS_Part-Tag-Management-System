@@ -18,9 +18,9 @@ export class TagController {
   commonHelper = CommonHelper;
   constructor(private readonly tagService: TagService) {}
 
-  @Get(':tag_no')
-  findOne(@Param('tag_no') tag_no: string) {
-    return this.tagService.findOne(tag_no);
+  @Get(':tag_no/:tag_id')
+  findOne(@Param('tag_no') tag_no: string, @Param('tag_id') tag_id: string) {
+    return this.tagService.findOne(tag_no, tag_id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -35,8 +35,8 @@ export class TagController {
 
     if (body?.type === 'daikin') {
       return this.tagService.validationTagDaikin({
-        tag_no: tag_no,
         ...body,
+        tag_no: tag_no,
         checked_by: account_id,
       });
     } else {

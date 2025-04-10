@@ -64,14 +64,17 @@ export class TagService {
       return {
         status: 'success',
         message: 'Tags retrieved successfully.',
-        data: [],
+        data: result,
       };
     } catch (error) {
       this.commonHelper.handleError(error);
     }
   }
 
-  async findOne(tag_no: string): Promise<ResponseFormat<TRESTag>> {
+  async findOne(
+    tag_no: string,
+    tag_id: string,
+  ): Promise<ResponseFormat<TRESTag>> {
     try {
       const cachedTag = await this.cacheManager.get<TRESTag>(`tag_${tag_no}`);
       if (cachedTag) {
@@ -82,12 +85,12 @@ export class TagService {
         };
       }
 
-      const result = await this?.tagHelper?.class?.findTagAndJoinPartByTagID(
+      const result = await this?.tagHelper?.class?.findTagAndJoinPartByTagNo(
         this.tagModel,
         tag_no,
       );
 
-      this?.tagHelper?.class?.isNoTagFound(!result);
+      this?.tagHelper?.class?.isNoTagFound(result?.part_id !== tag_id);
       await this.cacheManager.set(`tag_${tag_no}`, result);
 
       return {
@@ -112,7 +115,7 @@ export class TagService {
       await ValidatorUtils.validate(ValidationTagDto, req);
 
       const existingTag =
-        await this?.tagHelper?.class?.findTagAndJoinPartByTagID(
+        await this?.tagHelper?.class?.findTagAndJoinPartByTagNo(
           this.tagModel,
           req?.tag_no,
         );
