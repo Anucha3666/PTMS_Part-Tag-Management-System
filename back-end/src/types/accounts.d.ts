@@ -5,7 +5,7 @@ export type TRESAccunt = {
   employee_number: string;
   first_name: string;
   last_name: string;
-  username: string;
+  // username: string;
   role: TRole;
   profile_picture: string | null;
   created_at: date;

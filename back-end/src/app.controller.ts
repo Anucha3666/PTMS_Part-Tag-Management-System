@@ -42,8 +42,6 @@ export class AppController {
       'file_more_pictures',
     ];
 
-    console.log('test');
-
     for (const key of fileKeys) {
       const uploadedFiles = files[key];
       if (uploadedFiles) {

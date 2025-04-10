@@ -90,7 +90,7 @@ export class TagService {
         tag_no,
       );
 
-      this?.tagHelper?.class?.isNoTagFound(result?.part_id !== tag_id);
+      await this?.tagHelper?.class?.isNoTagFound(result?.tag_id !== tag_id);
       await this.cacheManager.set(`tag_${tag_no}`, result);
 
       return {
@@ -119,8 +119,6 @@ export class TagService {
           this.tagModel,
           req?.tag_no,
         );
-
-      console.log(existingTag);
 
       await this?.tagHelper?.class?.isNoTagFound(!existingTag);
 
