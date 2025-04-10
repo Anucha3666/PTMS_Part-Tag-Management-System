@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import {
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
@@ -10,10 +11,19 @@ import {
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as FormData from 'form-data';
 import { memoryStorage } from 'multer';
+import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly appService: AppService,
+  ) {}
+
+  @Get()
+  getHello() {
+    return this.appService.getHello();
+  }
 
   @Post('upload-proxy')
   @UseInterceptors(
