@@ -1,8 +1,8 @@
-import { TPrinted } from "@/types";
+import { TPrintedTag } from "@/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export type TPrintedState = {
-  printeds: TPrinted[];
+  printeds: TPrintedTag[];
 };
 
 const initialState: TPrintedState = {
