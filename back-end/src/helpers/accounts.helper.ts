@@ -85,14 +85,14 @@ export const mapAccountToTRESSignIn = (account: any) => ({
   employee_number: account.employee_number,
   first_name: account.first_name,
   last_name: account.last_name,
-  username: account.username,
   position: account.position,
   profile_picture: account.profile_picture
     ? `${process.env.BASE_FILE_IMAGES}/profile/${account.profile_picture}`
     : null,
+  username: account.username,
   role: account.role ?? null,
-  created_at: account.created_at ?? null,
   updated_at: account.updated_at ?? null,
+  created_at: account.created_at ?? null,
   token: '',
   _id: undefined,
 });
@@ -102,18 +102,18 @@ export const mapAccountToTRESAccount = (account: any) => ({
   employee_number: account.employee_number,
   first_name: account.first_name,
   last_name: account.last_name,
-  username: account.username,
-  is_approved: account.is_approved,
-  is_deleted: account.is_deleted,
-  role: account.role,
+  position: account.position,
   profile_picture: account.profile_picture
     ? `${process.env.BASE_FILE_IMAGES}/profile/${account.profile_picture}`
     : null,
-  created_at: account.created_at,
+  role: account.role,
   updated_at: account.updated_at,
+  created_at: account.created_at,
   created_by: account.created_by,
+  is_approved: account.is_approved,
   approved_at: account.approved_at,
   approved_by: account.approved_by,
+  is_deleted: account.is_deleted,
   deleted_at: account.deleted_at,
   deleted_by: account.deleted_by,
 });

@@ -42,7 +42,15 @@ export class AccountService extends APIService {
       const formData = new FormData();
 
       formData.append("employee_number", req?.employee_number);
-      formData.append("employee_number", "test");
+      formData.append("first_name", req?.first_name);
+      formData.append("last_name", req?.last_name);
+      formData.append("position", req?.position ?? "");
+      if (req?.profile_picture) {
+        formData.append("profile_picture", req.profile_picture);
+      }
+      formData.append("username", req?.username);
+      formData.append("password", req?.password);
+      formData.append("role", req?.role ?? "");
 
       const { data } = await this.post<TResponse<[]>>(`/account`, formData, {
         headers: {
@@ -64,6 +72,60 @@ export class AccountService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to create account due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      }
+    }
+  };
+
+  approveAccount = async (account_id: string): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.patch<TResponse<[]>>(
+        `/account/${account_id}/approve`
+      );
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("APPROVE_ACCOUNT_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to approve account due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to approve account due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      }
+    }
+  };
+
+  rejectAccount = async (account_id: string): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.patch<TResponse<[]>>(
+        `/account/${account_id}/reject`
+      );
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("REJECT_ACCOUNT_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to reject account due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to reject account due to an unknown error",
           status: "error",
           data: [],
         };
@@ -101,12 +163,43 @@ export class AccountService extends APIService {
     }
   };
 
+  resetPassword = async (account_id: string): Promise<TResponse<[]>> => {
+    try {
+      const { data } = await this.patch<TResponse<[]>>(
+        `/account/${account_id}/reset-password`
+      );
+      return data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.error("RESET_PASSWORD_ERROR", error.response);
+        return {
+          message:
+            error.response?.data?.message ||
+            "Failed to reset password due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      } else {
+        console.error("UNKNOWN_ERROR", error);
+        return {
+          message: "Failed to reset password due to an unknown error",
+          status: "error",
+          data: [],
+        };
+      }
+    }
+  };
+
   updateAccount = async (req: TUpdateAccount): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.put<TResponse<[]>>(
-        `/account/${req?.account_id}`,
-        req
-      );
+      const formData = new FormData();
+
+      formData.append("first_name", req?.first_name);
+      formData.append("last_name", req?.last_name);
+      formData.append("position", req?.position ?? "");
+      formData.append("profile_picture", req.profile_picture ?? "");
+
+      const { data } = await this.put<TResponse<[]>>(`/account`, req);
 
       return data;
     } catch (error) {
@@ -123,34 +216,6 @@ export class AccountService extends APIService {
         console.error("UNKNOWN_ERROR", error);
         return {
           message: "Failed to update account due to an unknown error",
-          status: "error",
-          data: [],
-        };
-      }
-    }
-  };
-
-  resetPassword = async (account_id: string): Promise<TResponse<[]>> => {
-    try {
-      const { data } = await this.post<TResponse<[]>>(
-        `/account/${account_id}/reset-password`
-      );
-
-      return data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error("RESET_PASSWORD_ERROR", error.response);
-        return {
-          message:
-            error.response?.data?.message ||
-            "Failed to reset password due to an unknown error",
-          status: "error",
-          data: [],
-        };
-      } else {
-        console.error("UNKNOWN_ERROR", error);
-        return {
-          message: "Failed to reset password due to an unknown error",
           status: "error",
           data: [],
         };

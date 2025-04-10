@@ -25,12 +25,12 @@ export type TAuth = {
   employee_number: string;
   first_name: string;
   last_name: string;
-  username: string;
   position: string;
+  username: string;
   profile_picture: string | null;
   role: TRole;
-  created_at: string;
   updated_at: string;
+  created_at: string;
   token: string;
 };
 

@@ -5,28 +5,28 @@ export type TAccount = {
   employee_number: string;
   first_name: string;
   last_name: string;
-  username: string;
-  role: TRole;
   position: string;
   profile_picture: string;
-  created_by: string;
-  created_at: string;
+  role: TRole;
   updated_at: string;
+  created_at: string;
+  created_by: string;
   is_approved: boolean;
-  approved_at: string;
-  approved_by: string;
+  approved_at: string | null;
+  approved_by: string | null;
   is_deleted: boolean;
-  deleted_at: boolean;
-  deleted_by: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
 };
 
 export type TCreateAccount = {
   employee_number: string;
   first_name: string;
   last_name: string;
-  username: string;
   position?: string;
-  profile_picture?: string | null;
+  profile_picture?: null | File;
+  username: string;
+  password: string;
   role: TRole;
 };
 
@@ -37,10 +37,10 @@ export type TChangeRole = {
 
 export type TUpdateAccount = {
   account_id: string;
-  first_name?: string;
-  last_name?: string;
-  position?: string;
-  profile_picture?: string | null;
+  first_name: string;
+  last_name: string;
+  position: string;
+  profile_picture: string | null;
 };
 
 export type TIntroduceAccount = {
