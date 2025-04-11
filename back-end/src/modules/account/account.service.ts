@@ -110,6 +110,7 @@ export class AccountsService {
         .find()
         .select('-password')
         .lean()
+        .sort({ created_at: -1 })
         .exec();
       if ((accounts?.length ?? 0) <= 0) {
         throw new HttpException(

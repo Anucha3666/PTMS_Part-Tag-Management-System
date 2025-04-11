@@ -54,6 +54,7 @@ export class TagService {
             $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
           },
         ])
+        .sort({ tag_no: -1 })
         .exec();
 
       await this?.tagHelper?.class?.isNoTagFound(!tags);

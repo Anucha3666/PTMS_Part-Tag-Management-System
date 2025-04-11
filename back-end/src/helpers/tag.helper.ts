@@ -54,6 +54,7 @@ export class ClassTagHelper {
           },
         },
       ])
+      .sort({ created_at: -1 })
       .exec();
 
     const result = tag.map(mapRES);

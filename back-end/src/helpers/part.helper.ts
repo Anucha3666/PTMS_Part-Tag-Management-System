@@ -25,6 +25,7 @@ export class ClassPartHelper {
       .find({
         _id: { $in: partIds },
       })
+      .sort({ created_at: -1 })
       .exec();
   }
 
