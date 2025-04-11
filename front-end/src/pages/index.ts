@@ -1,3 +1,4 @@
+export * from "./forbidden";
 export * from "./login";
 export * from "./not-found";
 export * from "./part";

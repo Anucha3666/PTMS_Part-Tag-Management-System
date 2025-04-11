@@ -1,5 +1,5 @@
 import { cn } from "@/libs/cn";
-import React, { FC, useState, useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 export type MenuRootProps = {
   children: React.ReactNode;
@@ -119,8 +119,7 @@ export const MenuContent: FC<MenuContentProps> = ({
   <div
     key={key}
     className={cn(
-      `absolute mt-0 w-48 p-1 flex flex-col gap-1 bg-white border border-gray-200 rounded-lg shadow-lg dark:shadow-lg-dark z-20
-    dark:bg-[#0B1739] dark:border-[#0B1739]`,
+      `absolute mt-0 w-48 p-1 flex flex-col gap-1 bg-white border border-gray-200 rounded-lg shadow-lg  `,
       position === "right" ? `right-0` : `left-0`,
       className
     )}>
@@ -144,7 +143,7 @@ export const MenuItem: FC<MenuItemProps> = ({
     <li
       key={key}
       className={cn(
-        "px-4 py-2 text-gray-700 flex gap-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:text-white dark:hover:bg-[#1B2749]",
+        "px-4 py-2 text-gray-700 flex gap-2 rounded-lg cursor-pointer hover:bg-gray-100  ",
         className
       )}
       onClick={handleClick}>

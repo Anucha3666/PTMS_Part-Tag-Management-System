@@ -45,8 +45,20 @@
 }
 
 .ant-otp-input {
-  width: 32px !important;
-  height: 32px !important;
+  width: 30px !important;
+  height: 30px !important;
 }
 
 /* ant-input css-dev-only-do-not-override-1htoz2s ant-input-outlined ant-otp-input */
+
+/* ปิด spinner (ลูกศรขึ้นลง) ใน Chrome/Safari */
+.ant-otp-input::-webkit-inner-spin-button,
+.ant-otp-input::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+/* ปิด spinner ใน Firefox */
+.ant-otp-input {
+  -moz-appearance: textfield !important;
+}

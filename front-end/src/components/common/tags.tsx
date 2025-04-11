@@ -1,30 +1,37 @@
+import { cn } from "@/libs/cn";
 import { TRole } from "@/types";
 import { Tag } from "antd";
 import { FC } from "react";
 
 export type TTagRoleProps = {
   role: TRole;
+  isView?: boolean;
+  isDlelete?: boolean;
 };
 
-export const TagRole: FC<TTagRoleProps> = ({ role }) => {
+export const TagRole: FC<TTagRoleProps> = ({
+  role,
+  isView = false,
+  isDlelete = false,
+}) => {
   return (
     <Tag
       color={
-        role === "admin"
+        isDlelete
+          ? "default"
+          : role === "admin"
           ? "gold"
           : role === "user"
           ? "blue"
           : role === "owner"
-          ? "gold-inverse"
+          ? "red"
           : role === "viewer"
           ? "yellow"
-          : role === ""
-          ? "red"
           : "default"
       }
       key={role}
-      className=' w-full text-center'>
-      {String(role ?? "No Rights")?.toLocaleUpperCase()}
+      className={cn("text-center", isView ? "" : " w-full")}>
+      {String(role === "" ? "Block" : role ?? "Block")?.toLocaleUpperCase()}
     </Tag>
   );
 };

@@ -37,7 +37,7 @@ const AppRoutes: FC = () => {
         <Route path='/settings'>
           <Route index element={<SettingsPage />} />
           <Route path='profile' element={<SettingProfilePage />} />
-          <Route path='account' element={<SettingAccountsPage />} />
+          <Route path='accounts' element={<SettingAccountsPage />} />
         </Route>
       </Route>
 

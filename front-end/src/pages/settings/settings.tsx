@@ -1,6 +1,5 @@
 import { ChangePasswordModal } from "@/components/settings";
 import { useDisclosure } from "@/helpers";
-import { Card } from "antd";
 import { BookUser, Lock, UserRoundPen } from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
@@ -38,9 +37,9 @@ export const SettingsPage: FC = () => {
     <>
       <div className='p-2 w-full h-min max-h-full gap-4 overflow-auto pb-4 grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 '>
         {DATA_MENU_SETTINGS?.map(({ label, description, icon, page }, i) => (
-          <Card
+          <div
             key={i}
-            className=' min-h-[6rem] h-[6rem] max-h-[6rem] flex items-center p-2 shadow-sm hover:scale-[101%] active:scale-[99%] cursor-pointer'
+            className=' min-h-[6rem] h-[6rem] max-h-[6rem] rounded-md flex items-center p-2 shadow-md hover:scale-[101%] active:scale-[99%] bg-white cursor-pointer'
             onClick={() =>
               page === "change-password" ? onOpen() : navigate(page)
             }>
@@ -51,7 +50,7 @@ export const SettingsPage: FC = () => {
                 <p className=' text-sm'>{description}</p>
               </div>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
 

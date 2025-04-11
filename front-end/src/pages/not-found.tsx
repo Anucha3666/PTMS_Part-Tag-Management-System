@@ -6,12 +6,6 @@ import { useNavigate } from "react-router-dom";
 export const NotFoundPage = () => {
   const navigator = useNavigate();
   const [animationData, setAnimationData] = useState(null);
-  const [data, setData] = useState<(string | FileList | null)[]>([
-    "test",
-    "test",
-  ]);
-
-  console.log(data);
 
   useEffect(() => {
     fetch("https://assets3.lottiefiles.com/packages/lf20_kcsr6fcp.json")
@@ -21,11 +15,6 @@ export const NotFoundPage = () => {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
-      <input
-        type='file'
-        id='files'
-        onChange={(e) => setData(data?.concat(e?.target?.files))}
-      />
       <div className='w-full max-w-md'>
         {animationData && (
           <Lottie animationData={animationData} loop={true} autoplay={true} />

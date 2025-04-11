@@ -1,13 +1,9 @@
 import { useScreen } from "@/hooks";
 import { Button } from "antd";
-import { Expand, LogOut, Shrink } from "lucide-react";
-import { useState } from "react";
-import { LogOutModal } from "./log-out-modal";
+import { Expand, Shrink } from "lucide-react";
 
 export const AppNavbar = () => {
   const { isFullScreen, toggleScreen } = useScreen();
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <>
@@ -34,16 +30,11 @@ export const AppNavbar = () => {
         </div>
 
         <div className='flex  w-full justify-end gap-2 items-center'>
-          <Button className='p-1' onClick={() => setIsOpen(true)}>
-            <LogOut />
-          </Button>
-
           <Button className='p-1' onClick={() => toggleScreen()}>
             {isFullScreen ? <Shrink /> : <Expand />}
           </Button>
         </div>
       </div>
-      <LogOutModal {...{ isOpen, setIsOpen }} />
     </>
   );
 };
