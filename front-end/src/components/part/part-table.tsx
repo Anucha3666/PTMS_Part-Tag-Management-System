@@ -12,7 +12,11 @@ import { ViewPartModal } from "./view-part-modal";
 
 type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
 
-export const PartTable: FC = () => {
+export type TPartTableProps = {
+  search?: string;
+};
+
+export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
   const dispatch = useAppDispatch();
   const divRef = useRef<HTMLDivElement>(null);
 
@@ -154,18 +158,20 @@ export const PartTable: FC = () => {
     {
       title: "Action",
       key: "action",
-      width: "4rem",
+      width: "5rem",
       fixed: "right",
       render: (_, record) => (
-        <div
-          className='flex gap-2 cursor-pointer'
-          onClick={() => console.log(record)}>
-          <Eye
-            className=' text-gray-400 hover:text-blue-600'
-            onClick={() => {
-              setDataModal({ ...record, order: "view" });
-            }}
-          />
+        <div className=' w-full justify-center items-center'>
+          <div
+            className='flex gap-2 cursor-pointer'
+            onClick={() => console.log(record)}>
+            <Eye
+              className=' text-gray-400 hover:text-blue-600'
+              onClick={() => {
+                setDataModal({ ...record, order: "view" });
+              }}
+            />
+          </div>
         </div>
       ),
     },
@@ -191,12 +197,21 @@ export const PartTable: FC = () => {
 
   return (
     <>
-      <div ref={divRef} className=' w-full h-full overflow-hidden'>
-        <div className='w-full h-min bg-white max-h-full rounded-md dark:shadow-md-dark'>
+      <div ref={divRef} className=' w-full h-full  overflow-hidden'>
+        <div className='w-full h-min bg-white max-h-full rounded-md  '>
           <Table<TPart>
             columns={columns}
             dataSource={parts
-              ?.filter(({ is_deleted }) => !is_deleted)
+              ?.filter(
+                (item) =>
+                  !item?.is_deleted &&
+                  (search
+                    ? Object.values(item)
+                        .join(" ")
+                        .toLowerCase()
+                        .includes(search.toLowerCase())
+                    : true)
+              )
               ?.map((item) => ({
                 ...item,
                 key: item?.part_id,
@@ -225,9 +240,11 @@ export const PartTable: FC = () => {
                 />
               ),
             }}
-            scroll={{
-              x: "max-content",
-            }}
+            scroll={
+              search === undefined
+                ? { x: "max-content" }
+                : { x: "max-content", y: `${height - 190}px` }
+            }
           />
         </div>
       </div>
