@@ -36,7 +36,7 @@ export const SettingsPage: FC = () => {
 
   return (
     <>
-      <div className='px-4 w-full h-min max-h-full gap-4 overflow-auto pb-4 grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 '>
+      <div className='p-2 w-full h-min max-h-full gap-4 overflow-auto pb-4 grid lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 '>
         {DATA_MENU_SETTINGS?.map(({ label, description, icon, page }, i) => (
           <Card
             key={i}

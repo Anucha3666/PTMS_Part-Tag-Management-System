@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import type { TableProps } from "antd";
 import { Empty, Table } from "antd";
-import { Eye } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { CreateUpdatePartModal } from "./create-update-part-modal";
@@ -166,6 +166,18 @@ export const PartTable: FC = () => {
               setDataModal({ ...record, order: "view" });
             }}
           />
+          <Pencil
+            className=' text-gray-400 hover:text-orange-400'
+            onClick={() => {
+              setDataModal({ ...record, order: "update" });
+            }}
+          />
+          <Trash2
+            className=' text-gray-400 hover:text-red-600'
+            onClick={() => {
+              setDataModal({ ...record, order: "delete" });
+            }}
+          />
         </div>
       ),
     },
@@ -227,6 +239,7 @@ export const PartTable: FC = () => {
             }}
             scroll={{
               x: "max-content",
+              // y: parts?.length < 7 ? "max-content" : `${height - 190}px`,
             }}
           />
         </div>

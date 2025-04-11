@@ -21,7 +21,7 @@ export const LoginForm: FC = () => {
       } else {
         cookieCryptoUtils.delete("DATA_USER_REMEMBER");
       }
-      navigate("/part-management");
+      navigate("/part");
     }
   };
 

@@ -1,41 +1,31 @@
-import {
-  GET_PART_CHANGE_HISTORYS,
-  GET_PART_DETAILS,
-  GET_PARTS,
-} from "@/constants";
+import { GET_PART, GET_PART_CHANGE_HISTORYS, GET_PARTS } from "@/constants";
 import { useMutationWithNotification } from "@/hooks";
-import {
-  TCreatePart,
-  TPart,
-  TPartChangeHistory,
-  TPartDetails,
-  TUpdatePart,
-} from "@/types";
+import { TCreatePart, TPart, TPartChangeHistory, TUpdatePart } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { PartService } from "../part.service";
 
 export const usePart = () => {
   const {
+    getPart,
     getParts,
-    getPartDetails,
     getPartChangeHistorys,
     createPart,
     updatePart,
     deletePart,
   } = new PartService();
 
+  const useGetPart = (part_id: string) => {
+    return useQuery({
+      queryKey: [GET_PART, part_id],
+      queryFn: async (): Promise<TPart> => await getPart(part_id),
+    });
+  };
+
   const useGetParts = () => {
     return useQuery({
       queryKey: [GET_PARTS],
       queryFn: async (): Promise<TPart[]> => await getParts(),
       refetchInterval: 300000,
-    });
-  };
-
-  const useGetPartDetails = (part_id: string) => {
-    return useQuery({
-      queryKey: [GET_PART_DETAILS, part_id],
-      queryFn: async (): Promise<TPartDetails> => await getPartDetails(part_id),
     });
   };
 
@@ -66,8 +56,8 @@ export const usePart = () => {
   );
 
   return {
+    useGetPart,
     useGetParts,
-    useGetPartDetails,
     useGetPartChangeHistorys,
     mutateCreatePart,
     mutateUpdatePart,

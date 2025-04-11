@@ -1,22 +1,16 @@
+import { SRC_USER } from "@/constants";
 import { cn } from "@/libs/cn";
 import { setIsOpenSidebar } from "@/store/features/utils.features";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BookText,
-  ChartGantt,
-  CircleUserRound,
-  FileCog,
-  FileTerminal,
-  FileText,
-  Grid3x3,
-  LayoutDashboard,
-  LayoutGrid,
+  Boxes,
   LogOut,
-  Monitor,
-  PackageCheck,
+  PrinterCheck,
   Settings,
   SquareChevronRight,
+  Tags,
 } from "lucide-react";
 import { ReactElement, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -47,56 +41,25 @@ export const SidebarApp = () => {
     }[];
   }[] = [
     {
-      label: "Monitor",
-      icon: <Monitor />,
-      children: [
-        {
-          label: "Work Card",
-          page: "/monitor/work-card",
-          icon: <LayoutGrid size={22} />,
-        },
-        {
-          label: "Layout",
-          page: "/monitor/layout",
-          icon: <LayoutDashboard size={22} />,
-        },
-      ],
-    },
-    {
-      label: "Planning",
-      page: "/planning",
-      icon: <ChartGantt />,
-    },
-    {
-      label: "Work schedule",
-      page: "/work-schedule",
-      icon: <Grid3x3 />,
+      label: "Part",
+      page: "/part",
+      icon: <Boxes />,
     },
     {
       label: "Report",
       icon: <BookText />,
       children: [
         {
-          label: "Daily",
-          page: "/report/daily",
-          icon: <FileText size={22} />,
+          label: "Printed",
+          page: "/report/printed",
+          icon: <PrinterCheck size={22} />,
         },
         {
-          label: "Machine",
-          page: "/report/machine",
-          icon: <FileCog size={22} />,
-        },
-        {
-          label: "Sync SAP",
-          page: "/report/sync-sap",
-          icon: <FileTerminal size={22} />,
+          label: "Tags",
+          page: "/report/tags",
+          icon: <Tags size={22} />,
         },
       ],
-    },
-    {
-      label: "Confirm",
-      page: "/confirm",
-      icon: <PackageCheck />,
     },
   ];
 
@@ -104,39 +67,52 @@ export const SidebarApp = () => {
     <>
       <motion.div
         animate={{ width: isOpenSidebar ? 260 : 58 }}
-        className=' bg-white dark:bg-[#03052C] z-40 hidden dark:text-white h-full shadow-lg dark:shadow-lg-dark md:flex flex-col overflow-hidden border-r-[1px] dark:border-[#03052C] '>
+        className=' bg-white  z-10 hidden pb-[60px]  h-full shadow-lg  md:flex flex-col overflow-hidden border-r-[1px]'>
         <div
           className={cn(
-            "flex items-center h-min px-2 py-2 border-b-[1px] border-gray-200 dark:border-[#202020] ",
+            "flex items-center w-full h-min overflow-hidden px-2 py-2 border-b-[1px] border-gray-200  ",
             isOpenSidebar ? "justify-between" : "justify-end"
           )}>
-          <AnimatePresence>
-            {isOpenSidebar && (
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.8, type: "spring" }}>
-                <div className='gap-1 items-center hidden md:flex dark:text-[#F9F9F9]'>
-                  <CircleUserRound size={34} />
-                  <div className='flex flex-col text-sm'>
-                    <p className='font-medium text-nowrap'>
-                      {(dataUser?.first_name ?? "") === ""
-                        ? "Anonymous"
-                        : `${dataUser?.first_name} ${dataUser?.last_name}`}
-                    </p>
-                    <p className='-mt-1 text-[0.8rem] text-nowrap'>
-                      {dataUser?.position ?? "-"} [
-                      {dataUser?.role?.toLocaleUpperCase() ?? "-"}]
-                    </p>
+          <div className=' flex overflow-hidden w-full'>
+            <AnimatePresence>
+              {isOpenSidebar && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.8, type: "spring" }}>
+                  <div className='gap-1 items-center hidden md:flex  '>
+                    <img
+                      src={dataUser?.profile_picture ?? ""}
+                      alt='profile'
+                      width={"34px"}
+                      height={"34px"}
+                      className=' rounded-full border-[1px]'
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = SRC_USER;
+                      }}
+                    />
+
+                    <div className='flex flex-col text-sm'>
+                      <p className='font-medium text-nowrap'>
+                        {(dataUser?.first_name ?? "") === ""
+                          ? "Anonymous"
+                          : `${dataUser?.first_name} ${dataUser?.last_name}`}
+                      </p>
+                      <p className='-mt-1 text-[0.8rem] text-nowrap'>
+                        {dataUser?.position ?? "-"} [
+                        {dataUser?.role?.toLocaleUpperCase() ?? "-"}]
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
           <button
             onClick={toggleCollapsed}
-            className='p-2 bg-gray-100 dark:bg-[#0B1739] rounded-md'>
+            className='p-2 bg-gray-100 w-min  rounded-md'>
             <motion.div
               animate={{
                 rotate: isOpenSidebar ? 180 : 0,
@@ -160,13 +136,13 @@ export const SidebarApp = () => {
                   "cursor-pointer py-2",
                   item?.page ?? "" !== ""
                     ? location?.pathname === item?.page
-                      ? "bg-gray-200 dark:bg-[#0B1739] text-blue-700 dark:text-purple-700"
-                      : "hover:bg-gray-200 dark:hover:bg-[#0B1739] hover:text-blue-500 dark:hover:text-purple-400"
+                      ? "bg-gray-200  text-blue-700 "
+                      : "hover:bg-gray-200  hover:text-blue-500 "
                     : item?.children
                         ?.map(({ page }) => page)
                         ?.includes(location?.pathname)
-                    ? "bg-gray-100 text-blue-700 dark:text-purple-700 dark:bg-[#0B1739]"
-                    : "hover:bg-gray-100 dark:hover:bg-[#0B1739]",
+                    ? "bg-gray-100 text-blue-700  "
+                    : "hover:bg-gray-100 ",
                   item?.hidden ? " hidden" : ""
                 )}
                 onClick={() => {
@@ -191,8 +167,8 @@ export const SidebarApp = () => {
                         className={cn(
                           "text-sm flex items-center gap-2 py-1 px-2 rounded-md",
                           location?.pathname === child?.page
-                            ? "bg-gray-200 dark:bg-[#FFFFFF20] text-blue-700 dark:text-purple-700"
-                            : "hover:bg-gray-200 text-black dark:text-white dark:hover:bg-[#FFFFFF20] hover:text-blue-500 dark:hover:text-purple-400",
+                            ? "bg-gray-200   text-blue-700 "
+                            : "hover:bg-gray-200 text-black   hover:text-blue-500 ",
                           child?.hidden ? " hidden" : ""
                         )}
                         onClick={() => {
@@ -217,8 +193,8 @@ export const SidebarApp = () => {
               className={cn(
                 "text-sm flex items-center gap-2 px-4 py-2",
                 location?.pathname?.split("/")[1] === "settings"
-                  ? "bg-gray-200 dark:bg-[#FFFFFF20] text-blue-700 dark:text-purple-700"
-                  : "hover:bg-gray-200 dark:hover:bg-[#FFFFFF20] hover:text-blue-500 dark:hover:text-purple-400"
+                  ? "bg-gray-200   text-blue-700 "
+                  : "hover:bg-gray-200  hover:text-blue-500 "
               )}
               onClick={() => navigate("/settings")}>
               <Settings />
@@ -226,7 +202,7 @@ export const SidebarApp = () => {
                 <span className=' text-[1rem] font-bold'>Settings</span>
               )}
             </div>
-            <div className='px-4 py-2 border-t-[1px] border-gray-200 dark:border-[#202020] hover:bg-gray-200 dark:hover:bg-[#FFFFFF20] hover:text-red-500 cursor-pointer'>
+            <div className='px-4 py-2 border-t-[1px] border-gray-200   hover:bg-gray-200  hover:text-red-500 cursor-pointer'>
               <div
                 className='flex items-center gap-2'
                 onClick={() => setIsOpen(true)}>

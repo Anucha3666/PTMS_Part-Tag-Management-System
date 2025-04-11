@@ -1,5 +1,5 @@
 import { GET_PRINTEDS } from "@/constants";
-import { TPrinted } from "@/types";
+import { TPrintedTag } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { PrintedService } from "../printed.service";
 
@@ -9,7 +9,7 @@ export const usePrinted = () => {
   const useGetPrinteds = () => {
     return useQuery({
       queryKey: [GET_PRINTEDS],
-      queryFn: async (): Promise<TPrinted[]> => await getPrinteds(),
+      queryFn: async (): Promise<TPrintedTag[]> => await getPrinteds(),
       refetchInterval: 300000,
     });
   };

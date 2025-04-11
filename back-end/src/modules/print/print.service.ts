@@ -22,6 +22,7 @@ export class PrintService {
     @InjectModel(Tag.name) private tagModel: Model<TagDocument>,
   ) {}
 
+  // async createTag(data: Partial<Tag>): Promise<Tag & { _id?: Types.ObjectId }> {
   async createTag(data: Partial<Tag>): Promise<Tag> {
     const lastTag = await this.tagModel.findOne().sort({ tag_no: -1 }).exec();
 
@@ -75,6 +76,7 @@ export class PrintService {
       });
       const parted = new this.printedModel(dto);
       const savedParted = await parted.save();
+
       const dataPrinted = [savedParted?.toObject()].map(
         this.printedHelper.map.res,
       )[0];
@@ -83,12 +85,13 @@ export class PrintService {
         dataPrinted?.printed_id,
         req?.parts,
       );
-
       const tags = [];
 
       for (const tag of dtoCreateTags) {
         const createdTag = await this.createTag(tag);
-        tags.push(createdTag.tag_no);
+        tags.push(
+          `${createdTag.tag_no}/${(createdTag as Tag & { _id: string })?._id?.toString()}`,
+        );
       }
 
       const updatedParted = await this.printedModel.findByIdAndUpdate(

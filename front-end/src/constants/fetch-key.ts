@@ -2,8 +2,8 @@
 export const GET_ACCOUNTS = "GET_ACCOUNTS";
 
 //? ---------- PART ---------- \\
+export const GET_PART = "GET_PART";
 export const GET_PARTS = "GET_PARTS";
-export const GET_PART_DETAILS = "GET_PART_DETAILS";
 export const GET_PART_CHANGE_HISTORYS = "GET_PART_CHANGE_HISTORYS";
 
 //? ---------- PRINTED ---------- \\

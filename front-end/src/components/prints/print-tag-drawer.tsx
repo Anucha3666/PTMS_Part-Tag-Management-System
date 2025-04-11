@@ -1,5 +1,6 @@
 import { usePrint } from "@/services/hooks";
 import { useAppSelector } from "@/store/hook";
+import { TPrintedTag, TPrintedTagSummary } from "@/types";
 import { Button, Drawer, Segmented } from "antd";
 import { Printer } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
@@ -19,10 +20,22 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
   onClose,
 }) => {
   const printRef = useRef<HTMLDivElement>(null);
-  const { mutatePrint } = usePrint();
+  const { mutatePrintTags } = usePrint();
 
-  const { printTags } = useAppSelector((state) => state.print);
+  const { prints } = useAppSelector((state) => state.print);
   const [segmented, setSegmented] = useState("Part List");
+  const [printedTag, setPrintedTag] = useState<TPrintedTag>({} as TPrintedTag);
+
+  const printTags = async () => {
+    const data = await mutatePrintTags(prints);
+
+    if (data?.status === "success") {
+      setPrintedTag(
+        ((Array.isArray(data?.data) ? data?.data[0] : {}) ?? {}) as TPrintedTag
+      );
+      setTimeout(() => handlePrint(), 400);
+    }
+  };
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -44,13 +57,10 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         <div className=' w-full flex justify-end'>
           <Button
             className=' flex gap-2 px-2 font-medium'
-            onClick={() => {
-              mutatePrint(printTags);
-              handlePrint();
-            }}
+            onClick={printTags}
             disabled={
-              (printTags?.find(({ no_tags }) => (no_tags ?? 0) > 0)?.no_tags ??
-                0) === 0
+              (prints?.find(({ number_of_tags }) => (number_of_tags ?? 0) > 0)
+                ?.number_of_tags ?? 0) === 0
             }>
             <Printer size={20} />
             Print
@@ -66,12 +76,23 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         />
         <div className=' w-full h-full overflow-auto'>
           <div className='flex w-full rounded-md overflow-hidden flex-col space-y-2'>
-            {segmented === "Part List" ? <PrintTable /> : <PDFTag />}
+            {segmented === "Part List" ? (
+              <PrintTable />
+            ) : (
+              <PDFTag
+                data={
+                  {
+                    summary: prints as TPrintedTagSummary[],
+                  } as TPrintedTag
+                }
+                isView
+              />
+            )}
           </div>
         </div>
         <div className=' hidden'>
           <div ref={printRef}>
-            <PDFTag />
+            <PDFTag data={printedTag} />
           </div>
         </div>
       </div>

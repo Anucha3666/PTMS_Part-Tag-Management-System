@@ -21,7 +21,7 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
   const { mutateCreatePart, mutateUpdatePart } = usePart();
 
   const { dataUser } = useAppSelector((state) => state.utils);
-  const { parts } = useAppSelector((state) => state.parts);
+  // const { parts } = useAppSelector((state) => state.parts);
   const [formData, setFormData] = useState<Partial<TPart>>({});
 
   const handleChange = (

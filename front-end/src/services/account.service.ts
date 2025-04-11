@@ -23,7 +23,7 @@ export class AccountService extends APIService {
 
   getAccounts = async (): Promise<TAccount[]> => {
     try {
-      const { data } = await this.delete<TResponse<TAccount[]>>(`/accounts`);
+      const { data } = await this.get<TResponse<TAccount[]>>(`/accounts`);
       this?.dispatch(setAccounts(data?.data));
       return data?.data;
     } catch (error) {

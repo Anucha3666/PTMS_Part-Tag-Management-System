@@ -11,7 +11,7 @@ import { AppLayout } from "@/layouts/app";
 import {
   LoginPage,
   NotFoundPage,
-  PartManagementPage,
+  PartPage,
   SettingAccountsPage,
   SettingProfilePage,
   SettingsPage,
@@ -28,20 +28,20 @@ const AppRoutes: FC = () => {
       <Route path='/' element={<Navigate to={"/login"} />} />
       <Route path='/login' element={<LoginPage />} />
       <Route element={<AppLayout />}>
-        <Route path='/part' element={<PartManagementPage />} />
+        <Route path='/part' element={<PartPage />} />
         <Route path='/report'>
           <Route index element={<Navigate to={"/report/printed"} />} />
           <Route path='printed' element={<UnderConstructionPage />} />
-          <Route path='tag' element={<UnderConstructionPage />} />
+          <Route path='tags' element={<UnderConstructionPage />} />
         </Route>
-        <Route path='/setting'>
+        <Route path='/settings'>
           <Route index element={<SettingsPage />} />
           <Route path='profile' element={<SettingProfilePage />} />
           <Route path='account' element={<SettingAccountsPage />} />
         </Route>
       </Route>
 
-      <Route path='/tag/:tag_no' element={<ViewPartPage />} />
+      <Route path='/tag/:tag_no/:tag_id' element={<ViewPartPage />} />
       <Route path='*' element={<NotFoundPage />} />
     </Routes>
   );

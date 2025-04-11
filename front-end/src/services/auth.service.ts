@@ -31,6 +31,7 @@ export class AuthService extends APIService {
       );
 
       if (data?.status) {
+        this?.setAccessToken(data?.data[0]?.token);
         this?.setDataUser(data?.data[0]);
         if (req?.remember) setCookieCrypto("auth_remember", req);
       }

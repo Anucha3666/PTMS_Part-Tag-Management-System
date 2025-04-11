@@ -32,14 +32,14 @@ export const NotFoundPage = () => {
         )}
       </div>
       <h1 className='mt-8 text-4xl font-bold text-gray-800'>
-        404 - ไม่พบหน้าที่คุณต้องการ
+        404 - The page you requested was not found.
       </h1>
       <p className='mt-4 text-xl text-gray-600'>
-        ขออภัย เราไม่สามารถหาหน้าที่คุณกำลังมองหาได้
+        Sorry, we couldn't find the page you were looking for.
       </p>
 
-      <Button className='mt-8' onClick={() => navigator("/part-management")}>
-        กลับไปยังหน้าหลัก
+      <Button className='mt-8' onClick={() => navigator("/part")}>
+        Return to home page
       </Button>
     </div>
   );

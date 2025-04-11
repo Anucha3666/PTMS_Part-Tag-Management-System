@@ -83,7 +83,13 @@ export class ClassPrintedHelper {
 const mapRES = (part: any) => ({
   printed_id: part._id.toString() ?? '',
   tags: part?.tags ?? [],
-  summary: part.summary ?? [],
+  summary:
+    part.summary?.map((item) => ({
+      ...item,
+      picture_std: item.picture_std
+        ? `${process.env.BASE_FILE_IMAGES}/picture_std/${item.picture_std}`
+        : null,
+    })) ?? [],
   printed_at: part.printed_at,
   printed_by: part.printed_by,
 });

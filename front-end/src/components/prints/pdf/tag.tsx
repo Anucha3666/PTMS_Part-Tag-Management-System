@@ -1,42 +1,53 @@
 "use client";
 
+import { SRC_WHITE } from "@/constants";
 import { formatDate } from "@/helpers";
-import { useAppSelector } from "@/store/hook";
-import { TPrintingHistorys } from "@/types";
+import { cn } from "@/libs/cn";
+import { TPrintedTag, TPrintedTagSummary } from "@/types";
 import { FC } from "react";
 import QRCode from "react-qr-code";
 
 export type TPDFTag = {
-  data?: TPrintingHistorys;
+  data?: TPrintedTag;
+  isView?: boolean;
 };
 
-const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
-  const isView = true;
-  const { printTags, printingHistorys } = useAppSelector(
-    (state) => state.print
-  );
+type OutputData = {
+  part_id: string;
+  part_no: string;
+  part_name: string;
+  packing_std: number;
+  picture_std: string;
+  tag_no: string;
+  tag_id: string;
+}[];
 
-  const dataPrint = (data?.data?.length > 0 ? data?.data : printTags)?.flatMap(
-    (item) => Array.from({ length: item?.no_tags }, () => ({ ...item }))
-  );
+const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintedTag, isView = false }) => {
+  const transformData = (input: TPrintedTag): OutputData => {
+    const result: OutputData = [];
 
-  const sumAllNoTags = (histories: TPrintingHistorys[]): number => {
-    return histories.reduce((total, history) => {
-      const sumTags = history.data.reduce((sum, item) => sum + item.no_tags, 0);
-      return total + sumTags;
-    }, 0);
+    let tagIndex = 0;
+    const summary = (input.summary ?? []) as TPrintedTagSummary[];
+    for (const part of summary) {
+      for (let i = 0; i < part.number_of_tags; i++) {
+        result.push({
+          part_id: part.part_id,
+          part_no: part.part_no,
+          part_name: part.part_name,
+          packing_std: part.packing_std,
+          picture_std: part.picture_std,
+          tag_no: (input?.tags?.[tagIndex] ?? "")?.split("/")[0],
+          tag_id: (input?.tags?.[tagIndex] ?? "")?.split("/")[1],
+        });
+
+        tagIndex++;
+      }
+    }
+
+    return result;
   };
 
-  const num =
-    data?.data?.length > 0
-      ? sumAllNoTags(
-          printingHistorys?.slice(
-            printingHistorys?.findIndex(
-              (history) => history._id === data?._id
-            ) + 1
-          )
-        )
-      : sumAllNoTags(printingHistorys);
+  const dataPrint = transformData(data);
 
   return (
     <div
@@ -50,13 +61,13 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
             className={`w-full space-y-8 bg-white ${
               isView
                 ? "h-[297mm] w-[210mm] min-w-[210mm] p-2 shadow-2xl"
-                : "page-break h-full"
+                : "page-break max-h-[297mm] w-[210mm] min-w-[210mm] overflow-hidden"
             }`}>
             <div className='h-full w-full grid grid-cols-2 gap-2 grid-rows-2 justify-between '>
               {dataPrint?.slice(i * 4, i * 4 + 4)?.map((item, j) => (
                 <div
                   key={j}
-                  className=' w-full h-full relative px-6 border border-black pt-2'>
+                  className=' w-full h-full relative px-6 pb-4 border border-black pt-2'>
                   <div className='w-full h-[5rem] overflow-hidden flex justify-between items-center'>
                     <p className=' text-red-600 text-[3.8rem] font-bold text-logo'>
                       IPC
@@ -68,7 +79,7 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
                     </div>
 
                     <QRCode
-                      value={`https://ptms-ipc.vercel.app/${item?.part_no}`}
+                      value={`https://ptms-ipc.vercel.app/tag/${item?.tag_no}/${item?.tag_id}`}
                       className=' w-[4.6rem] h-min'
                     />
                   </div>
@@ -157,16 +168,24 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintingHistorys }) => {
                       <p className=' -mt-1'>Order No.</p>
                     </div>
 
-                    <div className=' w-full h-[16rem] overflow-hidden flex items-center justify-center border border-black mt-1'>
+                    <div
+                      className={cn(
+                        " w-full overflow-hidden flex items-center justify-center border border-black mt-1",
+                        isView ? "h-[16rem]" : "h-[16.58rem]"
+                      )}>
                       <img
-                        src={item?.picture_std}
+                        src={`${item?.picture_std}`}
                         alt={item?.part_no}
                         className=' w-full pt-9'
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = SRC_WHITE;
+                        }}
                       />
                     </div>
                   </div>
                   <div className=' absolute -bottom-[1px] text-[0.7rem] right-0 px-1 flex w-full'>
-                    <p>A{(i * 4 + j + 1 + num).toString().padStart(4, "0")}</p>
+                    <p>{item?.tag_no}</p>
                     <p className=' w-full text-end'>
                       FM-PRO-016 Rev.00 Effective Date : 19/01/13
                     </p>

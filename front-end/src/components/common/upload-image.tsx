@@ -1,6 +1,7 @@
-import { FC, useState } from "react";
+import { SRC_DAMAGED_PICTURE, SRC_NO_PICTURE } from "@/constants";
 import Upload, { UploadChangeParam } from "antd/es/upload";
-import { Eye, ImageOff, ImageUp, Loader, Trash2 } from "lucide-react";
+import { Eye, Loader, Trash2 } from "lucide-react";
+import { FC, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
 export type TUpload = {
@@ -58,7 +59,15 @@ export const UploadImage: FC<TUpload> = ({ src, setSrc, disabled }) => {
                   <div className=' w-[100%] h-[100%] absolute flex justify-center items-center z-20 text-transparent hover:text-slate-200 hover:bg-[#77777720]  '>
                     <Eye />
                   </div>
-                  <img src={src} alt='uploaded' style={{ width: "100%" }} />
+                  <img
+                    src={src}
+                    alt='uploaded'
+                    style={{ width: "100%" }}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = SRC_DAMAGED_PICTURE;
+                    }}
+                  />
                 </div>
               </div>
             </PhotoView>
@@ -66,10 +75,7 @@ export const UploadImage: FC<TUpload> = ({ src, setSrc, disabled }) => {
         </>
       ) : (
         <div className='flex flex-col gap-1 justify-center items-center'>
-          {disabled ? <ImageOff /> : <ImageUp />}
-          <p className=' text-[0.7rem] font-bold'>
-            {disabled ? "No picture" : "Upload"}
-          </p>
+          <img src={SRC_NO_PICTURE} alt='uploaded' style={{ width: "100%" }} />
         </div>
       )}
     </Upload>

@@ -33,7 +33,7 @@ export const LoginPage: FC = () => {
               style={{ fontFamily: "Oswald, sans-serif" }}>
               PTMS
             </p>
-            <p className=' -mt-2 text-[1.2rem] font-bold'>
+            <p className=' -mt-2 text-[1.18rem] font-bold'>
               Part Tag Management System
             </p>
           </div>

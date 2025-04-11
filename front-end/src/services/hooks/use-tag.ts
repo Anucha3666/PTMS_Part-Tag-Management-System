@@ -1,10 +1,18 @@
 import { GET_TAG, GET_TAGS } from "@/constants";
-import { TTag } from "@/types";
+import { useMutationWithNotification } from "@/hooks";
+import { TTag, TValidationTag } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { TagService } from "../tag.service";
 
 export const useTag = () => {
-  const { getTags, getTag } = new TagService();
+  const { getTags, getTag, validationTag } = new TagService();
+
+  const useGetTag = (tag_no: string, tag_id: string) => {
+    return useQuery({
+      queryKey: [GET_TAG, tag_no, tag_id],
+      queryFn: async (): Promise<TTag> => await getTag(tag_no, tag_id),
+    });
+  };
 
   const useGetTags = () => {
     return useQuery({
@@ -14,15 +22,15 @@ export const useTag = () => {
     });
   };
 
-  const useGetTag = (tag_id: string) => {
-    return useQuery({
-      queryKey: [GET_TAG, tag_id],
-      queryFn: async (): Promise<TTag> => await getTag(tag_id),
-    });
-  };
+  const { mutateAsync: mutateValidationTag } = useMutationWithNotification(
+    async (req: TValidationTag) => await validationTag(req),
+    "Printing...",
+    [GET_TAGS]
+  );
 
   return {
-    useGetTags,
     useGetTag,
+    useGetTags,
+    mutateValidationTag,
   };
 };

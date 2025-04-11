@@ -1,13 +1,19 @@
+import { setPrints } from "@/store/features/print.features";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { TPart, TPrintTag } from "@/types";
 import type { TableProps } from "antd";
 import { Empty, Input, Table } from "antd";
 import { Minus, Plus } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 
-type TDataTable = any & { index: number };
+type TDataTable = TPart & TPrintTag & { index: number };
 
 export const PrintTable: FC = () => {
+  const dispatch = useAppDispatch();
   const divRef = useRef<HTMLDivElement>(null);
+
+  const { prints } = useAppSelector((state) => state.print);
 
   const [height, setHeight] = useState(0);
 
@@ -68,55 +74,60 @@ export const PrintTable: FC = () => {
         <div className='flex gap-2 cursor-pointer justify-center items-center'>
           <div className=' bg-slate-100 rounded-md   p-1 flex justify-center items-center'>
             <Plus
-            // onClick={() =>
-            //   dispatch(
-            //     setPrintTags(
-            //       printTags
-            //         ?.slice(0, record?.index)
-            //         ?.concat({ ...record, no_tags: record?.no_tags + 1 })
-            //         ?.concat(printTags?.slice(record?.index + 1))
-            //     )
-            //   )
-            // }
+              onClick={() =>
+                dispatch(
+                  setPrints(
+                    prints
+                      ?.slice(0, record?.index)
+                      ?.concat({
+                        ...record,
+                        number_of_tags: record?.number_of_tags + 1,
+                      })
+                      ?.concat(prints?.slice(record?.index + 1))
+                  )
+                )
+              }
             />
             <div className=' !w-[3rem] flex '>
               <Input
-                value={record?.no_tags}
+                value={record?.number_of_tags}
                 className=' text-center'
-                // onChange={(e) =>
-                //   dispatch(
-                //     setPrintTags(
-                //       printTags
-                //         ?.slice(0, record?.index)
-                //         ?.concat({
-                //           ...record,
-                //           no_tags:
-                //             isNaN(Number(e?.target?.value)) ||
-                //             Number(e?.target?.value) <= 0
-                //               ? 0
-                //               : Number(e?.target?.value),
-                //         })
-                //         ?.concat(printTags?.slice(record?.index + 1))
-                //     )
-                //   )
-                // }
+                onChange={(e) =>
+                  dispatch(
+                    setPrints(
+                      prints
+                        ?.slice(0, record?.index)
+                        ?.concat({
+                          ...record,
+                          number_of_tags:
+                            isNaN(Number(e?.target?.value)) ||
+                            Number(e?.target?.value) <= 0
+                              ? 0
+                              : Number(e?.target?.value),
+                        })
+                        ?.concat(prints?.slice(record?.index + 1))
+                    )
+                  )
+                }
               />
             </div>
             <Minus
-            // onClick={() =>
-            //   dispatch(
-            //     setPrintTags(
-            //       printTags
-            //         ?.slice(0, record?.index)
-            //         ?.concat({
-            //           ...record,
-            //           no_tags:
-            //             record?.no_tags - 1 <= 0 ? 0 : record?.no_tags - 1,
-            //         })
-            //         ?.concat(printTags?.slice(record?.index + 1))
-            //     )
-            //   )
-            // }
+              onClick={() =>
+                dispatch(
+                  setPrints(
+                    prints
+                      ?.slice(0, record?.index)
+                      ?.concat({
+                        ...record,
+                        number_of_tags:
+                          record?.number_of_tags - 1 <= 0
+                            ? 0
+                            : record?.number_of_tags - 1,
+                      })
+                      ?.concat(prints?.slice(record?.index + 1))
+                  )
+                )
+              }
             />
           </div>
         </div>
@@ -130,13 +141,13 @@ export const PrintTable: FC = () => {
     }
   }, []);
 
+  console.log(prints);
+
   return (
     <div ref={divRef} className='w-full h-full'>
       <Table<TDataTable>
         columns={columns}
-        // dataSource={
-        //   printTags?.map((item, i) => ({ ...item, index: i })) as TDataTable[]
-        // }
+        dataSource={prints?.map((item, i) => ({ ...item, index: i }))}
         className=' w-full h-full !text-nowrap'
         components={{
           header: {
@@ -163,7 +174,7 @@ export const PrintTable: FC = () => {
             />
           ),
         }}
-        scroll={{ x: "max-content", y: `${height - 400}px` }}
+        scroll={{ x: "max-content", y: `${height - 100}px` }}
       />
     </div>
   );

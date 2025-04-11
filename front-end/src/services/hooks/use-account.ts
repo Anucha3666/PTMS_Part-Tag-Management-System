@@ -9,6 +9,8 @@ export const useAccount = () => {
     getAccounts,
     createAccount,
     changeRole,
+    approveAccount,
+    rejectAccount,
     updateAccount,
     resetPassword,
     deleteAccount,
@@ -25,6 +27,18 @@ export const useAccount = () => {
   const { mutateAsync: mutateCreateAccount } = useMutationWithNotification(
     async (req: TCreateAccount) => await createAccount(req),
     "Creating...",
+    [GET_ACCOUNTS]
+  );
+
+  const { mutateAsync: mutateApproveAccount } = useMutationWithNotification(
+    async (account_id: string) => await approveAccount(account_id),
+    "Approving...",
+    [GET_ACCOUNTS]
+  );
+
+  const { mutateAsync: mutateRejectAccount } = useMutationWithNotification(
+    async (account_id: string) => await rejectAccount(account_id),
+    "Rejecting...",
     [GET_ACCOUNTS]
   );
 
@@ -55,6 +69,8 @@ export const useAccount = () => {
   return {
     useGetAccounts,
     mutateCreateAccount,
+    mutateApproveAccount,
+    mutateRejectAccount,
     mutateChangeRole,
     mutateUpdateAccount,
     mutateResetPassword,

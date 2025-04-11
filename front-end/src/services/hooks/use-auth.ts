@@ -3,7 +3,8 @@ import { TChangePassword, TForgotPassword, TSignIn, TSignUp } from "@/types";
 import { AuthService } from "../auth.service";
 
 export const useAuth = () => {
-  const { signIn, signUp, changePassword, forgotPassword } = new AuthService();
+  const { signIn, signUp, signOut, changePassword, forgotPassword } =
+    new AuthService();
 
   const { mutateAsync: mutateSignIn } = useMutationWithNotification(
     async (req: TSignIn) => await signIn(req),
@@ -13,6 +14,11 @@ export const useAuth = () => {
   const { mutateAsync: mutateSignUp } = useMutationWithNotification(
     async (req: TSignUp) => await signUp(req),
     "Sign up..."
+  );
+
+  const { mutateAsync: mutateSignOut } = useMutationWithNotification(
+    async () => await signOut(),
+    "Sign outing..."
   );
 
   const { mutateAsync: mutateChangePassword } = useMutationWithNotification(
@@ -28,6 +34,7 @@ export const useAuth = () => {
   return {
     mutateSignIn,
     mutateSignUp,
+    mutateSignOut,
     mutateChangePassword,
     mutateForgotPassword,
   };

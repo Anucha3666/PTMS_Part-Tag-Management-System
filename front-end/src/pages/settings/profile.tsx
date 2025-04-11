@@ -1,26 +1,18 @@
-import { TAccount } from "@/types";
-import { UploadOutlined, UserOutlined } from "@ant-design/icons";
+import { SRC_USER } from "@/constants";
+import { formatDateTime } from "@/helpers";
+import { useAppSelector } from "@/store/hook";
+import { TAuth } from "@/types";
+import { UploadOutlined } from "@ant-design/icons";
 import type { UploadFile, UploadProps } from "antd";
-import {
-  Avatar,
-  Button,
-  Card,
-  Col,
-  Divider,
-  Form,
-  Input,
-  message,
-  Row,
-  Space,
-  Spin,
-  Upload,
-} from "antd";
+import { Button, Form, Input, message, Space, Upload } from "antd";
 import { useEffect, useState } from "react";
 
 export const SettingProfilePage = () => {
+  const { dataUser } = useAppSelector((state) => state.utils);
+
   const [form] = Form.useForm();
-  const [account] = useState<TAccount | null>(null);
-  const [loading] = useState(true);
+  const [account] = useState<TAuth | null>(dataUser);
+
   const [uploading, setUploading] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -95,50 +87,54 @@ export const SettingProfilePage = () => {
     fileList,
   };
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}>
-        <Spin size='large' tip='Loading profile...' />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div
+  //       style={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         height: "100vh",
+  //       }}>
+  //       <Spin size='large' tip='Loading profile...' />
+  //     </div>
+  //   );
+  // }
 
   return (
-    <div style={{ maxWidth: 1000, margin: "0 auto", padding: "24px" }}>
-      <Card>
-        <p>Profile Settings</p>
-        <Divider />
+    <div className='p-2 w-full h-full flex flex-col overflow-hidden'>
+      <div className='w-full bg-white p-2 rounded-md h-min max-h-full flex flex-col shadow-xl overflow-hidden'>
+        <div className=' w-full flex justify-between items-center h-min p-2'>
+          <p className=' text-lg font-bold'>Profile Settings</p>
+        </div>
 
-        <Row gutter={[24, 24]}>
-          <Col xs={24} md={8}>
-            <div style={{ textAlign: "center" }}>
-              <Avatar
-                size={120}
-                src={account?.profile_picture}
-                icon={<UserOutlined />}
-              />
-              <div style={{ marginTop: 16 }}>
-                <p>{`${account?.first_name} ${account?.last_name}`}</p>
-                <br />
-                <p>{account?.position}</p>
+        <div className=' w-full h-full flex gap-2'>
+          <div className=' flex w-[24rem] flex-col items-center'>
+            <img
+              src={dataUser?.profile_picture ?? ""}
+              alt='profile'
+              width={"160px"}
+              height={"160px"}
+              className=' rounded-full border-[1px] my-4'
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = SRC_USER;
+              }}
+            />
+
+            <div className='flex w-full flex-col gap-1 px-2 text-sm'>
+              <p className='text-lg font-bold w-full '>Account Information</p>
+              <div className='w-full flex justify-between'>
+                <p>Created at : </p>
+                <p>{formatDateTime(dataUser?.created_at)}</p>
               </div>
-              <div style={{ marginTop: 16 }}>
-                <p>Employee #: {account?.employee_number}</p>
-                <br />
-                <p>Username: {account?.username}</p>
-                <br />
-                <p>Role: {account?.role}</p>
+              <div className='w-full flex justify-between'>
+                <p>Last updated : </p>
+                <p>{formatDateTime(dataUser?.updated_at)}</p>
               </div>
             </div>
-          </Col>
-
-          <Col xs={24} md={16}>
+          </div>
+          <div className=' w-full'>
             <Form
               form={form}
               layout='vertical'
@@ -148,43 +144,40 @@ export const SettingProfilePage = () => {
                 last_name: account?.last_name,
                 position: account?.position,
               }}>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Form.Item
-                    name='first_name'
-                    label='First Name'
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your first name",
-                      },
-                    ]}>
-                    <Input />
-                  </Form.Item>
-                </Col>
-                <Col span={12}>
-                  <Form.Item
-                    name='last_name'
-                    label='Last Name'
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your last name",
-                      },
-                    ]}>
-                    <Input />
-                  </Form.Item>
-                </Col>
-              </Row>
+              <div className='w-full grid-cols-3 grid gap-2'>
+                <Form.Item
+                  name='first_name'
+                  label='First Name'
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter your first name",
+                    },
+                  ]}>
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                name='position'
-                label='Position'
-                rules={[
-                  { required: true, message: "Please enter your position" },
-                ]}>
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  name='last_name'
+                  label='Last Name'
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter your last name",
+                    },
+                  ]}>
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name='position'
+                  label='Position'
+                  rules={[
+                    { required: true, message: "Please enter your position" },
+                  ]}>
+                  <Input />
+                </Form.Item>
+              </div>
 
               <Form.Item name='profile_picture' label='Profile Picture'>
                 <Upload {...uploadProps} listType='picture'>
@@ -201,43 +194,9 @@ export const SettingProfilePage = () => {
                 </Space>
               </Form.Item>
             </Form>
-
-            <Divider />
-
-            <div>
-              <p>Account Information</p>
-              <Row gutter={[16, 8]}>
-                <Col span={12}>
-                  <p>Created:</p>
-                </Col>
-                <Col span={12}>
-                  <p>
-                    {new Date(account?.created_at || "").toLocaleDateString()}
-                  </p>
-                </Col>
-
-                <Col span={12}>
-                  <p>Last Updated:</p>
-                </Col>
-                <Col span={12}>
-                  <p>
-                    {new Date(account?.updated_at || "").toLocaleDateString()}
-                  </p>
-                </Col>
-
-                <Col span={12}>
-                  <p>Account Status:</p>
-                </Col>
-                <Col span={12}>
-                  <p>
-                    {account?.is_approved ? "Approved" : "Pending Approval"}
-                  </p>
-                </Col>
-              </Row>
-            </div>
-          </Col>
-        </Row>
-      </Card>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

@@ -17,7 +17,8 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
       title={"View Part"}
       open={open?.order === "view"}
       onCancel={onClose}
-      width={"44rem"}>
+      width={"44rem"}
+      footer={<></>}>
       <div className='grid gap-2 grid-cols-2 py-4 -mt-6 w-full'>
         <div>
           <label className='text-right text-[0.8rem]'>Part No :</label>
@@ -55,7 +56,7 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
           <Input
             id='creator'
             name='creator'
-            value={open.creator ?? "-"}
+            value={open.created_by ?? "-"}
             readOnly
           />
         </div>
@@ -64,7 +65,7 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
           <Input
             id='create_at'
             name='create_at'
-            value={formatDateTime(open.create_at) ?? "-"}
+            value={formatDateTime(open.created_at) ?? "-"}
             readOnly
           />
         </div>
@@ -73,7 +74,7 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
           <Input
             id='update_at'
             name='update_at'
-            value={formatDateTime(open.update_at) ?? "-"}
+            value={formatDateTime(open.created_at) ?? "-"}
             readOnly
           />
         </div>
