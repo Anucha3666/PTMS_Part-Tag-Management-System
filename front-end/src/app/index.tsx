@@ -13,10 +13,10 @@ import {
   NotFoundPage,
   PartPage,
   ReportPrintedPage,
+  ReportTagPage,
   SettingAccountsPage,
   SettingProfilePage,
   SettingsPage,
-  UnderConstructionPage,
   ViewPartPage,
 } from "@/pages";
 import { AppProvider } from "../providers";
@@ -33,7 +33,7 @@ const AppRoutes: FC = () => {
         <Route path='/report'>
           <Route index element={<Navigate to={"/report/printed"} />} />
           <Route path='printed' element={<ReportPrintedPage />} />
-          <Route path='tags' element={<UnderConstructionPage />} />
+          <Route path='tags' element={<ReportTagPage />} />
         </Route>
         <Route path='/settings'>
           <Route index element={<SettingsPage />} />

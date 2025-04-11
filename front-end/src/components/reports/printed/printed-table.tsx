@@ -6,6 +6,7 @@ import { TPrintedTag } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
 import { CirclePlus, Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
+import { PhotoProvider, PhotoView } from "react-photo-view";
 import { ViewPDFPrintedModal } from "./view-pdf-printed-modal";
 
 export type ReportPrintedtTableProps = {
@@ -36,27 +37,34 @@ export const ReportPrintedTable: FC<ReportPrintedtTableProps> = ({
       dataIndex: "summary",
       key: "summary",
       render: (summary: TPrintedTag["summary"]) => (
-        <>
+        <div className=' flex flex-col gap-2'>
           {summary?.map(
             ({ part_name, picture_std, number_of_tags, part_no }, index) => (
               <div
                 key={index}
                 className=' flex gap-2 items-center font-medium justify-between'>
                 <div className='flex gap-2 items-center font-medium'>
-                  <img
-                    src={picture_std ?? ""}
-                    alt='profile'
-                    width={"40px"}
-                    height={"40px"}
-                    className=' rounded-sm border-[1px] my-4 shadow-md'
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src =
-                        picture_std ?? "" === ""
-                          ? SRC_NO_PICTURE
-                          : SRC_DAMAGED_PICTURE;
-                    }}
-                  />
+                  <div className='flex w-[12rem]'>
+                    <PhotoProvider>
+                      <PhotoView src={picture_std}>
+                        <div className='relative w-full h-[4rem] bg-slate-50 rounded-md'>
+                          <img
+                            src={picture_std ?? ""}
+                            alt={`picture_std`}
+                            className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src =
+                                (picture_std ?? "") === ""
+                                  ? SRC_NO_PICTURE
+                                  : SRC_DAMAGED_PICTURE;
+                            }}
+                          />
+                        </div>
+                      </PhotoView>
+                    </PhotoProvider>
+                  </div>
+
                   <p>{part_no}</p>
                   <div className='w-[0.2rem] h-[1.2rem] bg-gray-400 rounded-full' />
                   <p>{part_name}</p>
@@ -65,7 +73,7 @@ export const ReportPrintedTable: FC<ReportPrintedtTableProps> = ({
               </div>
             )
           )}
-        </>
+        </div>
       ),
     },
     {
