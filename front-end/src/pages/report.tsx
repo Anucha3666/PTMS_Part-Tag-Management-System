@@ -1,5 +1,5 @@
 import { PrintTagDrawer } from "@/components/prints";
-import { PrintingHistorysTable } from "@/components/report";
+import { PrintingHistorysTable } from "@/components/reports";
 import { Input } from "antd";
 import { Search } from "lucide-react";
 import { useState } from "react";

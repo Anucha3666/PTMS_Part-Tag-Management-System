@@ -10,6 +10,7 @@ import QRCode from "react-qr-code";
 export type TPDFTag = {
   data?: TPrintedTag;
   isView?: boolean;
+  isViewPDF?: boolean;
 };
 
 type OutputData = {
@@ -22,7 +23,11 @@ type OutputData = {
   tag_id: string;
 }[];
 
-const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintedTag, isView = false }) => {
+const PDFTag: FC<TPDFTag> = ({
+  data = {} as TPrintedTag,
+  isView = false,
+  isViewPDF = false,
+}) => {
   const transformData = (input: TPrintedTag): OutputData => {
     const result: OutputData = [];
 
@@ -60,8 +65,8 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintedTag, isView = false }) => {
             key={i}
             className={`w-full space-y-8 bg-white ${
               isView
-                ? "h-[297mm] w-[210mm] min-w-[210mm] p-2 shadow-2xl"
-                : "page-break max-h-[297mm] w-[210mm] min-w-[210mm] overflow-hidden"
+                ? "!h-[297mm] !max-h-[297mm] !w-[210mm] !min-w-[210mm] !max-w-[210mm] p-2 shadow-2xl"
+                : "page-break !h-[297mm] !max-h-[297mm] !w-[210mm] !min-w-[210mm] !max-w-[210mm] overflow-hidden"
             }`}>
             <div className='h-full w-full grid grid-cols-2 gap-2 grid-rows-2 justify-between '>
               {dataPrint?.slice(i * 4, i * 4 + 4)?.map((item, j) => (
@@ -80,7 +85,7 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintedTag, isView = false }) => {
 
                     <QRCode
                       value={`https://ptms-ipc.vercel.app/tag/${item?.tag_no}/${item?.tag_id}`}
-                      className=' w-[4.6rem] h-min'
+                      className=' !w-[4.6rem] !h-[4.6rem]'
                     />
                   </div>
                   <div className='w-full h-full !text-[0.7rem]'>
@@ -171,7 +176,11 @@ const PDFTag: FC<TPDFTag> = ({ data = {} as TPrintedTag, isView = false }) => {
                     <div
                       className={cn(
                         " w-full overflow-hidden flex items-center justify-center border border-black mt-1",
-                        isView ? "h-[16rem]" : "h-[16.58rem]"
+                        isViewPDF
+                          ? "!h-[15.7rem] !max-h-[15.7rem]"
+                          : isView
+                          ? "!h-[16rem] !max-h-[16rem]"
+                          : "!h-[16.58rem]"
                       )}>
                       <img
                         src={`${item?.picture_std}`}

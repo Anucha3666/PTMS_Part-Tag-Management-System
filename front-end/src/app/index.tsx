@@ -12,6 +12,7 @@ import {
   LoginPage,
   NotFoundPage,
   PartPage,
+  ReportPrintedPage,
   SettingAccountsPage,
   SettingProfilePage,
   SettingsPage,
@@ -31,7 +32,7 @@ const AppRoutes: FC = () => {
         <Route path='/part' element={<PartPage />} />
         <Route path='/report'>
           <Route index element={<Navigate to={"/report/printed"} />} />
-          <Route path='printed' element={<UnderConstructionPage />} />
+          <Route path='printed' element={<ReportPrintedPage />} />
           <Route path='tags' element={<UnderConstructionPage />} />
         </Route>
         <Route path='/settings'>

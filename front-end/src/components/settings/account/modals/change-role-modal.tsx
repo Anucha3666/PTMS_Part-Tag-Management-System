@@ -10,7 +10,7 @@ import { useAccount } from "@/services/hooks";
 import { TAccount, TRole } from "@/types";
 import { screenSize } from "@/utils";
 import { Button, Modal } from "antd";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 export type TChangeRoleModal = {
   data: TAccount;
@@ -21,6 +21,8 @@ export const ChangeRoleModal: FC<TChangeRoleModal> = ({ data, onCancel }) => {
   const { mutateChangeRole } = useAccount();
 
   const [role, setRole] = useState<TRole>(data?.role);
+
+  useEffect(() => setRole(data?.role), [data?.role]);
 
   return (
     <Modal

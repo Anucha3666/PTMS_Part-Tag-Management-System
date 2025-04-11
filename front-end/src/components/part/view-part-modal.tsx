@@ -1,4 +1,6 @@
+import { SRC_DAMAGED_PICTURE, SRC_USER } from "@/constants";
 import { formatDateTime } from "@/helpers";
+import { useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import { Input, Modal } from "antd";
 import { FC, Fragment } from "react";
@@ -12,6 +14,11 @@ export type TViewPartModal = {
 };
 
 export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
+  const { accounts } = useAppSelector((state) => state?.account);
+
+  const Created = accounts?.find(
+    ({ account_id }) => account_id === open?.created_by
+  );
   return (
     <Modal
       title={"View Part"}
@@ -53,12 +60,24 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
         </div>
         <div>
           <label className='text-right text-[0.8rem]'>Creator :</label>
-          <Input
-            id='creator'
-            name='creator'
-            value={open.created_by ?? "-"}
-            readOnly
-          />
+          <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
+            <img
+              src={Created?.profile_picture ?? ""}
+              alt='profile'
+              width={"30px"}
+              height={"30px"}
+              className=' rounded-full border-[1px] my-4 shadow-md'
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src =
+                  Created?.profile_picture ?? "" === ""
+                    ? SRC_USER
+                    : SRC_DAMAGED_PICTURE;
+              }}
+            />
+            <p>{Created?.first_name}</p>
+            <p>{Created?.last_name}</p>
+          </div>
         </div>
         <div>
           <label className='text-right text-[0.8rem]'>Create At :</label>
