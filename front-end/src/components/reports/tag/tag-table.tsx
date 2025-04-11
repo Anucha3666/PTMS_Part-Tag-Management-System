@@ -104,9 +104,9 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
             <img
               src={account?.profile_picture ?? ""}
               alt='profile'
-              width={"40px"}
-              height={"40px"}
-              className=' rounded-full border-[1px] my-4 shadow-md'
+              width='40'
+              height='40'
+              className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src =
@@ -148,9 +148,9 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
                 <img
                   src={account?.profile_picture ?? ""}
                   alt='profile'
-                  width={"40px"}
-                  height={"40px"}
-                  className=' rounded-full border-[1px] my-4 shadow-md'
+                  width='40'
+                  height='40'
+                  className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =

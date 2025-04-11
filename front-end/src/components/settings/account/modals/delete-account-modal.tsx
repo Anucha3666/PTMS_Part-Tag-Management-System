@@ -1,5 +1,5 @@
 import { TagRole } from "@/components/common";
-import { SRC_USER } from "@/constants";
+import { SRC_DAMAGED_PICTURE, SRC_USER } from "@/constants";
 import { useAccount } from "@/services/hooks";
 import { TAccount } from "@/types";
 import { screenSize } from "@/utils";
@@ -56,12 +56,15 @@ export const DeleteAccountModal: FC<TDeleteAccountModal> = ({
         <img
           src={data?.profile_picture ?? ""}
           alt='profile'
-          width={"80px"}
-          height={"80px"}
-          className=' rounded-full border-[1px] my-4 shadow-md'
+          width='40'
+          height='40'
+          className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = SRC_USER;
+            e.currentTarget.src =
+              data?.profile_picture ?? "" === ""
+                ? SRC_USER
+                : SRC_DAMAGED_PICTURE;
           }}
         />
 

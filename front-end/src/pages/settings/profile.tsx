@@ -1,5 +1,5 @@
 import { EditProfileModal } from "@/components/settings/profile";
-import { SRC_USER } from "@/constants";
+import { SRC_DAMAGED_PICTURE, SRC_USER } from "@/constants";
 import { formatDateTime, useDisclosure } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { Tag } from "antd";
@@ -52,12 +52,15 @@ export const SettingProfilePage = () => {
           <img
             src={dataUser?.profile_picture ?? ""}
             alt='profile'
-            width={"160px"}
-            height={"160px"}
-            className=' rounded-full border-[1px] my-4 shadow-md'
+            width='160'
+            height='160'
+            className='!max-w-[160px] !max-h-[160px] w-[160px] h-[160px] object-cover rounded-full border-[1px] my-4 shadow-md'
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = SRC_USER;
+              e.currentTarget.src =
+                dataUser?.profile_picture ?? "" === ""
+                  ? SRC_USER
+                  : SRC_DAMAGED_PICTURE;
             }}
           />
 

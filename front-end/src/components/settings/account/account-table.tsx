@@ -44,9 +44,9 @@ export const AccountTable: FC<TAccountTableProps> = ({ search }) => {
             <img
               src={profile_picture ?? ""}
               alt='profile'
-              width={"80px"}
-              height={"80px"}
-              className=' rounded-full border-[1px] my-4 shadow-md'
+              width='80'
+              height='80'
+              className='!max-w-[80px] !max-h-[80px] w-[80px] h-[80px] object-cover rounded-full border-[1px] my-4 shadow-md'
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = SRC_USER;

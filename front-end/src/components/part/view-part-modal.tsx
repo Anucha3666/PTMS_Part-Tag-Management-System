@@ -64,9 +64,9 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
             <img
               src={Created?.profile_picture ?? ""}
               alt='profile'
-              width={"30px"}
-              height={"30px"}
-              className=' rounded-full border-[1px] my-4 shadow-md'
+              width='30'
+              height='30'
+              className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src =

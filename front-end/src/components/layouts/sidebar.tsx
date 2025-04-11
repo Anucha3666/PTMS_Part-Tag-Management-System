@@ -85,9 +85,9 @@ export const SidebarApp = () => {
                     <img
                       src={dataUser?.profile_picture ?? ""}
                       alt='profile'
-                      width={"34px"}
-                      height={"34px"}
-                      className=' rounded-full border-[1px]'
+                      width='34'
+                      height='34'
+                      className='!max-w-[34px] !max-h-[34px] w-[34px] h-[34px] object-cover rounded-full border-[1px] my-4 shadow-md'
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = SRC_USER;
