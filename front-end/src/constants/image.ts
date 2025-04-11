@@ -6,3 +6,5 @@ export const SRC_WHITE =
   "https://sncservices.sncformer.com/data/microservices/v1/file-storage/ptms/images/077ed027-4277-4f8c-9471-48d3d69bfe73-1744298727176.png";
 export const SRC_USER =
   "https://sncservices.sncformer.com/data/microservices/v1/file-storage/ptms/images/d9b93bf7-0bee-4c4b-ac17-7165ee45ef5e-1744300872300.png";
+export const SRC_UPLODE_PICTURE =
+  "https://sncservices.sncformer.com/data/microservices/v1/file-storage/ptms/images/32b869be-c5d2-42f9-8a99-30aa6b3249ea-1744337871747.png";

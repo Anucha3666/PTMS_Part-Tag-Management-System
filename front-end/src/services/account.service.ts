@@ -199,7 +199,11 @@ export class AccountService extends APIService {
       formData.append("position", req?.position ?? "");
       formData.append("profile_picture", req.profile_picture ?? "");
 
-      const { data } = await this.put<TResponse<[]>>(`/account`, req);
+      const { data } = await this.put<TResponse<[]>>(`/account`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       return data;
     } catch (error) {

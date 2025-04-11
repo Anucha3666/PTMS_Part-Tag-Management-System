@@ -81,7 +81,7 @@ export const SidebarApp = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.8, type: "spring" }}>
-                  <div className='gap-1 items-center hidden md:flex  '>
+                  <div className='gap-1 w-full items-center hidden md:flex  '>
                     <img
                       src={dataUser?.profile_picture ?? ""}
                       alt='profile'
@@ -94,16 +94,17 @@ export const SidebarApp = () => {
                       }}
                     />
 
-                    <div className='flex flex-col text-sm'>
-                      <p className='font-medium text-nowrap'>
+                    <div className='flex w-full flex-col text-sm'>
+                      <p className='font-medium whitespace-nowrap text-ellipsis overflow-hidden w-[120px]'>
                         {(dataUser?.first_name ?? "") === ""
                           ? "Anonymous"
                           : `${dataUser?.first_name} ${dataUser?.last_name}`}
                       </p>
-                      <p className='-mt-1 text-[0.8rem] text-nowrap'>
-                        {dataUser?.position ?? "-"} [
-                        {dataUser?.role?.toLocaleUpperCase() ?? "-"}]
-                      </p>
+                      <div className='flex w-full gap-1 text-[0.8rem]'>
+                        <p className='font-medium whitespace-nowrap text-ellipsis overflow-hidden w-[120px]'>
+                          {dataUser?.position ?? "-"}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

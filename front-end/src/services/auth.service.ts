@@ -114,7 +114,7 @@ export class AuthService extends APIService {
 
   forgotPassword = async (req: TForgotPassword): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.post<TResponse<[]>>(
+      const { data } = await this.patch<TResponse<[]>>(
         `/auth/forgot-password`,
         req
       );
@@ -143,7 +143,7 @@ export class AuthService extends APIService {
 
   changePassword = async (req: TChangePassword): Promise<TResponse<[]>> => {
     try {
-      const { data } = await this.put<TResponse<[]>>(
+      const { data } = await this.patch<TResponse<[]>>(
         "/auth/change-password",
         req
       );

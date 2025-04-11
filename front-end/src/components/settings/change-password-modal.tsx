@@ -32,14 +32,7 @@ export const ChangePasswordModal: FC<TChangePasswordModalProps> = ({
       width={"18rem"}
       okText='Confirm'
       onOk={handleOk}
-      onCancel={handleCancel}
-      okButtonProps={{ className: "dark:bg-[#0B1739]" }}
-      cancelButtonProps={{ className: "dark:bg-[#0B1739]" }}
-      classNames={{
-        header: "dark:bg-[#0B1739]",
-        body: "dark:bg-[#0B1739]",
-        content: "dark:bg-[#0B1739]",
-      }}>
+      onCancel={handleCancel}>
       <Form
         form={form}
         layout='vertical'
@@ -48,14 +41,11 @@ export const ChangePasswordModal: FC<TChangePasswordModalProps> = ({
         className=' flex flex-col gap-0'>
         <Form.Item
           label='Old Password'
-          name='oldPassword'
+          name='password'
           rules={[
             { required: true, message: "Please input your old password!" },
           ]}>
-          <Input.Password
-            className='dark:bg-[#081028]'
-            placeholder='Please input your old password!'
-          />
+          <Input.Password placeholder='Please input your old password!' />
         </Form.Item>
 
         <Form.Item
@@ -68,10 +58,7 @@ export const ChangePasswordModal: FC<TChangePasswordModalProps> = ({
               message: "Password must be at least 6 characters.",
             },
           ]}>
-          <Input.Password
-            className='dark:bg-[#081028]'
-            placeholder='Please input your new password!'
-          />
+          <Input.Password placeholder='Please input your new password!' />
         </Form.Item>
 
         <Form.Item
@@ -91,10 +78,7 @@ export const ChangePasswordModal: FC<TChangePasswordModalProps> = ({
               },
             }),
           ]}>
-          <Input.Password
-            className='dark:bg-[#081028]'
-            placeholder='Please confirm your new password!'
-          />
+          <Input.Password placeholder='Please confirm your new password!' />
         </Form.Item>
       </Form>
     </Modal>

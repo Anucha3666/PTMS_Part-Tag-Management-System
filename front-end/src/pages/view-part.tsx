@@ -26,6 +26,8 @@ export const ViewPartPage: FC = () => {
     );
   }
 
+  console.log(data);
+
   return (
     <div
       className={`w-screen h-screen flex justify-center md:items-center overflow-auto py-4 bg-slate-200`}>

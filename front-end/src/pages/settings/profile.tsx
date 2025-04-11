@@ -1,91 +1,14 @@
+import { EditProfileModal } from "@/components/settings/profile";
 import { SRC_USER } from "@/constants";
-import { formatDateTime } from "@/helpers";
+import { formatDateTime, useDisclosure } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
-import { TAuth } from "@/types";
-import { UploadOutlined } from "@ant-design/icons";
-import type { UploadFile, UploadProps } from "antd";
-import { Button, Form, Input, message, Space, Upload } from "antd";
-import { useEffect, useState } from "react";
+import { Tag } from "antd";
+import { Pencil } from "lucide-react";
 
 export const SettingProfilePage = () => {
+  const { isOpen: open, onOpen, onClose } = useDisclosure();
+
   const { dataUser } = useAppSelector((state) => state.utils);
-
-  const [form] = Form.useForm();
-  const [account] = useState<TAuth | null>(dataUser);
-
-  const [uploading, setUploading] = useState(false);
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-
-  useEffect(() => {
-    // const fetchAccount = async () => {
-    //   try {
-    //     setTimeout(() => {
-    //       setAccount(mockAccount);
-    //       form.setFieldsValue({
-    //         first_name: mockAccount.first_name,
-    //         last_name: mockAccount.last_name,
-    //         position: mockAccount.position,
-    //       });
-    //       setLoading(false);
-    //     }, 1000);
-    //   } catch (error) {
-    //     message.error("Failed to fetch account data");
-    //     setLoading(false);
-    //   }
-    // };
-    // fetchAccount();
-  }, [form]);
-
-  //   const handleSubmit = async (values: TUpdateAccount) => {
-  const handleSubmit = async () => {
-    try {
-      setUploading(true);
-
-      //   const updateData: TUpdateAccount = {
-      //     account_id: account?.account_id || "",
-      //     first_name: values.first_name,
-      //     last_name: values.last_name,
-      //     position: values.position,
-      //     profile_picture:
-      //       fileList.length > 0 ? fileList[0].url : account?.profile_picture,
-      //   };
-
-      //   setTimeout(() => {
-      //     setAccount({
-      //       ...account!,
-      //       ...updateData,
-      //       updated_at: new Date().toISOString(),
-      //     });
-      //     message.success("Profile updated successfully");
-      //     setUploading(false);
-      //   }, 1500);
-    } catch {
-      message.error("Failed to update profile");
-      setUploading(false);
-    }
-  };
-
-  const uploadProps: UploadProps = {
-    onRemove: () => {
-      setFileList([]);
-    },
-    beforeUpload: (file) => {
-      // Simulate file upload
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const newFile: UploadFile = {
-          uid: file.uid,
-          name: file.name,
-          status: "done",
-          url: reader.result as string,
-        };
-        setFileList([newFile]);
-      };
-      return false;
-    },
-    fileList,
-  };
 
   // if (loading) {
   //   return (
@@ -101,102 +24,96 @@ export const SettingProfilePage = () => {
   //   );
   // }
 
+  const parseJwt = (token: string) => {
+    try {
+      return JSON.parse(atob(token.split(".")[1]));
+    } catch {
+      return null;
+    }
+  };
+
+  const tokenData = parseJwt(dataUser.token);
+  const tokenExpiry = tokenData?.exp ? new Date(tokenData.exp * 1000) : null;
+
   return (
     <div className='p-2 w-full h-full flex flex-col overflow-hidden'>
       <div className='w-full bg-white p-2 rounded-md h-min max-h-full flex flex-col shadow-xl overflow-hidden'>
         <div className=' w-full flex justify-between items-center h-min p-2'>
           <p className=' text-lg font-bold'>Profile Settings</p>
+          <Pencil
+            className=' text-gray-400 cursor-pointer 
+          hover:text-orange-400 hover:rotate-12 hover:scale-105 
+          active:text-orange-300 active:rotate-0 active:scale-95'
+            onClick={onOpen}
+          />
         </div>
 
-        <div className=' w-full h-full flex gap-2'>
-          <div className=' flex w-[24rem] flex-col items-center'>
-            <img
-              src={dataUser?.profile_picture ?? ""}
-              alt='profile'
-              width={"160px"}
-              height={"160px"}
-              className=' rounded-full border-[1px] my-4'
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = SRC_USER;
-              }}
-            />
+        <div className='flex gap-6 justify-center items-center w-full'>
+          <img
+            src={dataUser?.profile_picture ?? ""}
+            alt='profile'
+            width={"160px"}
+            height={"160px"}
+            className=' rounded-full border-[1px] my-4 shadow-md'
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = SRC_USER;
+            }}
+          />
 
-            <div className='flex w-full flex-col gap-1 px-2 text-sm'>
-              <p className='text-lg font-bold w-full '>Account Information</p>
-              <div className='w-full flex justify-between'>
-                <p>Created at : </p>
-                <p>{formatDateTime(dataUser?.created_at)}</p>
-              </div>
-              <div className='w-full flex justify-between'>
-                <p>Last updated : </p>
-                <p>{formatDateTime(dataUser?.updated_at)}</p>
-              </div>
+          <div className=' font-bold flex flex-col  text-2xl text-slate-400 h-ful'>
+            <div className=' flex gap-4 items-center justify-center text-black'>
+              <p className='text-4xl'>
+                {dataUser?.first_name} {dataUser?.last_name}
+              </p>
+              <Tag color='red'>{dataUser?.role?.toLocaleUpperCase()}</Tag>
             </div>
+            <p>{dataUser?.position}</p>
+            <p>@{dataUser?.username}</p>
           </div>
-          <div className=' w-full'>
-            <Form
-              form={form}
-              layout='vertical'
-              onFinish={handleSubmit}
-              initialValues={{
-                first_name: account?.first_name,
-                last_name: account?.last_name,
-                position: account?.position,
-              }}>
-              <div className='w-full grid-cols-3 grid gap-2'>
-                <Form.Item
-                  name='first_name'
-                  label='First Name'
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter your first name",
-                    },
-                  ]}>
-                  <Input />
-                </Form.Item>
+        </div>
 
-                <Form.Item
-                  name='last_name'
-                  label='Last Name'
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter your last name",
-                    },
-                  ]}>
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  name='position'
-                  label='Position'
-                  rules={[
-                    { required: true, message: "Please enter your position" },
-                  ]}>
-                  <Input />
-                </Form.Item>
-              </div>
-
-              <Form.Item name='profile_picture' label='Profile Picture'>
-                <Upload {...uploadProps} listType='picture'>
-                  <Button icon={<UploadOutlined />}>Select New Image</Button>
-                </Upload>
-              </Form.Item>
-
-              <Form.Item>
-                <Space>
-                  <Button type='primary' htmlType='submit' loading={uploading}>
-                    Save Changes
-                  </Button>
-                  <Button onClick={() => form.resetFields()}>Reset</Button>
-                </Space>
-              </Form.Item>
-            </Form>
-          </div>
+        <div className='grid grid-cols-2 w-full gap-2'>
+          {[
+            {
+              title: "Account Informatio",
+              data: [
+                { label: "Employee Number", value: dataUser?.employee_number },
+                { label: "Account ID", value: dataUser?.account_id },
+                { label: "Username", value: dataUser?.username },
+              ],
+            },
+            {
+              title: "Session Information",
+              data: [
+                {
+                  label: "Account Created",
+                  value: formatDateTime(String(dataUser?.created_at)),
+                },
+                {
+                  label: "Last Updated",
+                  value: formatDateTime(String(dataUser?.updated_at)),
+                },
+                {
+                  label: "Session Expires",
+                  value: formatDateTime(String(tokenExpiry)) ?? "",
+                },
+              ],
+            },
+          ]?.map(({ title, data }) => (
+            <div className='w-full border-[1px] flex flex-col gap-2 rounded-md shadow-sm p-2 px-4'>
+              <p className=' text-lg font-bold'>{title}</p>
+              {data?.map(({ label, value }) => (
+                <div>
+                  <p className=' text-sm text-slate-400'>{label} :</p>
+                  <p className=' text-md font-medium'>{value}</p>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
+      {open && <EditProfileModal {...{ open, onClose }} />}
     </div>
   );
 };
