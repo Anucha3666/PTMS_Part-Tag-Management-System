@@ -1,6 +1,6 @@
 "use client";
 
-import { SRC_WHITE } from "@/constants";
+import { SRC_WHITE, VITE_BASE_QR_CODE } from "@/constants";
 import { formatDate } from "@/helpers";
 import { cn } from "@/libs/cn";
 import { TPrintedTag, TPrintedTagSummary } from "@/types";
@@ -84,7 +84,7 @@ const PDFTag: FC<TPDFTag> = ({
                     </div>
 
                     <QRCode
-                      value={`https://ptms-ipc.vercel.app/tag/${item?.tag_no}/${item?.tag_id}`}
+                      value={`${VITE_BASE_QR_CODE}/tag/${item?.tag_no}/${item?.tag_id}`}
                       className=' !w-[4.6rem] !h-[4.6rem]'
                     />
                   </div>

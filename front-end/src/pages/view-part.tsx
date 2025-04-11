@@ -1,4 +1,5 @@
 import { UploadImage } from "@/components/common/upload-image";
+import { VITE_BASE_QR_CODE } from "@/constants";
 import { formatDate, formatDateTime } from "@/helpers";
 import { useTag } from "@/services/hooks";
 import { Input, Spin } from "antd";
@@ -45,7 +46,7 @@ export const ViewPartPage: FC = () => {
               </div>
 
               <QRCode
-                value={`https://ptms-ipc.vercel.app/tag/${data?.tag_no}/${data?.tag_id}`}
+                value={`${VITE_BASE_QR_CODE}/tag/${data?.tag_no}/${data?.tag_id}`}
                 className=' w-[4.6rem] h-min'
               />
             </div>

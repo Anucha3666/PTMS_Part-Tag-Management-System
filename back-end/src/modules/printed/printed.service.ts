@@ -33,9 +33,8 @@ export class PrintedService {
       }
 
       const printeds = await this.printedModel
-        .find({ is_log: { $ne: true } })
-        .select('-is_log')
-        .sort({ created_at: -1 })
+        .find()
+        .sort({ printed_at: -1 })
         .lean()
         .exec();
       await this?.printedHelper?.class?.isNoPrintedFound(!printeds);

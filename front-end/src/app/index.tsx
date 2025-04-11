@@ -49,7 +49,7 @@ const AppRoutes: FC = () => {
 };
 
 export const App: FC = () => (
-  <BrowserRouter>
+  <BrowserRouter basename='ptms'>
     <AppProvider>
       <AppRoutes />
     </AppProvider>

@@ -4,7 +4,7 @@ import { formatDateTime } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TPrintedTag } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
-import { CirclePlus, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { ViewPDFPrintedModal } from "./view-pdf-printed-modal";
@@ -184,18 +184,10 @@ export const ReportPrintedTable: FC<ReportPrintedtTableProps> = ({
               />
             ),
           }}
-          footer={() => (
-            <div className='w-full flex justify-end bg-white border-b-[1px] p-4'>
-              <CirclePlus
-                className=' text-gray-400 hover:text-green-600 cursor-pointer'
-                // onClick={onOpen}
-              />
-            </div>
-          )}
           scroll={
             search === undefined
               ? { x: "max-content" }
-              : { x: "max-content", y: `${height - 235}px` }
+              : { x: "max-content", y: `${height - 175}px` }
           }
         />
       </div>

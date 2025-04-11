@@ -28,7 +28,7 @@ export const ViewPDFPrintedModal: FC<TViewPDFPrintedModal> = ({
           ? "95%"
           : "54.6rem"
       }>
-      <div className='w-full !h-[80vh] overflow-auto bg-[#525659]'>
+      <div className='w-full !h-[70svh] overflow-auto bg-[#525659]'>
         <div className='flex w-full rounded-md overflow-hidden flex-col space-y-2'>
           <PDFTag data={data} isView isViewPDF />
         </div>

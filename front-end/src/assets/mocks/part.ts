@@ -6,17 +6,21 @@ const generateMockPart = (): TPart => ({
   part_no: faker.string.alphanumeric(10).toUpperCase(),
   part_name: faker.commerce.productName(),
   packing_std: faker.number.int({ min: 1, max: 100 }),
-  picture_std: faker.image.urlLoremFlickr({ category: "industrial" }),
-  q_point: faker.lorem.sentence(),
-  packing: faker.commerce.productMaterial(),
+  picture_std: faker.datatype.boolean()
+    ? faker.image.urlLoremFlickr({ category: "industrial" })
+    : null,
+  q_point: faker.datatype.boolean() ? faker.lorem.sentence() : null,
+  packing: faker.datatype.boolean() ? faker.commerce.productMaterial() : null,
   more_pictures: [
     faker.image.urlLoremFlickr({ category: "industrial" }),
     faker.image.urlLoremFlickr({ category: "industrial" }),
     faker.image.urlLoremFlickr({ category: "industrial" }),
   ],
-  creator: faker.person.fullName(),
-  create_at: faker.date.past().toISOString(),
-  update_at: faker.date.recent().toISOString(),
+  created_by: faker.person.fullName(),
+  created_at: faker.date.past().toISOString(),
+  is_deleted: false,
+  deleted_at: null,
+  deleted_by: null,
 });
 
 export const mockPart = (length = 24) => {

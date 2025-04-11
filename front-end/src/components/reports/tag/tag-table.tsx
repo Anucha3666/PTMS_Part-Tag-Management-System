@@ -4,7 +4,7 @@ import { formatDateTime } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TTag } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
-import { CirclePlus, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { ViewTagModal } from "./view-tag-modal";
@@ -135,6 +135,7 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
       title: "Checked By",
       dataIndex: "checked_by",
       key: "checked_by",
+      width: "12rem",
       sorter: (a, b) =>
         String(a.checked_by).localeCompare(String(b.checked_by)),
       render: (checked_by) => {
@@ -248,18 +249,10 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
               />
             ),
           }}
-          footer={() => (
-            <div className='w-full flex justify-end bg-white border-b-[1px] p-4'>
-              <CirclePlus
-                className=' text-gray-400 hover:text-green-600 cursor-pointer'
-                // onClick={onOpen}
-              />
-            </div>
-          )}
           scroll={
             search === undefined
               ? { x: "max-content" }
-              : { x: "max-content", y: `${height - 235}px` }
+              : { x: "max-content", y: `${height - 175}px` }
           }
         />
       </div>

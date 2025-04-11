@@ -1,5 +1,3 @@
-import { usePart } from "@/services/hooks";
-import { useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import { Input, Modal } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
@@ -18,10 +16,6 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
   onClose,
   data = {} as TDataModalPart,
 }) => {
-  const { mutateCreatePart, mutateUpdatePart } = usePart();
-
-  const { dataUser } = useAppSelector((state) => state.utils);
-  // const { parts } = useAppSelector((state) => state.parts);
   const [formData, setFormData] = useState<Partial<TPart>>({});
 
   const handleChange = (
@@ -36,12 +30,12 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if ((data?.order ?? "") === "update") {
-      mutateUpdatePart(formData as TPart);
-    } else {
-      mutateCreatePart({ ...formData, creator: dataUser?.full_name } as TPart);
-      if (parts?.length < 7) window.location.reload();
-    }
+    // if ((data?.order ?? "") === "update") {
+    //   mutateUpdatePart(formData as TPart);
+    // } else {
+    //   mutateCreatePart({ ...formData, creator: dataUser?.full_name } as TPart);
+    //   if (parts?.length < 7) window.location.reload();
+    // }
     onClose();
   };
 
