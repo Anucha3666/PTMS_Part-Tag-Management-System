@@ -15,6 +15,7 @@ export type TPDFTag = {
 
 type OutputData = {
   part_id: string;
+  customer_name: string;
   part_no: string;
   part_name: string;
   packing_std: number;
@@ -37,6 +38,7 @@ const PDFTag: FC<TPDFTag> = ({
       for (let i = 0; i < part.number_of_tags; i++) {
         result.push({
           part_id: part.part_id,
+          customer_name: part.customer_name,
           part_no: part.part_no,
           part_name: part.part_name,
           packing_std: part.packing_std,
@@ -93,7 +95,9 @@ const PDFTag: FC<TPDFTag> = ({
                       <div className='w-full'>
                         <div className=' w-full flex text-nowrap gap-2'>
                           <p>ชื่อผู้สั่งทำ</p>
-                          <p className='w-full border-b border-black inline-block'></p>
+                          <p className='w-full border-b border-black inline-block indent-2 font-bold '>
+                            {item?.customer_name}
+                          </p>
                         </div>
                         <p className=' -mt-1'>Customer name</p>
                       </div>

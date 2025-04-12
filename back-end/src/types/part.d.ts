@@ -3,6 +3,7 @@ export type TRESPart = {
   part_no: string;
   part_name: string;
   packing_std: number;
+  customer_name: string;
   picture_std: string;
   q_point: string;
   packing: string;
@@ -19,6 +20,7 @@ export type TRESPartChangeHistory = {
   part_no: string;
   part_name: string;
   packing_std: number;
+  customer_name: string;
   picture_std: string;
   q_point: string;
   packing: string;

@@ -39,10 +39,9 @@ export const PartPage = () => {
 
         {parts?.length > 0 ? <PartTable {...{ search }} /> : <PartTable />}
       </div>
-      <PrintTagDrawer
-        open={isOpenPrintTagDrawer}
-        onClose={() => setIsOpenPrintTagDrawer(false)}
-      />
+      {isOpenPrintTagDrawer && (
+        <PrintTagDrawer open onClose={() => setIsOpenPrintTagDrawer(false)} />
+      )}
     </div>
   );
 };

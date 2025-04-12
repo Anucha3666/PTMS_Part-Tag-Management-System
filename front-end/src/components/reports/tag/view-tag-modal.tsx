@@ -48,7 +48,9 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
             <div className='w-full'>
               <div className=' w-full flex text-nowrap gap-2'>
                 <p>ชื่อผู้สั่งทำ</p>
-                <p className='w-full border-b border-black inline-block'></p>
+                <p className='w-full border-b border-black inline-block indent-2 font-bold '>
+                  {data?.part?.customer_name}
+                </p>
               </div>
               <p className=' -mt-1'>Customer name</p>
             </div>
@@ -56,7 +58,7 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
               <div className=' w-full flex text-nowrap gap-2'>
                 <p>วันที่</p>
                 <p className='w-full border-b border-black inline-block indent-2 font-bold'>
-                  {formatDate(data?.printed_id)}
+                  {formatDate(data?.printed_at)}
                 </p>
               </div>
               <p className=' -mt-1'>Date</p>
@@ -67,7 +69,7 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
             <div className=' w-full flex text-nowrap gap-2'>
               <p>ชื่อชิ้นงาน</p>
               <p className='w-full border-b border-black inline-block indent-2 font-bold '>
-                {data?.part_name}
+                {data?.part?.part_name}
               </p>
             </div>
             <p className=' -mt-1'>Part name</p>
@@ -77,7 +79,7 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
             <div className=' w-full flex text-nowrap gap-2'>
               <p>เลขที่แบบ</p>
               <p className='w-full border-b border-black inline-block indent-2 font-bold'>
-                {data?.part_no}
+                {data?.part?.part_no}
               </p>
             </div>
             <p className=' -mt-1'>DWG No./Code</p>
@@ -88,7 +90,7 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
               <div className=' w-full flex text-nowrap gap-2'>
                 <p>จำนวน</p>
                 <p className='w-full border-b border-black inline-block text-center font-bold'>
-                  {data?.packing_std?.toLocaleString("en")}
+                  {data?.part?.packing_std?.toLocaleString("en")}
                 </p>
                 <p>ชิ้น</p>
               </div>
@@ -134,8 +136,8 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
               "!h-[15.7rem] !max-h-[15.7rem]"
             )}>
             <img
-              src={`${data?.picture_std}`}
-              alt={data?.part_no}
+              src={`${data?.part?.picture_std}`}
+              alt={data?.part?.part_no}
               className=' w-full pt-9'
               onError={(e) => {
                 e.currentTarget.onerror = null;

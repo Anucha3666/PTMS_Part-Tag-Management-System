@@ -3,7 +3,9 @@ import { TPart } from "@/types";
 import { Modal } from "antd";
 import { FC } from "react";
 
-type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
+type TDataModalPart = TPart & {
+  order: "view" | "update" | "delete";
+};
 
 export type TDeletePartModal = {
   open: TDataModalPart;

@@ -11,8 +11,10 @@ import {
   MongooseSchemaModule,
   PartModule,
 } from './modules';
+import { CustomerModule } from './modules/customer/customer.module';
 import { PrintModule } from './modules/print/print.module';
 import { PrintedModule } from './modules/printed/printed.module';
+import { ProcessModule } from './modules/process/process.module';
 import { TagModule } from './modules/tag/tag.module';
 
 @Module({
@@ -34,6 +36,8 @@ import { TagModule } from './modules/tag/tag.module';
     PartModule,
     PrintModule,
     PrintedModule,
+    CustomerModule,
+    ProcessModule,
     TagModule,
   ],
   controllers: [AppController],

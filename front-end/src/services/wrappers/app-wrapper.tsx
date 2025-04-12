@@ -26,7 +26,6 @@ export const AppWrapper: FC<TAppWrapperProps> = ({ children }) => {
 
   useEffect(() => {
     const dataUser = cookieCryptoUtils?.get(SERVICE_CONFIG_DATA_USER) as TAuth;
-    console.log("cookieCryptoUtils", dataUser);
 
     if ((dataUser?.token ?? "") === "" || (dataUser?.role ?? "") === "") {
       navigate("/login");

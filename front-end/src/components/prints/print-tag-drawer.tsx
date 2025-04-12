@@ -34,6 +34,9 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         ((Array.isArray(data?.data) ? data?.data[0] : {}) ?? {}) as TPrintedTag
       );
       setTimeout(() => handlePrint(), 400);
+      setTimeout(() => {
+        if (onClose) onClose();
+      }, 500);
     }
   };
 

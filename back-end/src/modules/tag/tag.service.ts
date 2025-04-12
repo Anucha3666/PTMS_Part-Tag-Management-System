@@ -32,34 +32,12 @@ export class TagService {
         };
       }
 
-      const tags = await this.tagModel
-        .aggregate([
-          {
-            $sort: { created_at: -1 },
-          },
-          {
-            $addFields: {
-              part_id: { $toObjectId: '$part_id' },
-            },
-          },
-          {
-            $lookup: {
-              from: 'parts',
-              localField: 'part_id',
-              foreignField: '_id',
-              as: 'part_info',
-            },
-          },
-          {
-            $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
-          },
-        ])
-        .sort({ tag_no: -1 })
-        .exec();
+      const result = await this.tagHelper?.class?.findTagsAndJoinPartAndPrinted(
+        this?.tagModel,
+      );
 
-      await this?.tagHelper?.class?.isNoTagFound(!tags);
+      await this?.tagHelper?.class?.isNoTagFound(!result);
 
-      const result = tags.map(this.tagHelper.map.res);
       await this.cacheManager.set('tags', result);
 
       return {
@@ -89,10 +67,11 @@ export class TagService {
         };
       }
 
-      const result = await this?.tagHelper?.class?.findTagAndJoinPartByTagNo(
-        this.tagModel,
-        tag_no,
-      );
+      const result =
+        await this?.tagHelper?.class?.findTagAndJoinPartAndPrintedAndAccountByTagNo(
+          this.tagModel,
+          tag_no,
+        );
 
       await this?.tagHelper?.class?.isNoTagFound(result?.tag_id !== tag_id);
       await this.cacheManager.set(`tag_${tag_no}`, result);
@@ -119,7 +98,7 @@ export class TagService {
       await ValidatorUtils.validate(ValidationTagDto, req);
 
       const existingTag =
-        await this?.tagHelper?.class?.findTagAndJoinPartByTagNo(
+        await this?.tagHelper?.class?.findTagAndJoinPartAndPrintedByTagNo(
           this.tagModel,
           req?.tag_no,
         );
@@ -136,9 +115,9 @@ export class TagService {
       }
 
       const parts = req?.ref_tag.split('|');
-      if (`${parts[1]}${parts[2]}` !== existingTag?.part_no) {
+      if (`${parts[1]}${parts[2]}` !== existingTag?.part?.part_no) {
         this?.commonHelper?.httpExceptionError(
-          `Tag part number ${existingTag?.part_no} does not match with ref_tag part number ${parts[1]}${parts[2]}`,
+          `Tag part number ${existingTag?.part?.part_no} does not match with ref_tag part number ${parts[1]}${parts[2]}`,
         );
       }
 

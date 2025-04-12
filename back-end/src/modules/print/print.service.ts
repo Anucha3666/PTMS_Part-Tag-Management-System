@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { CommonHelper, PartHelper, PrintedHelper } from 'src/helpers';
 import { TRESPrinted } from 'src/types';
@@ -20,6 +22,7 @@ export class PrintService {
     @InjectModel(Printed.name) private printedModel: Model<PrintedDocument>,
     @InjectModel(Part.name) private partModel: Model<PartDocument>,
     @InjectModel(Tag.name) private tagModel: Model<TagDocument>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   // async createTag(data: Partial<Tag>): Promise<Tag & { _id?: Types.ObjectId }> {
@@ -69,6 +72,7 @@ export class PrintService {
             part_no: data.part_no,
             part_name: data.part_name,
             packing_std: data.packing_std,
+            customer_name: data.customer_name,
             picture_std: data.picture_std,
             number_of_tags: part.number_of_tags,
           };
@@ -103,6 +107,8 @@ export class PrintService {
       const result = [updatedParted?.toObject()].map(
         this.printedHelper.map.res,
       );
+
+      await this.cacheManager.del('printeds');
 
       return {
         status: 'success',

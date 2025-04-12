@@ -6,6 +6,7 @@ const generateMockPart = (): TPart => ({
   part_no: faker.string.alphanumeric(10).toUpperCase(),
   part_name: faker.commerce.productName(),
   packing_std: faker.number.int({ min: 1, max: 100 }),
+  customer_name: faker.commerce.productName(),
   picture_std: faker.datatype.boolean()
     ? faker.image.urlLoremFlickr({ category: "industrial" })
     : null,

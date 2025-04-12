@@ -8,6 +8,7 @@ export type TPrintedTag = {
 
 export type TPrintedTagSummary = {
   part_id: string;
+  customer_name: string;
   part_no: string;
   part_name: string;
   packing_std: number;

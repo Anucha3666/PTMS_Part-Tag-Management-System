@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  HttpCode,
   Patch,
   Post,
   Request,
@@ -20,6 +21,7 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(200)
   @Post('sign-in')
   signIn(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);

@@ -9,15 +9,17 @@ import {
 
 import { AppLayout } from "@/layouts/app";
 import {
+  ComparisonPage,
   LoginPage,
   NotFoundPage,
   PartPage,
   ReportPrintedPage,
   ReportTagPage,
   SettingAccountsPage,
+  SettingPartsPage,
   SettingProfilePage,
   SettingsPage,
-  ViewPartPage,
+  TagPage,
 } from "@/pages";
 import { AppProvider } from "../providers";
 
@@ -29,9 +31,10 @@ const AppRoutes: FC = () => {
       <Route path='/' element={<Navigate to={"/login"} />} />
       <Route path='/login' element={<LoginPage />} />
       <Route element={<AppLayout />}>
-        <Route path='/part' element={<PartPage />} />
-        <Route path='/report'>
-          <Route index element={<Navigate to={"/report/printed"} />} />
+        <Route path='/parts' element={<PartPage />} />
+        <Route path='/compare' element={<ComparisonPage />} />
+        <Route path='/reports'>
+          <Route index element={<Navigate to={"/reports/printed"} />} />
           <Route path='printed' element={<ReportPrintedPage />} />
           <Route path='tags' element={<ReportTagPage />} />
         </Route>
@@ -39,10 +42,11 @@ const AppRoutes: FC = () => {
           <Route index element={<SettingsPage />} />
           <Route path='profile' element={<SettingProfilePage />} />
           <Route path='accounts' element={<SettingAccountsPage />} />
+          <Route path='parts' element={<SettingPartsPage />} />
         </Route>
       </Route>
 
-      <Route path='/tag/:tag_no/:tag_id' element={<ViewPartPage />} />
+      <Route path='/tag/:tag_no/:tag_id' element={<TagPage />} />
       <Route path='*' element={<NotFoundPage />} />
     </Routes>
   );

@@ -14,11 +14,13 @@ import {
   RejectAccountModal,
 } from ".";
 
-export type TAccountTableProps = {
+export type TSettingsAccountTableProps = {
   search?: string;
 };
 
-export const AccountTable: FC<TAccountTableProps> = ({ search }) => {
+export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
+  search,
+}) => {
   const divRef = useRef<HTMLDivElement>(null);
 
   const { isOpen, onOpen, onClose } = useDisclosure();

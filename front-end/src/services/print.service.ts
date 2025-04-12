@@ -16,8 +16,6 @@ export class PrintService extends APIService {
 
   printTags = async (req: TPrintTag[]): Promise<TResponse<TPrintedTag[]>> => {
     try {
-      console.log(req);
-
       const { data } = await this.post<TResponse<TPrintedTag[]>>(
         `/print/tags`,
         { parts: req }

@@ -15,6 +15,9 @@ export class Part {
   @Prop({ required: true })
   packing_std: number;
 
+  @Prop({ required: true })
+  customer_name: string;
+
   @Prop({ default: () => null })
   picture_std: string | null;
 

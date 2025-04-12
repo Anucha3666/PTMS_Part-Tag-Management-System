@@ -48,6 +48,7 @@ const mapRES = (part: any) => ({
   part_no: part.part_no,
   part_name: part.part_name,
   packing_std: part.packing_std,
+  customer_name: part.customer_name,
   picture_std: part.picture_std
     ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
     : null,
@@ -76,6 +77,7 @@ const mapRESChangeHistory = (part: any) => ({
   part_no: part.part_no,
   part_name: part.part_name,
   packing_std: part.packing_std,
+  customer_name: part.customer_name,
   picture_std: part.picture_std
     ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
     : null,

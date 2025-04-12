@@ -16,7 +16,7 @@ export const ForbiddenPage = () => {
         Sorry, you don't have permission to access this page.
       </p>
 
-      <Button className='mt-8' onClick={() => navigator("/part")}>
+      <Button className='mt-8' onClick={() => navigator("/parts")}>
         Return to home page
       </Button>
     </div>

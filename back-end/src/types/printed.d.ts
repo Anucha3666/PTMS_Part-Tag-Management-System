@@ -12,6 +12,7 @@ export type TPrintedSummary = {
   part_no: string;
   part_name: string;
   picture_std: string;
+  customer_name: string;
   packing_std: number;
   number_of_tags: number;
 };

@@ -27,7 +27,7 @@ export const NotFoundPage = () => {
         Sorry, we couldn't find the page you were looking for.
       </p>
 
-      <Button className='mt-8' onClick={() => navigator("/part")}>
+      <Button className='mt-8' onClick={() => navigator("/parts")}>
         Return to home page
       </Button>
     </div>

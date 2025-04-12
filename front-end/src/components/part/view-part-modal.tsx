@@ -4,9 +4,11 @@ import { useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import { Input, Modal } from "antd";
 import { FC, Fragment } from "react";
-import { UploadImage } from "../common/upload-image";
+import { UploadImage } from "../common/upload-image-base64";
 
-type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
+type TDataModalPart = TPart & {
+  order: "view" | "update" | "delete";
+};
 
 export type TViewPartModal = {
   open: TDataModalPart;
@@ -27,6 +29,16 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
       width={"44rem"}
       footer={<></>}>
       <div className='grid gap-2 grid-cols-2 py-4 -mt-6 w-full'>
+        <div>
+          <label className='text-right text-[0.8rem]'>Customer Name :</label>
+          <Input
+            id='customer_name'
+            name='customer_name'
+            value={open.customer_name || ""}
+            placeholder='Enter customer name.'
+            readOnly
+          />
+        </div>
         <div>
           <label className='text-right text-[0.8rem]'>Part No :</label>
           <Input
@@ -97,6 +109,7 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
             readOnly
           />
         </div>
+        <div />
         <div className='flex gap-2 justify-between'>
           <div className='justify-between items-center'>
             <label className='text-right text-[0.8rem] overflow-hidden text-nowrap w-full'>

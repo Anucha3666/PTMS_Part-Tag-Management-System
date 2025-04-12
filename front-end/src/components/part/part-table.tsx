@@ -1,3 +1,5 @@
+import { SRC_DAMAGED_PICTURE, SRC_NO_PICTURE } from "@/constants";
+import { getCustomTableDarkThemeProps } from "@/helpers";
 import { setPrints } from "@/store/features/print.features";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
@@ -6,11 +8,11 @@ import { Empty, Table } from "antd";
 import { Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
-import { CreateUpdatePartModal } from "./create-update-part-modal";
-import { DeletePartModal } from "./delete-part-modal";
 import { ViewPartModal } from "./view-part-modal";
 
-type TDataModalPart = TPart & { order: "view" | "update" | "delete" };
+type TDataModalPart = TPart & {
+  order: "view" | "update" | "delete";
+};
 
 export type TPartTableProps = {
   search?: string;
@@ -20,6 +22,9 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
   const dispatch = useAppDispatch();
   const divRef = useRef<HTMLDivElement>(null);
 
+  const { className, rowClassName, rootClassName } =
+    getCustomTableDarkThemeProps();
+
   const { parts } = useAppSelector((state) => state.part);
   const [height, setHeight] = useState(0);
   const [dataModal, setDataModal] = useState<TDataModalPart>(
@@ -27,6 +32,12 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
   );
 
   const columns: TableProps<TPart>["columns"] = [
+    {
+      title: "Customer Name",
+      dataIndex: "customer_name",
+      key: "customer_name",
+      sorter: (a, b) => a.customer_name.localeCompare(b.customer_name),
+    },
     {
       title: "Part No.",
       dataIndex: "part_no",
@@ -64,7 +75,9 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
+                      (picture_std ?? "") === ""
+                        ? SRC_NO_PICTURE
+                        : SRC_DAMAGED_PICTURE;
                   }}
                 />
               </div>
@@ -90,7 +103,9 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
+                      (q_point ?? "") === ""
+                        ? SRC_NO_PICTURE
+                        : SRC_DAMAGED_PICTURE;
                   }}
                 />
               </div>
@@ -116,7 +131,9 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
+                      (packing ?? "") === ""
+                        ? SRC_NO_PICTURE
+                        : SRC_DAMAGED_PICTURE;
                   }}
                 />
               </div>
@@ -144,7 +161,9 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src =
-                          "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
+                          (src ?? "") === ""
+                            ? SRC_NO_PICTURE
+                            : SRC_DAMAGED_PICTURE;
                       }}
                     />
                   </div>
@@ -216,7 +235,6 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                 ...item,
                 key: item?.part_id,
               }))}
-            className=' w-full !text-nowrap p-2'
             rowSelection={{ type: "checkbox", ...rowSelection, fixed: "left" }}
             components={{
               header: {
@@ -245,19 +263,12 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                 ? { x: "max-content" }
                 : { x: "max-content", y: `${height - 190}px` }
             }
+            {...{ className, rowClassName, rootClassName }}
           />
         </div>
       </div>
-      <CreateUpdatePartModal
-        open={dataModal?.order === "update"}
-        data={dataModal}
-        onClose={() => setDataModal({} as TDataModalPart)}
-      />
+
       <ViewPartModal
-        open={dataModal}
-        onClose={() => setDataModal({} as TDataModalPart)}
-      />
-      <DeletePartModal
         open={dataModal}
         onClose={() => setDataModal({} as TDataModalPart)}
       />

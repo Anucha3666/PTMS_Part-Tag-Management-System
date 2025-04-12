@@ -38,41 +38,37 @@ export const ReportPrintedTable: FC<ReportPrintedtTableProps> = ({
       key: "summary",
       render: (summary: TPrintedTag["summary"]) => (
         <div className=' flex flex-col gap-2'>
-          {summary?.map(
-            ({ part_name, picture_std, number_of_tags, part_no }, index) => (
-              <div
-                key={index}
-                className=' flex gap-2 items-center font-medium justify-between'>
-                <div className='flex gap-2 items-center font-medium'>
-                  <div className='flex w-[12rem]'>
-                    <PhotoProvider>
-                      <PhotoView src={picture_std}>
-                        <div className='relative w-full h-[4rem] bg-slate-50 rounded-md'>
-                          <img
-                            src={picture_std ?? ""}
-                            alt={`picture_std`}
-                            className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
-                            onError={(e) => {
-                              e.currentTarget.onerror = null;
-                              e.currentTarget.src =
-                                (picture_std ?? "") === ""
-                                  ? SRC_NO_PICTURE
-                                  : SRC_DAMAGED_PICTURE;
-                            }}
-                          />
-                        </div>
-                      </PhotoView>
-                    </PhotoProvider>
-                  </div>
-
-                  <p>{part_no}</p>
-                  <div className='w-[0.2rem] h-[1.2rem] bg-gray-400 rounded-full' />
-                  <p>{part_name}</p>
+          {summary?.map(({ picture_std, number_of_tags, part_no }, index) => (
+            <div
+              key={index}
+              className=' flex gap-2 items-center font-medium justify-between'>
+              <div className='flex gap-2 items-center font-medium'>
+                <div className='flex w-[12rem]'>
+                  <PhotoProvider>
+                    <PhotoView src={picture_std}>
+                      <div className='relative w-full h-[4rem] bg-slate-50 rounded-md'>
+                        <img
+                          src={picture_std ?? ""}
+                          alt={`picture_std`}
+                          className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src =
+                              (picture_std ?? "") === ""
+                                ? SRC_NO_PICTURE
+                                : SRC_DAMAGED_PICTURE;
+                          }}
+                        />
+                      </div>
+                    </PhotoView>
+                  </PhotoProvider>
                 </div>
-                <p>[x {number_of_tags}]</p>
+
+                <p>{part_no}</p>
               </div>
-            )
-          )}
+              <p>[x {number_of_tags}]</p>
+            </div>
+          ))}
         </div>
       ),
     },
@@ -166,9 +162,10 @@ export const ReportPrintedTable: FC<ReportPrintedtTableProps> = ({
                 <th
                   {...props}
                   style={{
+                    ...props?.style,
                     textAlign: "center",
                   }}>
-                  {props.children}
+                  <p className=' w-full text-center'>{props.children}</p>
                 </th>
               ),
             },

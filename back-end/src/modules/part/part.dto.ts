@@ -20,6 +20,10 @@ export class CreatePartDto {
   @IsNotEmpty()
   readonly packing_std: number;
 
+  @IsString()
+  @IsNotEmpty()
+  readonly customer_name: string;
+
   @IsOptional()
   @IsString()
   readonly picture_std: string | null | Express.Multer.File;
@@ -50,6 +54,7 @@ export class CreatePartDto {
       part_no: data.part_no,
       part_name: data.part_name,
       packing_std: data.packing_std,
+      customer_name: data.customer_name,
       picture_std: data.picture_std,
       q_point: data.q_point,
       packing: data.packing,
@@ -73,6 +78,10 @@ export class UpdatePartDto {
   @IsNumber()
   @IsNotEmpty()
   readonly packing_std: number;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly customer_name: string;
 
   @IsOptional()
   @IsString()

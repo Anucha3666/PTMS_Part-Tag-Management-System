@@ -1,12 +1,14 @@
 import { ChangePasswordModal } from "@/components/settings";
 import { useDisclosure } from "@/helpers";
-import { BookUser, Lock, UserRoundPen } from "lucide-react";
+import { useAppSelector } from "@/store/hook";
+import { BookUser, Boxes, Lock, UserRoundPen } from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const SettingsPage: FC = () => {
   const navigate = useNavigate();
 
+  const { dataUser } = useAppSelector((store) => store?.utils);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const DATA_MENU_SETTINGS = [
@@ -23,6 +25,15 @@ export const SettingsPage: FC = () => {
         "Manage team account information, including names, roles, and system access permissions.",
       icon: <BookUser size={60} />,
       page: "accounts",
+      role: ["admin", "owner"],
+    },
+    {
+      label: "Parts",
+      description:
+        "Manage and organize parts data, including part numbers, specifications, and stock information.",
+      icon: <Boxes size={60} />,
+      page: "parts",
+      role: ["admin", "owner"],
     },
     {
       label: "Change Password",
@@ -31,7 +42,9 @@ export const SettingsPage: FC = () => {
       icon: <Lock size={60} />,
       page: "change-password",
     },
-  ];
+  ]?.filter(({ role }) =>
+    role === undefined ? true : role?.includes(dataUser?.role ?? "")
+  );
 
   return (
     <>

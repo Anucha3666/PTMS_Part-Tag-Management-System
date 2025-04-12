@@ -1,4 +1,4 @@
-import { AccountTable } from "@/components/settings/account";
+import { SettingsAccountTable } from "@/components/settings/accounts";
 import { useAppSelector } from "@/store/hook";
 import { Input } from "antd";
 import { Search } from "lucide-react";
@@ -30,9 +30,9 @@ export const SettingAccountsPage = () => {
           />
         </div>
         {accounts?.length > 0 ? (
-          <AccountTable {...{ search }} />
+          <SettingsAccountTable {...{ search }} />
         ) : (
-          <AccountTable />
+          <SettingsAccountTable />
         )}
       </div>
     </div>

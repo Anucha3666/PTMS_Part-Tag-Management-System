@@ -4,7 +4,7 @@ import { formatDateTime } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TTag } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
-import { Eye } from "lucide-react";
+import { CircleCheck, CircleSlash, Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { ViewTagModal } from "./view-tag-modal";
@@ -24,6 +24,26 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
 
   const columns: TableProps<TTag>["columns"] = [
     {
+      title: "",
+      dataIndex: "checked_at",
+      key: "checked_at",
+      width: "1rem",
+      sorter: (a, b) =>
+        String(a.checked_at).localeCompare(String(b.checked_at)),
+      render: (checked_at) => (
+        <div className=' w-full flex justify-center items-center cursor-help'>
+          <Tooltip
+            title={<p>{checked_at ? "Verified" : "Not yet verified"}</p>}>
+            {checked_at ? (
+              <CircleCheck className=' text-green-600' />
+            ) : (
+              <CircleSlash className='text-red-600' />
+            )}{" "}
+          </Tooltip>
+        </div>
+      ),
+    },
+    {
       title: "Tag No.",
       dataIndex: "tag_no",
       key: "tag_no",
@@ -32,11 +52,13 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
     },
     {
       title: "Part No.",
-      dataIndex: "picture_std",
+      dataIndex: ["part", "picture_std"],
       key: "picture_std",
       width: "12rem",
       sorter: (a, b) =>
-        String(a.picture_std).localeCompare(String(b.picture_std)),
+        String(a?.part?.picture_std).localeCompare(
+          String(b?.part?.picture_std)
+        ),
       render: (picture_std) => (
         <div className='flex'>
           <PhotoProvider>
@@ -61,28 +83,39 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
       ),
     },
     {
+      title: "Customer Name",
+      dataIndex: ["part", "customer_name"],
+      key: "customer_name",
+      width: "12rem",
+      sorter: (a, b) =>
+        a?.part?.customer_name.localeCompare(b?.part?.customer_name),
+      render: (customer_name) => <WriteText text={customer_name ?? "-"} />,
+    },
+    {
       title: "Part No.",
-      dataIndex: "part_no",
+      dataIndex: ["part", "part_no"],
       key: "part_no",
       width: "8rem",
-      sorter: (a, b) => a.part_no.localeCompare(b.part_no),
+      sorter: (a, b) => a?.part?.part_no.localeCompare(b?.part?.part_no),
       render: (part_no) => <WriteText text={part_no ?? "-"} />,
     },
     {
       title: "Part Name",
-      dataIndex: "part_name",
+      dataIndex: ["part", "part_name"],
       key: "part_name",
       width: "12rem",
-      sorter: (a, b) => a.part_name.localeCompare(b.part_name),
+      sorter: (a, b) => a?.part?.part_name.localeCompare(b?.part?.part_name),
       render: (part_name) => <WriteText text={part_name ?? "-"} />,
     },
     {
       title: "Packing Std.",
-      dataIndex: "packing_std",
+      dataIndex: ["part", "packing_std"],
       width: "6rem",
       key: "packing_std",
       sorter: (a, b) =>
-        String(a.packing_std).localeCompare(String(b.packing_std)),
+        String(a?.part?.packing_std).localeCompare(
+          String(b?.part?.packing_std)
+        ),
       render: (packing_std) => (
         <WriteText
           text={Number(packing_std ?? 0)?.toLocaleString("en") ?? "-"}
@@ -91,13 +124,15 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
       ),
     },
     {
-      title: "Created By",
-      dataIndex: "created_by",
-      key: "created_by",
-      sorter: (a, b) => a.created_by.localeCompare(b.created_by),
-      render: (created_by) => {
+      title: "Printed By",
+      dataIndex: "printed_by",
+      key: "printed_by",
+      width: "10rem",
+      sorter: (a, b) =>
+        (a?.printed_by ?? "").localeCompare(b?.printed_by ?? ""),
+      render: (printed_by) => {
         const account = accounts?.find(
-          ({ account_id }) => created_by === account_id
+          ({ account_id }) => printed_by === account_id
         );
         return (
           <div className=' flex gap-2 items-center font-medium  '>
@@ -122,13 +157,14 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
       },
     },
     {
-      title: "Created At",
-      dataIndex: "created_at",
-      key: "created_at",
+      title: "Printed At",
+      dataIndex: "printed_at",
+      key: "printed_at",
       width: "10rem",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (created_at) => (
-        <WriteText text={formatDateTime(created_at) ?? "-"} />
+      sorter: (a, b) =>
+        (a?.printed_at ?? "").localeCompare(b?.printed_at ?? ""),
+      render: (printed_at) => (
+        <WriteText text={formatDateTime(printed_at) ?? "-"} />
       ),
     },
     {
@@ -137,7 +173,7 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
       key: "checked_by",
       width: "12rem",
       sorter: (a, b) =>
-        String(a.checked_by).localeCompare(String(b.checked_by)),
+        String(a?.checked_by).localeCompare(String(b?.checked_by)),
       render: (checked_by) => {
         const account = accounts?.find(
           ({ account_id }) => checked_by === account_id
@@ -231,9 +267,10 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
                 <th
                   {...props}
                   style={{
+                    ...props?.style,
                     textAlign: "center",
                   }}>
-                  {props.children}
+                  <p className=' w-full text-center'>{props.children}</p>
                 </th>
               ),
             },

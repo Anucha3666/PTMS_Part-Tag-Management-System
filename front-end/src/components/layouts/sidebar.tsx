@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   BookText,
   Boxes,
+  GitCompareArrows,
   LogOut,
   PrinterCheck,
   Settings,
@@ -41,22 +42,27 @@ export const SidebarApp = () => {
     }[];
   }[] = [
     {
-      label: "Part",
-      page: "/part",
+      label: "Parts",
+      page: "/parts",
       icon: <Boxes />,
     },
     {
-      label: "Report",
+      label: "Compare",
+      page: "/compare",
+      icon: <GitCompareArrows />,
+    },
+    {
+      label: "Reports",
       icon: <BookText />,
       children: [
         {
           label: "Printed",
-          page: "/report/printed",
+          page: "/reports/printed",
           icon: <PrinterCheck size={22} />,
         },
         {
           label: "Tags",
-          page: "/report/tags",
+          page: "/reports/tags",
           icon: <Tags size={22} />,
         },
       ],
@@ -81,7 +87,7 @@ export const SidebarApp = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.8, type: "spring" }}>
-                  <div className='gap-1 w-full items-center hidden md:flex  '>
+                  <div className='gap-1 w-full h-[2rem] overflow-hidden justify-center items-center hidden md:flex  '>
                     <img
                       src={dataUser?.profile_picture ?? ""}
                       alt='profile'

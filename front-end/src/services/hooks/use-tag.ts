@@ -1,6 +1,6 @@
 import { GET_TAG, GET_TAGS } from "@/constants";
 import { useMutationWithNotification } from "@/hooks";
-import { TTag, TValidationTag } from "@/types";
+import { TTag, TTagView, TValidationTag } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { TagService } from "../tag.service";
 
@@ -10,7 +10,7 @@ export const useTag = () => {
   const useGetTag = (tag_no: string, tag_id: string) => {
     return useQuery({
       queryKey: [GET_TAG, tag_no, tag_id],
-      queryFn: async (): Promise<TTag> => await getTag(tag_no, tag_id),
+      queryFn: async (): Promise<TTagView> => await getTag(tag_no, tag_id),
     });
   };
 
