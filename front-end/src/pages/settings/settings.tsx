@@ -1,7 +1,14 @@
 import { ChangePasswordModal } from "@/components/settings";
 import { useDisclosure } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
-import { BookUser, Boxes, Lock, UserRoundPen } from "lucide-react";
+import {
+  BookUser,
+  Boxes,
+  Combine,
+  FileUser,
+  Lock,
+  UserRoundPen,
+} from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -25,6 +32,22 @@ export const SettingsPage: FC = () => {
         "Manage team account information, including names, roles, and system access permissions.",
       icon: <BookUser size={60} />,
       page: "accounts",
+      role: ["admin", "owner"],
+    },
+    {
+      label: "Process",
+      description:
+        "Configure and monitor workflow processes to ensure smooth and efficient operations.",
+      icon: <Combine size={60} />,
+      page: "process",
+      role: ["admin", "owner"],
+    },
+    {
+      label: "Customers",
+      description:
+        "View and manage customer details, including contact information and interaction history.",
+      icon: <FileUser size={60} />,
+      page: "customers",
       role: ["admin", "owner"],
     },
     {

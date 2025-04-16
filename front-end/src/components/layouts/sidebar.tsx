@@ -87,7 +87,7 @@ export const SidebarApp = () => {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.8, type: "spring" }}>
-                  <div className='gap-1 w-full h-[2rem] overflow-hidden justify-center items-center hidden md:flex  '>
+                  <div className='gap-1 w-full h-[2.5rem] overflow-hidden justify-center items-center hidden md:flex  '>
                     <img
                       src={dataUser?.profile_picture ?? ""}
                       alt='profile'

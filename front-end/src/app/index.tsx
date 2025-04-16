@@ -20,6 +20,7 @@ import {
   SettingProfilePage,
   SettingsPage,
   TagPage,
+  UnderConstructionPage,
 } from "@/pages";
 import { AppProvider } from "../providers";
 
@@ -42,6 +43,8 @@ const AppRoutes: FC = () => {
           <Route index element={<SettingsPage />} />
           <Route path='profile' element={<SettingProfilePage />} />
           <Route path='accounts' element={<SettingAccountsPage />} />
+          <Route path='process' element={<UnderConstructionPage />} />
+          <Route path='customers' element={<UnderConstructionPage />} />
           <Route path='parts' element={<SettingPartsPage />} />
         </Route>
       </Route>
