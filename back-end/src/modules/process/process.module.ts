@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MicroServiceUplode } from 'src/services';
 import { GuardsModule } from '../guards/guards.module';
-import { ProcessController, ProcesssController } from './process.controller';
+import { ProcessController, ProcessesController } from './process.controller';
 import { Process, ProcessSchema } from './process.entity';
 import { ProcessService } from './process.service';
 
@@ -13,7 +13,7 @@ import { ProcessService } from './process.service';
     GuardsModule,
     HttpModule,
   ],
-  controllers: [ProcessController, ProcesssController],
+  controllers: [ProcessController, ProcessesController],
   providers: [ProcessService, MicroServiceUplode],
 })
 export class ProcessModule {}

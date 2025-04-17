@@ -51,10 +51,10 @@ export class ProcessController {
   }
 }
 
-@Controller('processs')
+@Controller('processes')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin', 'owner')
-export class ProcesssController {
+export class ProcessesController {
   constructor(private readonly processService: ProcessService) {}
 
   @Get()
