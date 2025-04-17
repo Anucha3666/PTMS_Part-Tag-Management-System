@@ -35,11 +35,11 @@ export const SettingsPage: FC = () => {
       role: ["admin", "owner"],
     },
     {
-      label: "Process",
+      label: "Processes",
       description:
         "Configure and monitor workflow processes to ensure smooth and efficient operations.",
       icon: <Combine size={60} />,
-      page: "process",
+      page: "processes",
       role: ["admin", "owner"],
     },
     {

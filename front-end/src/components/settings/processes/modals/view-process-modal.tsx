@@ -2,20 +2,17 @@ import { Image } from "@/components/36S/ui/image";
 import { SRC_DAMAGED_PICTURE } from "@/constants";
 import { formatDateTime } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
-import { TCustomer } from "@/types";
+import { TProcess } from "@/types";
 import { screenSize } from "@/utils";
 import { Input, Modal } from "antd";
 import { FC } from "react";
 
-export type TViewCustomerModal = {
-  data: TCustomer;
+export type TViewProcessModal = {
+  data: TProcess;
   onCancel: () => void;
 };
 
-export const ViewCustomerModal: FC<TViewCustomerModal> = ({
-  data,
-  onCancel,
-}) => {
+export const ViewProcessModal: FC<TViewProcessModal> = ({ data, onCancel }) => {
   const { accounts } = useAppSelector((state) => state?.account);
 
   const Created = accounts?.find(
@@ -28,8 +25,8 @@ export const ViewCustomerModal: FC<TViewCustomerModal> = ({
 
   return (
     <Modal
-      title={"View customer"}
-      open={(data?.customer_id ?? "") !== ""}
+      title={"View process"}
+      open={(data?.process_id ?? "") !== ""}
       onCancel={() => {
         if (onCancel) {
           onCancel();
@@ -42,18 +39,13 @@ export const ViewCustomerModal: FC<TViewCustomerModal> = ({
           : "max-content"
       }>
       <div className=' flex flex-col w-full gap-2'>
-        <div className='flex gap-4 max-w-[30rem] justify-center items-center w-full'>
-          <Image
-            src={data?.logo ?? ""}
-            alt='logo'
-            className='!max-w-[80px] !max-h-[80px] w-[80px] h-[80px] object-cover rounded-full border-[1px] my-4 shadow-md'
-          />
-          <div className=' font-bold flex flex-col items-start text-lg text-slate-400 h-ful'>
-            <div className=' flex gap-2 items-center justify-center text-black'>
-              <p className='text-xl'>{data?.customer_name}</p>
-            </div>
-            <p className=' text-[0.7rem]'>{data?.customer_description}</p>
+        <div className='flex max-w-[34rem] justify-center items-center w-full flex-col pb-2'>
+          <div className=' flex gap-2 items-center justify-center text-black'>
+            <p className='text-xl '>{data?.process_name}</p>
           </div>
+          <p className=' text-[0.7rem] text-slate-400'>
+            {data?.process_description}
+          </p>
         </div>
         <div className='grid gap-2 grid-cols-2 w-full border-t-2'>
           <div>
