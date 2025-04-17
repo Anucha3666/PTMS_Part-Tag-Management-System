@@ -10,7 +10,7 @@ const initialState: TAccountState = {
 };
 
 const accountSlice = createSlice({
-  name: "part",
+  name: "account",
   initialState,
   reducers: {
     setAccounts: (state, action: PayloadAction<TAccountState["accounts"]>) => {

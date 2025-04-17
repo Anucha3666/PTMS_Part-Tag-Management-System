@@ -1,6 +1,9 @@
 //? ---------- ACCOUNT ---------- \\
 export const GET_ACCOUNTS = "GET_ACCOUNTS";
 
+//? ---------- CUSTOMER ---------- \\
+export const GET_CUSTOMERS = "GET_CUSTOMERS";
+
 //? ---------- PART ---------- \\
 export const GET_PART = "GET_PART";
 export const GET_PARTS = "GET_PARTS";

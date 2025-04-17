@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 import accountFeatures from "./features/account.features";
+import customerFeatures from "./features/customer.features";
 import partFeatures from "./features/part.features";
 import printFeatures from "./features/print.features";
 import printedFeatures from "./features/printed.features";
@@ -10,6 +11,7 @@ import utilsFeatures from "./features/utils.features";
 const rootReducer = combineReducers({
   utils: utilsFeatures,
   account: accountFeatures,
+  customer: customerFeatures,
   part: partFeatures,
   print: printFeatures,
   printed: printedFeatures,
