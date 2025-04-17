@@ -28,7 +28,10 @@ export const mapRES = (customer: any) => ({
   customer_id: customer._id.toString(),
   customer_name: customer.customer_name,
   customer_description: customer.customer_description,
-  logo: customer.logo,
+  logo: customer.logo
+    ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${customer.logo}`
+    : null,
+
   created_by: customer.created_by,
   updated_at: customer.updated_at,
   created_at: customer.created_at,

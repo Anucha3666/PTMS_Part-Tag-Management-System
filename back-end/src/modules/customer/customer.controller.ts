@@ -35,18 +35,18 @@ export class CustomerController {
     }),
   )
   create(
-    @Request() req,
+    @Request() req: TRequest,
     @UploadedFiles() files: { [key: string]: Express.Multer.File[] },
     @Body() createCustomerDto: CreateCustomerDto,
   ) {
-    const customer_id = req.user.customer_id;
+    const account_id = req.user?.account_id;
 
     const logoPicture = files['logo']?.[0] ?? null;
 
     return this.customerService.create({
       ...createCustomerDto,
       logo: logoPicture,
-      created_by: customer_id,
+      created_by: account_id,
     });
   }
 

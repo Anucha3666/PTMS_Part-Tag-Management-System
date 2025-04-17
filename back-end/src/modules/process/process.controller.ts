@@ -25,8 +25,8 @@ export class ProcessController {
   @UseGuards(RolesGuard)
   @Roles('admin', 'owner')
   @Post()
-  create(@Request() req, @Body() createProcessDto: CreateProcessDto) {
-    const account_id = req.user.account_id;
+  create(@Request() req: TRequest, @Body() createProcessDto: CreateProcessDto) {
+    const account_id = req.user?.account_id;
 
     return this.processService.create({
       ...createProcessDto,
