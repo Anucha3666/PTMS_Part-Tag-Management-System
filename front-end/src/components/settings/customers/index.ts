@@ -1,2 +1,2 @@
-export * from "./account-table";
+export * from "./customer-table";
 export * from "./modals";

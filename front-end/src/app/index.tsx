@@ -22,6 +22,7 @@ import {
   TagPage,
   UnderConstructionPage,
 } from "@/pages";
+import { SettingCustomersPage } from "@/pages/settings/customers";
 import { AppProvider } from "../providers";
 
 const AppRoutes: FC = () => {
@@ -44,7 +45,7 @@ const AppRoutes: FC = () => {
           <Route path='profile' element={<SettingProfilePage />} />
           <Route path='accounts' element={<SettingAccountsPage />} />
           <Route path='process' element={<UnderConstructionPage />} />
-          <Route path='customers' element={<UnderConstructionPage />} />
+          <Route path='customers' element={<SettingCustomersPage />} />
           <Route path='parts' element={<SettingPartsPage />} />
         </Route>
       </Route>

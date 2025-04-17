@@ -44,7 +44,7 @@ export class CustomerService extends APIService {
       const formData = new FormData();
 
       formData.append("customer_name", req?.customer_name);
-      formData.append("customer_description", req?.customer_description);
+      formData.append("customer_description", req?.customer_description ?? "");
       if (req?.logo) {
         formData.append("logo", req.logo);
       }
@@ -83,14 +83,18 @@ export class CustomerService extends APIService {
       const formData = new FormData();
 
       formData.append("customer_name", req?.customer_name);
-      formData.append("customer_description", req?.customer_description);
+      formData.append("customer_description", req?.customer_description ?? "");
       formData.append("logo", req.logo ?? "");
 
-      const { data } = await this.put<TResponse<[]>>(`/customer`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const { data } = await this.put<TResponse<[]>>(
+        `/customer/${req?.customer_id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       return data;
     } catch (error) {
