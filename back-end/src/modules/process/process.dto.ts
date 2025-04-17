@@ -23,8 +23,8 @@ export class CreateProcessDto {
     data: Partial<CreateProcessDto>,
   ): Promise<CreateProcessDto> {
     const cleanData = {
-      process_name: data.process_name,
-      process_description: data.process_description,
+      process_name: data?.process_name ?? '',
+      process_description: data?.process_description ?? '',
       created_by: data?.created_by,
     };
 
@@ -49,8 +49,8 @@ export class UpdateProcessDto {
     data: Partial<UpdateProcessDto>,
   ): Promise<UpdateProcessDto> {
     const cleanData = {
-      process_name: data.process_name,
-      process_description: data.process_description,
+      process_name: data?.process_name ?? '',
+      process_description: data?.process_description ?? '',
       updated_at: new Date(),
     };
 

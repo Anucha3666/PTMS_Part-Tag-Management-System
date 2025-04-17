@@ -27,9 +27,9 @@ export class CreateCustomerDto {
     data: Partial<CreateCustomerDto>,
   ): Promise<CreateCustomerDto> {
     const cleanData = {
-      customer_name: data.customer_name,
-      customer_description: data.customer_description,
-      logo: data.logo ?? null,
+      customer_name: data?.customer_name ?? '',
+      customer_description: data?.customer_description ?? '',
+      logo: data?.logo ?? null,
       created_by: data?.created_by,
     };
 
@@ -58,9 +58,9 @@ export class UpdateCustomerDto {
     data: Partial<UpdateCustomerDto>,
   ): Promise<UpdateCustomerDto> {
     const cleanData = {
-      customer_name: data.customer_name,
-      customer_description: data.customer_description,
-      logo: data.logo ?? null,
+      customer_name: data?.customer_name ?? '',
+      customer_description: data?.customer_description ?? '',
+      logo: data?.logo ?? null,
       updated_at: new Date(),
     };
 

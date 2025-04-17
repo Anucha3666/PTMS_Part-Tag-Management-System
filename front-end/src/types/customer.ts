@@ -12,7 +12,7 @@ export type TCustomer = {
 };
 
 export type TCreateUpdateCustomer = {
-  customer_id: string;
+  customer_id?: string;
   customer_name: string;
   customer_description: string;
   logo: string;

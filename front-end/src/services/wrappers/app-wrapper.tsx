@@ -5,7 +5,14 @@ import { TAuth } from "@/types";
 import { cookieCryptoUtils } from "@/utils";
 import { FC, ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAccount, useCustomer, usePart, usePrinted, useTag } from "../hooks";
+import {
+  useAccount,
+  useCustomer,
+  usePart,
+  usePrinted,
+  useProcess,
+  useTag,
+} from "../hooks";
 
 export type TAppWrapperProps = {
   children: ReactNode;
@@ -19,8 +26,10 @@ export const AppWrapper: FC<TAppWrapperProps> = ({ children }) => {
   const { useGetPrinteds } = usePrinted();
   const { useGetTags } = useTag();
   const { useGetCustomers } = useCustomer();
+  const { useGetProcesses } = useProcess();
 
   useGetAccounts();
+  useGetProcesses();
   useGetCustomers();
   useGetParts();
   useGetPrinteds();

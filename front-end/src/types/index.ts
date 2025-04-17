@@ -5,4 +5,5 @@ export * from "./customer";
 export * from "./part";
 export * from "./print";
 export * from "./printed";
+export * from "./process";
 export * from "./tag";
