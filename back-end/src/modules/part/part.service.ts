@@ -52,6 +52,19 @@ export class PartService {
           HttpStatus.BAD_REQUEST,
         );
       }
+      const existingCustomer = await this.partModel
+        .findById(req?.customer_id)
+        .exec();
+      if (existingCustomer) {
+        throw new HttpException(
+          {
+            status: 'error',
+            message: `Customer is already in use. Please choose a different one.`,
+            data: [existingPart],
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       const pictureSTD = req?.picture_std;
       const packing = req?.packing;
@@ -133,12 +146,7 @@ export class PartService {
         };
       }
 
-      const parts = await this.partModel
-        .find({ is_log: { $ne: true } })
-        .select('-is_log')
-        .sort({ created_at: -1 })
-        .lean()
-        .exec();
+      const parts = await this?.partHelper?.class?.findParts(this?.partModel);
       await this?.partHelper?.class?.isNoPartFound(!parts);
 
       const result = parts.map(this.partHelper.map.res);

@@ -22,7 +22,7 @@ export class CreatePartDto {
 
   @IsString()
   @IsNotEmpty()
-  readonly customer_name: string;
+  readonly customer_id: string;
 
   @IsOptional()
   @IsString()
@@ -54,7 +54,7 @@ export class CreatePartDto {
       part_no: data.part_no,
       part_name: data.part_name,
       packing_std: data.packing_std,
-      customer_name: data.customer_name,
+      customer_id: data.customer_id,
       picture_std: data.picture_std,
       q_point: data.q_point,
       packing: data.packing,

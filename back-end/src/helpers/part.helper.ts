@@ -3,6 +3,52 @@ import { Model } from 'mongoose';
 import { PartDocument } from 'src/modules/part/part.entity';
 
 export class ClassPartHelper {
+  async findParts(
+    partModel: Model<PartDocument>,
+  ): Promise<PartDocument[] | null> {
+    return partModel?.aggregate([
+      {
+        $match: {
+          is_log: { $ne: true },
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+      {
+        $addFields: {
+          customerObjectId: {
+            $convert: {
+              input: '$customer_id',
+              to: 'objectId',
+              onError: null,
+              onNull: null,
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'customers',
+          localField: 'customerObjectId',
+          foreignField: '_id',
+          as: 'customer',
+        },
+      },
+      {
+        $unwind: {
+          path: '$customer',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          is_log: 0,
+        },
+      },
+    ]);
+  }
+
   async findPartByPartNo(
     partModel: Model<PartDocument>,
     part_no: string,
@@ -45,6 +91,17 @@ export class ClassPartHelper {
 
 const mapRES = (part: any) => ({
   part_id: part._id.toString() ?? '',
+  customer:
+    (part?.customer?._id.toString() ?? '') === ''
+      ? null
+      : {
+          customer_id: part?.customer?._id.toString() ?? '',
+          customer_name: part?.customer?.customer_name,
+          customer_description: part?.customer?.customer_description,
+          logo: part.customer?.logo
+            ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${part.customer?.logo}`
+            : null,
+        },
   part_no: part.part_no,
   part_name: part.part_name,
   packing_std: part.packing_std,
