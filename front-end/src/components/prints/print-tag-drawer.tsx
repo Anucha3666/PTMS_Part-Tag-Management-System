@@ -1,7 +1,7 @@
 import { usePrint } from "@/services/hooks";
 import { useAppSelector } from "@/store/hook";
-import { TPrintedTag, TPrintedTagSummary } from "@/types";
-import { Button, Drawer, Segmented } from "antd";
+import { TPrintedTag, TPrintedTagSummary, TPrintTag } from "@/types";
+import { Button, Drawer, Segmented, Select } from "antd";
 import { Printer } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -22,12 +22,17 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
   const printRef = useRef<HTMLDivElement>(null);
   const { mutatePrintTags } = usePrint();
 
+  const { processes } = useAppSelector((state) => state.process);
   const { prints } = useAppSelector((state) => state.print);
   const [segmented, setSegmented] = useState("Part List");
   const [printedTag, setPrintedTag] = useState<TPrintedTag>({} as TPrintedTag);
+  const [process, setProcess] = useState<string>("");
 
   const printTags = async () => {
-    const data = await mutatePrintTags(prints);
+    const data = await mutatePrintTags({
+      process,
+      parts: (prints ?? []) as TPrintTag["parts"],
+    });
 
     if (data?.status === "success") {
       setPrintedTag(
@@ -71,12 +76,28 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
         </div>
       }>
       <div className=' flex flex-col gap-2 w-full h-full overflow-hidden'>
-        <Segmented<string>
-          options={["Part List", "Preview"]}
-          className=' w-min p-1 gap-2'
-          value={segmented}
-          onChange={(value) => setSegmented(value)}
-        />
+        <div className=' w-full flex  gap-2 justify-between '>
+          <Segmented<string>
+            options={["Part List", "Preview"]}
+            className=' w-min p-1 gap-2'
+            value={segmented}
+            onChange={(value) => setSegmented(value)}
+          />
+
+          <Select
+            id='process'
+            value={process}
+            placeholder='Select process.'
+            className='w-full max-w-[8rem]'
+            options={[{ value: "", label: "Select process." }]?.concat(
+              processes?.map(({ process_name }) => ({
+                value: process_name,
+                label: process_name,
+              }))
+            )}
+            onChange={(e) => setProcess(e)}
+          />
+        </div>
         <div className=' w-full h-full overflow-auto'>
           <div className='flex w-full rounded-md overflow-hidden flex-col space-y-2'>
             {segmented === "Part List" ? (
@@ -85,6 +106,7 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
               <PDFTag
                 data={
                   {
+                    process: process,
                     summary: prints as TPrintedTagSummary[],
                   } as TPrintedTag
                 }

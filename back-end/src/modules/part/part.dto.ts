@@ -80,7 +80,7 @@ export class UpdatePartDto {
 
   @IsString()
   @IsNotEmpty()
-  readonly customer_name: string;
+  readonly customer_id: string;
 
   @IsOptional()
   @IsString()

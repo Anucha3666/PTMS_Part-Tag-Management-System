@@ -1,6 +1,10 @@
 export type TPart = {
   part_id: string;
-  customer_name: string;
+  customer: {
+    customer_id: string;
+    customer_name: string;
+    logo: string | null;
+  } | null;
   part_no: string;
   part_name: string;
   packing_std: number;
@@ -18,7 +22,11 @@ export type TPart = {
 
 export type TPartChangeHistory = {
   part_id: string;
-  customer_name: string;
+  customer: {
+    customer_id: string;
+    customer_name: string;
+    logo: string | null;
+  } | null;
   part_no: string;
   part_name: string;
   packing_std: number;
@@ -35,7 +43,7 @@ export type TPartChangeHistory = {
 };
 
 export type TCreatePart = {
-  customer_name: string;
+  customer_id: string;
   part_no: string;
   part_name: string;
   packing_std: number;
@@ -47,7 +55,7 @@ export type TCreatePart = {
 
 export type TUpdatePart = {
   part_id: string;
-  customer_name: string;
+  customer_id: string;
   part_name: string;
   packing_std: number;
   picture_std: string;

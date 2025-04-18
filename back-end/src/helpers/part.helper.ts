@@ -170,7 +170,17 @@ const mapRESChangeHistory = (part: any) => ({
   part_no: part.part_no,
   part_name: part.part_name,
   packing_std: part.packing_std,
-  customer_name: part.customer_name,
+  customer:
+    (part?.customer?._id.toString() ?? '') === ''
+      ? null
+      : {
+          customer_id: part?.customer?._id.toString() ?? '',
+          customer_name: part?.customer?.customer_name,
+          customer_description: part?.customer?.customer_description,
+          logo: part.customer?.logo
+            ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${part.customer?.logo}`
+            : null,
+        },
   picture_std: part.picture_std
     ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
     : null,

@@ -205,8 +205,44 @@ export class PartService {
       await this?.partHelper?.class?.isNoPartFound(!part);
 
       const historyOfChanges = await this.partModel
-        .find({ part_no: part.part_no })
-        .sort({ created_at: -1 })
+        .aggregate([
+          {
+            $match: {
+              part_no: part.part_no,
+            },
+          },
+          {
+            $sort: {
+              created_at: -1,
+            },
+          },
+          {
+            $addFields: {
+              customerObjectId: {
+                $convert: {
+                  input: '$customer_id',
+                  to: 'objectId',
+                  onError: null,
+                  onNull: null,
+                },
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: 'customers',
+              localField: 'customerObjectId',
+              foreignField: '_id',
+              as: 'customer',
+            },
+          },
+          {
+            $unwind: {
+              path: '$customer',
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+        ])
         .exec();
 
       const result = historyOfChanges.map(this.partHelper.map.resChangeHistory);

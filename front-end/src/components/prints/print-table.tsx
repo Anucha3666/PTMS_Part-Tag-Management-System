@@ -20,9 +20,13 @@ export const PrintTable: FC = () => {
   const columns: TableProps<TDataTable>["columns"] = [
     {
       title: "Customer Name",
-      dataIndex: "customer_name",
-      key: "customer_name",
-      sorter: (a, b) => a.customer_name.localeCompare(b.customer_name),
+      dataIndex: ["customer", "customer_name"],
+      key: "customer.customer_name",
+      width: "12rem",
+      sorter: (a, b) =>
+        String(a?.customer?.customer_name ?? "").localeCompare(
+          String(b?.customer?.customer_name ?? "")
+        ),
     },
     {
       title: "Part No.",

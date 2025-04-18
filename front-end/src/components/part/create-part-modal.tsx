@@ -1,6 +1,7 @@
 import { usePart } from "@/services/hooks";
+import { useAppSelector } from "@/store/hook";
 import { TCreatePart } from "@/types";
-import { Input, Modal } from "antd";
+import { Input, Modal, Select } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { UploadImageFile } from "../common/upload-image-file";
 
@@ -11,6 +12,8 @@ export type TCreatePartModal = {
 
 export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
   const { mutateCreatePart } = usePart();
+
+  const { customers } = useAppSelector((state) => state?.customer);
   const [formData, setFormData] = useState<Partial<TCreatePart>>(
     {} as TCreatePart
   );
@@ -52,12 +55,17 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
             <label htmlFor='customer_name' className='text-right text-[0.8rem]'>
               Customer Name :
             </label>
-            <Input
-              id='customer_name'
-              name='customer_name'
-              value={formData.customer_name ?? ""}
-              onChange={handleChange}
-              placeholder='Enter customer name.'
+
+            <Select
+              id='customer_id'
+              value={formData?.customer_id}
+              placeholder='Select customer name.'
+              className='w-full'
+              options={customers?.map(({ customer_id, customer_name }) => ({
+                value: customer_id,
+                label: customer_name,
+              }))}
+              onChange={(e) => setFormData({ ...formData, customer_id: e })}
             />
           </div>
           <div>

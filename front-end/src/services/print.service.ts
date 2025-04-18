@@ -14,11 +14,11 @@ export class PrintService extends APIService {
     });
   }
 
-  printTags = async (req: TPrintTag[]): Promise<TResponse<TPrintedTag[]>> => {
+  printTags = async (req: TPrintTag): Promise<TResponse<TPrintedTag[]>> => {
     try {
       const { data } = await this.post<TResponse<TPrintedTag[]>>(
         `/print/tags`,
-        { parts: req }
+        req
       );
       return data;
     } catch (error) {

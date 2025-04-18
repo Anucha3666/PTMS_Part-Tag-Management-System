@@ -16,6 +16,7 @@ export type TPDFTag = {
 type OutputData = {
   part_id: string;
   customer_name: string;
+  process: string;
   part_no: string;
   part_name: string;
   packing_std: number;
@@ -29,6 +30,8 @@ const PDFTag: FC<TPDFTag> = ({
   isView = false,
   isViewPDF = false,
 }) => {
+  console.log(data);
+
   const transformData = (input: TPrintedTag): OutputData => {
     const result: OutputData = [];
 
@@ -38,11 +41,13 @@ const PDFTag: FC<TPDFTag> = ({
       for (let i = 0; i < part.number_of_tags; i++) {
         result.push({
           part_id: part.part_id,
-          customer_name: part.customer_name,
+          customer_name:
+            part?.customer_name ?? part?.customer?.customer_name ?? "",
           part_no: part.part_no,
           part_name: part.part_name,
           packing_std: part.packing_std,
           picture_std: part.picture_std,
+          process: data?.process,
           tag_no: (input?.tags?.[tagIndex] ?? "")?.split("/")[0],
           tag_id: (input?.tags?.[tagIndex] ?? "")?.split("/")[1],
         });
@@ -146,7 +151,9 @@ const PDFTag: FC<TPDFTag> = ({
                       <div className='w-full'>
                         <div className=' w-full flex text-nowrap gap-2'>
                           <p>ขั้นตอน</p>
-                          <p className='w-full border-b border-black inline-block'></p>
+                          <p className='w-full border-b border-black inline-block indent-2 font-bold'>
+                            {item?.process}
+                          </p>
                         </div>
                         <p className=' -mt-1'>Process</p>
                       </div>

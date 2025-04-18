@@ -11,8 +11,8 @@ import { CreatePrintedDto, PrintedSummaryDto } from '../printed/printed.dto';
 import { Tag } from '../tag/tag.entity';
 
 export class CreatePrintDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   readonly process: string;
 
   @IsString()

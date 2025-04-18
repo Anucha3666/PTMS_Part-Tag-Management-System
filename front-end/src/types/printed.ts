@@ -1,5 +1,6 @@
 export type TPrintedTag = {
   printed_id: string;
+  process: string;
   tags: string[];
   summary: TPrintedTagSummary[];
   printed_by: string;
@@ -8,7 +9,12 @@ export type TPrintedTag = {
 
 export type TPrintedTagSummary = {
   part_id: string;
-  customer_name: string;
+  customer_name?: string;
+  customer?: {
+    customer_id: string;
+    customer_name: string;
+    logo: string | null;
+  } | null;
   part_no: string;
   part_name: string;
   packing_std: number;

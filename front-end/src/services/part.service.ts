@@ -77,7 +77,7 @@ export class PartService extends APIService {
 
       const formData = new FormData();
 
-      formData.append("customer_name", req?.customer_name);
+      formData.append("customer_id", req?.customer_id);
       formData.append("part_no", req?.part_no);
       formData.append("part_name", req?.part_name);
       formData.append("packing_std", String(req?.packing_std));
@@ -130,6 +130,7 @@ export class PartService extends APIService {
     try {
       const formData = new FormData();
 
+      formData.append("customer_id", req?.customer_id);
       formData.append("part_name", req?.part_name);
       formData.append("packing_std", String(req?.packing_std));
       formData.append("picture_std", req.picture_std);

@@ -20,10 +20,14 @@ export type TRESPartChangeHistory = {
   part_no: string;
   part_name: string;
   packing_std: number;
-  customer_name: string;
   picture_std: string;
   q_point: string;
   packing: string;
+  customer: {
+    customer_id: string;
+    customer_name: string;
+    logo: string | null;
+  } | null;
   more_pictures: string[] | [];
   is_log: boolean;
   created_at: string;
