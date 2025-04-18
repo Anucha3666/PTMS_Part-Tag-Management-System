@@ -242,6 +242,7 @@ export class ClassTagHelper {
 const mapRES = (data: any) => ({
   tag_id: data._id.toString() ?? '',
   printed_id: data.printed_id,
+  process: data?.printed_info?.process ?? '',
   printed_by: data?.printed_info?.printed_by,
   printed_at: data?.printed_info?.printed_at,
   tag_no: data.tag_no,
@@ -294,6 +295,7 @@ const mapRES = (data: any) => ({
 const mapRESOne = (data: any) => ({
   tag_id: data._id.toString() ?? '',
   printed_id: data.printed_id,
+  process: data?.printed_info?.process ?? '',
   printed_by: {
     employee_number: data?.printed_by_info?.employee_number,
     first_name: data?.printed_by_info?.first_name,

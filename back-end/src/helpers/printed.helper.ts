@@ -82,6 +82,7 @@ export class ClassPrintedHelper {
 
 const mapRES = (part: any) => ({
   printed_id: part._id.toString() ?? '',
+  process: part?.process,
   tags: part?.tags ?? [],
   summary:
     part.summary?.map((item) => ({

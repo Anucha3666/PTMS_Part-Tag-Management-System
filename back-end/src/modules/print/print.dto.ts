@@ -13,6 +13,10 @@ import { Tag } from '../tag/tag.entity';
 export class CreatePrintDto {
   @IsString()
   @IsNotEmpty()
+  readonly process: string;
+
+  @IsString()
+  @IsNotEmpty()
   readonly print_by: string;
 
   @IsOptional()
@@ -29,6 +33,7 @@ export class CreatePrintDto {
     data: Partial<CreatePrintDto>,
   ): Promise<CreatePrintedDto> {
     const cleanData = {
+      process: data.process,
       printed_by: data.print_by,
       tags: [],
       summary: data?.parts,
