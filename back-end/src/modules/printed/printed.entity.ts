@@ -9,10 +9,13 @@ export class Printed {
   @Prop({ required: true })
   printed_by: string;
 
-  @Prop({ default: () => [] })
+  @Prop({ default: '' })
+  process: string;
+
+  @Prop({ default: [] })
   tags: string[];
 
-  @Prop({ default: () => [] })
+  @Prop({ default: [] })
   summary: TPrintedSummary[];
 
   @Prop({ default: () => new Date() })

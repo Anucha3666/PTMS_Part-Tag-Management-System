@@ -8,10 +8,10 @@ export class Customer {
   @Prop({ required: true, unique: true })
   customer_name: string;
 
-  @Prop({ default: () => '' })
+  @Prop({ default: '' })
   customer_description: string;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   logo?: string | null;
 
   @Prop({ default: () => new Date() })
@@ -20,16 +20,16 @@ export class Customer {
   @Prop({ default: () => new Date() })
   updated_at?: Date;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   created_by?: string;
 
   @Prop({ default: false })
   is_deleted?: boolean;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   deleted_at?: Date;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   deleted_by?: string;
 }
 

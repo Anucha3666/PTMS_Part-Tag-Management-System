@@ -14,13 +14,13 @@ export class Tag {
   @Prop({ required: true, unique: true })
   tag_no: string;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   ref_tag: string;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   checked_by: string;
 
-  @Prop({ default: () => null })
+  @Prop({ default: null })
   checked_at: Date;
 }
 

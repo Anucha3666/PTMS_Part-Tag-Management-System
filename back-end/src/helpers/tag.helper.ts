@@ -192,6 +192,32 @@ export class ClassTagHelper {
         {
           $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
         },
+        {
+          $addFields: {
+            'part_info.customerObjectId': {
+              $convert: {
+                input: '$part_info.customer_id',
+                to: 'objectId',
+                onError: null,
+                onNull: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'customers',
+            localField: 'part_info.customerObjectId',
+            foreignField: '_id',
+            as: 'part_info.customer',
+          },
+        },
+        {
+          $unwind: {
+            path: '$part_info.customer',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
       ])
       .exec();
 
@@ -224,6 +250,18 @@ const mapRES = (data: any) => ({
   checked_at: data.checked_at,
   part: {
     part_id: data?.part_id,
+    customer:
+      (data?.part_info?.customer?._id.toString() ?? '') === ''
+        ? null
+        : {
+            customer_id: data?.part_info?.customer?._id.toString() ?? '',
+            customer_name: data?.part_info?.customer?.customer_name,
+            customer_description:
+              data?.part_info?.customer?.customer_description,
+            logo: data?.part_info.customer?.logo
+              ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${data?.part_info.customer?.logo}`
+              : null,
+          },
     part_no: data?.part_info?.part_no,
     part_name: data?.part_info?.part_name,
     packing_std: data?.part_info?.packing_std,
@@ -278,6 +316,18 @@ const mapRESOne = (data: any) => ({
   checked_at: data.checked_at,
   part: {
     part_id: data?.part_id,
+    customer:
+      (data?.part_info?.customer?._id.toString() ?? '') === ''
+        ? null
+        : {
+            customer_id: data?.part_info?.customer?._id.toString() ?? '',
+            customer_name: data?.part_info?.customer?.customer_name,
+            customer_description:
+              data?.part_info?.customer?.customer_description,
+            logo: data?.part_info.customer?.logo
+              ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${data?.part_info.customer?.logo}`
+              : null,
+          },
     part_no: data?.part_info?.part_no,
     part_name: data?.part_info?.part_name,
     packing_std: data?.part_info?.packing_std,

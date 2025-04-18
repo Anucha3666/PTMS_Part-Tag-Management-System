@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { PartDocument } from 'src/modules/part/part.entity';
 
 export class ClassPartHelper {
@@ -67,12 +67,48 @@ export class ClassPartHelper {
     partModel: Model<PartDocument>,
     partIds: string[],
   ): Promise<PartDocument[] | null> {
-    return partModel
-      .find({
-        _id: { $in: partIds },
-      })
-      .sort({ created_at: -1 })
-      .exec();
+    return partModel.aggregate([
+      {
+        $match: {
+          _id: { $in: partIds.map((id) => new mongoose.Types.ObjectId(id)) },
+          is_log: { $ne: true },
+        },
+      },
+      {
+        $sort: { created_at: -1 },
+      },
+      {
+        $addFields: {
+          customerObjectId: {
+            $convert: {
+              input: '$customer_id',
+              to: 'objectId',
+              onError: null,
+              onNull: null,
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'customers',
+          localField: 'customerObjectId',
+          foreignField: '_id',
+          as: 'customer',
+        },
+      },
+      {
+        $unwind: {
+          path: '$customer',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          is_log: 0,
+        },
+      },
+    ]);
   }
 
   async isNoPartFound(isNoPartFound: boolean) {

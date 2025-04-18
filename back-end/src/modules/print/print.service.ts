@@ -25,7 +25,6 @@ export class PrintService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  // async createTag(data: Partial<Tag>): Promise<Tag & { _id?: Types.ObjectId }> {
   async createTag(data: Partial<Tag>): Promise<Tag> {
     const lastTag = await this.tagModel.findOne().sort({ tag_no: -1 }).exec();
 
@@ -52,6 +51,7 @@ export class PrintService {
         this.partModel,
         partIds,
       );
+
       const existingPartIds = existingParts.map((part) => part._id.toString());
       const notFound = partIds.filter((id) => !existingPartIds.includes(id));
       if (notFound.length > 0) {
@@ -72,7 +72,7 @@ export class PrintService {
             part_no: data.part_no,
             part_name: data.part_name,
             packing_std: data.packing_std,
-            customer_name: data.customer_name,
+            customer_name: (data as any)?.customer?.customer_name ?? null,
             picture_std: data.picture_std,
             number_of_tags: part.number_of_tags,
           };

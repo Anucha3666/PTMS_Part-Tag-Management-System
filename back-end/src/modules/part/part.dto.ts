@@ -59,7 +59,6 @@ export class CreatePartDto {
       q_point: data.q_point,
       packing: data.packing,
       more_pictures: data.more_pictures,
-      created_by: data?.created_by,
     };
 
     return plainToClass(CreatePartDto, cleanData);
