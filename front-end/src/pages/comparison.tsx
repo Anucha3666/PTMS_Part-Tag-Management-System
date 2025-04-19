@@ -125,7 +125,7 @@ export const ComparisonPage = () => {
                           <div className=' w-full flex text-nowrap gap-2'>
                             <p>ชื่อผู้สั่งทำ</p>
                             <p className='w-full border-b border-black inline-block indent-2 font-bold '>
-                              {data?.part?.customer?.customer_name}
+                              {data?.customer_name}
                             </p>
                           </div>
                           <p className=' -mt-1'>Customer name</p>

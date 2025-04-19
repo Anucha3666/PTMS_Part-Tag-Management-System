@@ -127,9 +127,6 @@ export class ClassTagHelper {
       ])
       .exec();
 
-    console.log(tag);
-    console.log(tag[0]?.printed_info?.summary);
-
     const result = tag.map(mapRESOne);
     return result[0] || null;
   }

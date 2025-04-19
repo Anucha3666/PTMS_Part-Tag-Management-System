@@ -4,6 +4,7 @@ export type TTag = {
   tag_id: string;
   printed_id: string;
   process: string;
+  customer_name: string;
   printed_by: string;
   printed_at: string;
   tag_no: string;
@@ -16,6 +17,8 @@ export type TTag = {
 export type TTagView = {
   tag_id: string;
   printed_id: string;
+  process: string;
+  customer_name: string;
   printed_by: {
     employee_number: string;
     first_name: string;
