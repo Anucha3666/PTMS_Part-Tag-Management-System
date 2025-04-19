@@ -1,17 +1,26 @@
+import { UploadImageFiles } from "@/components/common";
 import { usePart } from "@/services/hooks";
 import { useAppSelector } from "@/store/hook";
-import { TCreatePart } from "@/types";
+import { TCreatePart, TPart, TUpdatePart } from "@/types";
 import { Input, Modal, Select } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { UploadImageFile } from "../common/upload-image-file";
+import { UploadImageFile } from "../../../common/upload-image-file";
 
-export type TCreatePartModal = {
-  open: boolean;
+type TDataModalPart = (TPart & TCreatePart) &
+  (TUpdatePart & {
+    order: "view" | "update" | "delete" | "create";
+  });
+
+export type TCreateUpdatePartModal = {
+  open: TDataModalPart;
   onClose: () => void;
 };
 
-export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
-  const { mutateCreatePart } = usePart();
+export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
+  open,
+  onClose,
+}) => {
+  const { mutateCreatePart, mutateUpdatePart } = usePart();
 
   const { customers } = useAppSelector((state) => state?.customer);
   const [formData, setFormData] = useState<Partial<TCreatePart>>(
@@ -31,19 +40,24 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await mutateCreatePart(formData as TCreatePart);
+    const res =
+      open?.order === "create"
+        ? await mutateCreatePart(formData as TCreatePart)
+        : await mutateUpdatePart(formData as TUpdatePart);
 
     if (res?.status === "success") onClose();
   };
 
   useEffect(() => {
-    setFormData({});
+    setFormData({ ...open, customer_id: open?.customer?.customer_id ?? "" });
   }, [open]);
 
   return (
     <Modal
-      title={"Create Print"}
-      open={open}
+      title={`${open?.order?.slice(0, 1)?.toUpperCase()}${open?.order?.slice(
+        1
+      )} print`}
+      open={open?.order === "create" || open?.order === "update"}
       onCancel={onClose}
       onClose={onClose}
       width={"23rem"}
@@ -129,6 +143,7 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
                 Picture Std :
               </label>
               <UploadImageFile
+                data={open?.picture_std ?? ""}
                 setData={(e) =>
                   setFormData({
                     ...formData,
@@ -142,6 +157,7 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
                 Q-Point :
               </label>
               <UploadImageFile
+                data={open?.q_point ?? ""}
                 setData={(e) =>
                   setFormData({
                     ...formData,
@@ -155,6 +171,7 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
                 Packing :
               </label>
               <UploadImageFile
+                data={open?.packing ?? ""}
                 setData={(e) =>
                   setFormData({
                     ...formData,
@@ -169,62 +186,27 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
               More pictures ({formData?.more_pictures?.length ?? 0}/3) :
             </label>
             <div className=' flex gap-2'>
-              {formData?.more_pictures?.[0] && (
-                <UploadImageFile
-                  isUplode
-                  data={URL.createObjectURL(
-                    formData?.more_pictures?.[0] as File
-                  )}
-                  onDelete={() => {
-                    setFormData({
-                      ...formData,
-                      more_pictures: formData?.more_pictures?.slice(1),
-                    });
-                  }}
-                />
-              )}
-              {formData?.more_pictures?.[1] && (
-                <UploadImageFile
-                  isUplode
-                  data={URL.createObjectURL(
-                    formData?.more_pictures?.[1] as File
-                  )}
-                  onDelete={() => {
-                    setFormData({
-                      ...formData,
-                      more_pictures: formData?.more_pictures
-                        ?.slice(0, 1)
-                        ?.concat(formData?.more_pictures?.slice(2)),
-                    });
-                  }}
-                />
-              )}
-              {formData?.more_pictures?.[2] && (
-                <UploadImageFile
-                  isUplode
-                  data={URL.createObjectURL(
-                    formData?.more_pictures?.[2] as File
-                  )}
-                  onDelete={() => {
-                    setFormData({
-                      ...formData,
-                      more_pictures: formData?.more_pictures?.slice(0, 2),
-                    });
-                  }}
-                />
-              )}
-
-              {(formData?.more_pictures?.length ?? 0) < 3 && (
-                <UploadImageFile
-                  isUplode
-                  setData={(e) =>
-                    setFormData({
-                      ...formData,
-                      more_pictures: (formData?.more_pictures ?? [])?.concat(e),
-                    })
-                  }
-                />
-              )}
+              <UploadImageFiles
+                data={formData?.more_pictures?.map((more_picture) =>
+                  typeof more_picture === "string"
+                    ? more_picture
+                    : URL.createObjectURL(more_picture)
+                )}
+                setData={(e) => {
+                  setFormData({
+                    ...formData,
+                    more_pictures: formData?.more_pictures?.concat(e),
+                  });
+                }}
+                onDelete={(i) => {
+                  setFormData({
+                    ...formData,
+                    more_pictures: formData?.more_pictures
+                      ?.slice(0, i)
+                      ?.concat(formData?.more_pictures?.slice(i + 1)),
+                  });
+                }}
+              />
             </div>
           </div>
         </div>

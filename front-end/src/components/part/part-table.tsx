@@ -9,7 +9,7 @@ import { Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { Image } from "../36S/ui/image";
-import { ViewPartModal } from "./view-part-modal";
+import { ViewPartModal } from "../settings/parts";
 
 type TDataModalPart = TPart & {
   order: "view" | "update" | "delete";

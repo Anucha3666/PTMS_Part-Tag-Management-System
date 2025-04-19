@@ -1,17 +1,17 @@
 import { Image } from "@/components/36S/ui/image";
-import {
-  CreatePartModal,
-  DeletePartModal,
-  ViewPartModal,
-} from "@/components/part";
 import { SRC_DAMAGED_PICTURE, SRC_NO_PICTURE } from "@/constants";
-import { getCustomTableDarkThemeProps, useDisclosure } from "@/helpers";
+import { getCustomTableDarkThemeProps } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TCreatePart, TPart, TUpdatePart } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
-import { CirclePlus, Eye, Trash2 } from "lucide-react";
+import { CirclePlus, Eye, Pencil, Trash2 } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import {
+  CreateUpdatePartModal,
+  DeletePartModal,
+  ViewPartModal,
+} from "./modals";
 
 export type TSettingsPartsTableProps = {
   search?: string;
@@ -19,7 +19,7 @@ export type TSettingsPartsTableProps = {
 
 type TDataModalPart = (TPart & TCreatePart) &
   (TUpdatePart & {
-    order: "view" | "update" | "delete";
+    order: "view" | "update" | "delete" | "create";
   });
 
 export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
@@ -27,7 +27,6 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { parts } = useAppSelector((store) => store?.part);
 
   const { className, rowClassName, rootClassName } =
@@ -216,14 +215,30 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
             </div>
           </Tooltip>
           {!record?.is_deleted && (
-            <Tooltip title={<p>Delete Account</p>}>
-              <Trash2
-                className='text-gray-400 hover:text-red-600 cursor-pointer'
-                onClick={() =>
-                  setDataModal({ ...record, order: "delete" } as TDataModalPart)
-                }
-              />
-            </Tooltip>
+            <>
+              <Tooltip title={<p>Edit Account</p>}>
+                <Pencil
+                  className='text-gray-400 hover:text-orange-600 cursor-pointer'
+                  onClick={() =>
+                    setDataModal({
+                      ...record,
+                      order: "update",
+                    } as TDataModalPart)
+                  }
+                />
+              </Tooltip>
+              <Tooltip title={<p>Delete Account</p>}>
+                <Trash2
+                  className='text-gray-400 hover:text-red-600 cursor-pointer'
+                  onClick={() =>
+                    setDataModal({
+                      ...record,
+                      order: "delete",
+                    } as TDataModalPart)
+                  }
+                />
+              </Tooltip>
+            </>
           )}
           {record?.is_deleted && (
             <p className=' text-xl font-bold absolute text-[#FF000030] rotate-12 -z-10 '>
@@ -288,7 +303,11 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
             <div className='w-full flex justify-end bg-white border-b-[1px] p-4'>
               <CirclePlus
                 className=' text-gray-400 hover:text-green-600 cursor-pointer'
-                onClick={onOpen}
+                onClick={() => {
+                  console.log(dataModal);
+
+                  setDataModal({ order: "create" } as TDataModalPart);
+                }}
               />
             </div>
           )}
@@ -299,23 +318,24 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
           }
         />
       </div>
-      {isOpen && <CreatePartModal open onClose={() => onClose()} />}
-      {/* <CreateUpdatePartModal
-        // open
-        open={dataModal?.order === "update"}
-        data={dataModal}
-        onClose={() => {
-          setDataModal({} as TDataModalPart);
-        }}
-      /> */}
-      <ViewPartModal
-        open={dataModal}
-        onClose={() => setDataModal({} as TDataModalPart)}
-      />
-      <DeletePartModal
-        open={dataModal}
-        onClose={() => setDataModal({} as TDataModalPart)}
-      />
+      {(dataModal?.order === "create" || dataModal?.order === "update") && (
+        <CreateUpdatePartModal
+          open={dataModal}
+          onClose={() => setDataModal({} as TDataModalPart)}
+        />
+      )}
+      {dataModal?.order === "view" && (
+        <ViewPartModal
+          open={dataModal}
+          onClose={() => setDataModal({} as TDataModalPart)}
+        />
+      )}
+      {dataModal?.order === "delete" && (
+        <DeletePartModal
+          open={dataModal}
+          onClose={() => setDataModal({} as TDataModalPart)}
+        />
+      )}
     </div>
   );
 };

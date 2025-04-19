@@ -1,14 +1,14 @@
+import { Image } from "@/components/36S/ui/image";
+import { UploadImage } from "@/components/common";
 import { SRC_DAMAGED_PICTURE, SRC_USER } from "@/constants";
 import { formatDateTime } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TPart } from "@/types";
 import { Input, Modal } from "antd";
 import { FC, Fragment } from "react";
-import { Image } from "../36S/ui/image";
-import { UploadImage } from "../common/upload-image-base64";
 
 type TDataModalPart = TPart & {
-  order: "view" | "update" | "delete";
+  order: "view" | "update" | "delete" | "create";
 };
 
 export type TViewPartModal = {

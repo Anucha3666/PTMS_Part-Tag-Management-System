@@ -222,6 +222,7 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
           }
         />
       </div>
+
       <DeleteAccountModal
         data={dataDelete}
         onCancel={() => setDataDelete({} as TAccount)}
@@ -238,6 +239,7 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
         data={dataChangeRole}
         onCancel={() => setDataChangeRole({} as TAccount)}
       />
+
       {isOpen && <CreateAccountModal open onClose={onClose} />}
       {(dataView?.account_id ?? "") !== "" && (
         <ViewAccountModal

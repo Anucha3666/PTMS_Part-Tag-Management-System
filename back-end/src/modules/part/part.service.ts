@@ -322,6 +322,7 @@ export class PartService {
             updatedMorePictures.push(res?.name ?? null);
           }
         }
+
         req = {
           ...req,
           more_pictures: updatedMorePictures?.filter(
@@ -363,14 +364,13 @@ export class PartService {
           }
           return pic;
         });
-
         req = { ...req, more_pictures: updatedMorePictures };
       }
       const isSame = Object.keys(existingPart.toObject()).every((key) => {
         return key === 'part_no' || key === 'is_log' || key === '_id'
           ? true
           : key === 'more_pictures'
-            ? JSON.stringify(existingPart[key]) ===
+            ? JSON.stringify(req?.more_pictures) ===
               JSON.stringify(existingPart?.more_pictures)
             : existingPart[key] === req[key];
       });

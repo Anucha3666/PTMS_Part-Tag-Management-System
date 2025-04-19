@@ -107,11 +107,8 @@ export class PartController {
       (files['packing']?.[0] ? files['packing']?.[0] : body?.packing) ?? null;
     const q_point =
       (files['q_point']?.[0] ? files['q_point']?.[0] : body?.q_point) ?? null;
-    const file_more_pictures = files['more_pictures'] ?? [];
-    const more_pictures =
-      typeof body?.more_pictures === 'string'
-        ? [body?.more_pictures]
-        : (body?.more_pictures ?? []);
+    const file_more_pictures = []?.concat(files['more_pictures'] ?? []);
+    const more_pictures = []?.concat(body?.more_pictures ?? []);
 
     return this.partService.update(part_id, {
       ...body,
