@@ -1,5 +1,5 @@
 import { Image } from "@/components/36S/ui/image";
-import { SRC_DAMAGED_PICTURE, SRC_USER, VITE_BASE_QR_CODE } from "@/constants";
+import { SRC_USER, VITE_BASE_QR_CODE } from "@/constants";
 import { formatDate, formatDateTime } from "@/helpers";
 import { useTag } from "@/services/hooks";
 import { Input, Spin } from "antd";
@@ -32,6 +32,8 @@ export const TagPage: FC = () => {
     return <NotFoundPage />;
   }
 
+  console.log(data);
+
   return (
     <div
       className={`w-screen h-screen flex justify-center md:items-center overflow-auto py-4 bg-slate-200`}>
@@ -59,7 +61,7 @@ export const TagPage: FC = () => {
                   <div className=' w-full flex text-nowrap gap-2'>
                     <p>ชื่อผู้สั่งทำ</p>
                     <p className='w-full border-b border-black inline-block indent-2 font-bold '>
-                      {data?.part?.customer?.customer_name}
+                      {data?.customer_name}
                     </p>
                   </div>
                   <p className=' -mt-1'>Customer name</p>
@@ -109,7 +111,9 @@ export const TagPage: FC = () => {
                 <div className='w-full'>
                   <div className=' w-full flex text-nowrap gap-2'>
                     <p>ขั้นตอน</p>
-                    <p className='w-full border-b border-black inline-block'></p>
+                    <p className='w-full border-b border-black inline-block indent-2 font-bold'>
+                      {data?.process}
+                    </p>{" "}
                   </div>
                   <p className=' -mt-1'>Process</p>
                 </div>
@@ -158,14 +162,14 @@ export const TagPage: FC = () => {
           <div className=' w-full md:w-[20rem] h-min grid gap-1 py-4 -mt-6 '>
             <div>
               <label className='text-right text-[0.8rem]'>Customer :</label>
-              <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
+              <div className=' flex gap-2 py-4 items-center font-medium h-[1rem]  '>
                 <Image
                   src={data?.part?.customer?.logo ?? ""}
                   alt='customer_logo'
                   className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
                 />
 
-                <p>{data?.part?.customer?.customer_name}</p>
+                <p>{data?.customer_name}</p>
               </div>
             </div>
             <div>
@@ -202,22 +206,24 @@ export const TagPage: FC = () => {
             <div>
               <label className='text-right text-[0.8rem]'>Printed By :</label>
               <div className=' flex gap-2 py-4 items-center font-medium h-[1rem]  '>
-                <img
+                <Image
                   src={data?.printed_by?.profile_picture ?? ""}
+                  srcErrorNoPicture={SRC_USER}
                   alt='profile'
-                  width='30'
-                  height='30'
                   className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src =
-                      data?.printed_by?.profile_picture ?? "" === ""
-                        ? SRC_USER
-                        : SRC_DAMAGED_PICTURE;
-                  }}
                 />
+
                 <p>{data?.printed_by?.first_name}</p>
                 <p>{data?.printed_by?.last_name}</p>
+              </div>
+              <div>
+                <label className='text-right text-[0.8rem]'>Printed at :</label>
+                <Input
+                  id='printed_at'
+                  name='printed_at'
+                  value={formatDateTime(data?.printed_at ?? "") || "-"}
+                  readOnly
+                />
               </div>
             </div>
             {data?.checked_at && (
@@ -227,19 +233,11 @@ export const TagPage: FC = () => {
                     Chacked By :
                   </label>
                   <div className=' flex gap-2 py-4 items-center font-medium h-[1rem]  '>
-                    <img
+                    <Image
                       src={data?.checked_by?.profile_picture ?? ""}
+                      srcErrorNoPicture={SRC_USER}
                       alt='profile'
-                      width='30'
-                      height='30'
                       className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src =
-                          data?.checked_by?.profile_picture ?? "" === ""
-                            ? SRC_USER
-                            : SRC_DAMAGED_PICTURE;
-                      }}
                     />
                     <p>{data?.checked_by?.first_name ?? "-_-"}</p>
                     <p>{data?.checked_by?.last_name ?? ""}</p>
@@ -250,11 +248,9 @@ export const TagPage: FC = () => {
                     Checked at :
                   </label>
                   <Input
-                    id='packing_std'
-                    name='packing_std'
-                    type='number'
+                    id='checked_at'
+                    name='checked_at'
                     value={formatDateTime(data?.checked_at ?? "") || "-"}
-                    placeholder='Enter Checked at.'
                     readOnly
                   />
                 </div>
