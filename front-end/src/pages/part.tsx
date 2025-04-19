@@ -1,16 +1,22 @@
 import { PrintTagDrawer } from "@/components/prints";
-import { useAppSelector } from "@/store/hook";
+import { setPrints } from "@/store/features/print.features";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { Button, Input } from "antd";
 import { Printer, Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PartTable } from "../components/part";
 
 export const PartPage = () => {
+  const dispatch = useAppDispatch();
   const { parts } = useAppSelector((state) => state.part);
   const { prints } = useAppSelector((state) => state.print);
 
   const [isOpenPrintTagDrawer, setIsOpenPrintTagDrawer] = useState(false);
   const [search, setSearch] = useState<string>("");
+
+  useEffect(() => {
+    dispatch(setPrints([]));
+  }, []);
 
   return (
     <div className='p-2 w-full h-full flex flex-col gap-2 overflow-hidden'>

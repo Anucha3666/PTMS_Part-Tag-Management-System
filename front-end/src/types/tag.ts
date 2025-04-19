@@ -3,6 +3,7 @@ import { TPart } from "./part";
 export type TTag = {
   tag_id: string;
   printed_id: string;
+  process: string;
   printed_by: string;
   printed_at: string;
   tag_no: string;

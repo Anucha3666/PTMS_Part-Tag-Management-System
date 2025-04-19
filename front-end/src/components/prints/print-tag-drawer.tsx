@@ -90,10 +90,12 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
             placeholder='Select process.'
             className='w-full max-w-[8rem]'
             options={[{ value: "", label: "Select process." }]?.concat(
-              processes?.map(({ process_name }) => ({
-                value: process_name,
-                label: process_name,
-              }))
+              processes
+                ?.filter(({ is_deleted }) => !is_deleted)
+                ?.map(({ process_name }) => ({
+                  value: process_name,
+                  label: process_name,
+                }))
             )}
             onChange={(e) => setProcess(e)}
           />

@@ -49,6 +49,7 @@ export const SettingsCustomerTable: FC<TSettingsCustomerTableProps> = ({
       title: "Customer name",
       dataIndex: "customer_name",
       key: "customer_name",
+      width: "18rem",
       sorter: (a, b) => a.customer_name.localeCompare(b.customer_name),
       render: (customer_name) => <WriteText text={customer_name ?? "-"} />,
     },
@@ -60,12 +61,19 @@ export const SettingsCustomerTable: FC<TSettingsCustomerTableProps> = ({
         a.customer_description.localeCompare(b.customer_description),
       render: (customer_description) => (
         <WriteText
-          text={
+          value={
             (customer_description ?? "") === ""
               ? "-"
               : customer_description ?? "-"
-          }
-        />
+          }>
+          <div className='max-w-[40rem]'>
+            <p className='w-full truncate whitespace-nowrap'>
+              {(customer_description ?? "") === ""
+                ? "-"
+                : customer_description ?? "-"}
+            </p>
+          </div>
+        </WriteText>
       ),
     },
     {

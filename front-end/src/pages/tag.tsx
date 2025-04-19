@@ -59,7 +59,7 @@ export const TagPage: FC = () => {
                   <div className=' w-full flex text-nowrap gap-2'>
                     <p>ชื่อผู้สั่งทำ</p>
                     <p className='w-full border-b border-black inline-block indent-2 font-bold '>
-                      {data?.part?.customer_name}
+                      {data?.part?.customer?.customer_name}
                     </p>
                   </div>
                   <p className=' -mt-1'>Customer name</p>
@@ -157,16 +157,16 @@ export const TagPage: FC = () => {
           </div>
           <div className=' w-full md:w-[20rem] h-min grid gap-1 py-4 -mt-6 '>
             <div>
-              <label className='text-right text-[0.8rem]'>
-                Customer Name :
-              </label>
-              <Input
-                id='customer_name'
-                name='customer_name'
-                value={data?.part?.customer_name || ""}
-                placeholder='Enter customer name.'
-                readOnly
-              />
+              <label className='text-right text-[0.8rem]'>Customer :</label>
+              <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
+                <Image
+                  src={data?.part?.customer?.logo ?? ""}
+                  alt='customer_logo'
+                  className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
+                />
+
+                <p>{data?.part?.customer?.customer_name}</p>
+              </div>
             </div>
             <div>
               <label className='text-right text-[0.8rem]'>Part No :</label>

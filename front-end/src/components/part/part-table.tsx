@@ -8,6 +8,7 @@ import { Empty, Table } from "antd";
 import { Eye } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { Image } from "../36S/ui/image";
 import { ViewPartModal } from "./view-part-modal";
 
 type TDataModalPart = TPart & {
@@ -33,14 +34,24 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
 
   const columns: TableProps<TPart>["columns"] = [
     {
-      title: "Customer Name",
-      dataIndex: ["customer", "customer_name"],
-      key: "customer.customer_name",
+      title: "Customer",
+      dataIndex: ["customer"],
+      key: "customer",
       width: "12rem",
       sorter: (a, b) =>
         String(a?.customer?.customer_name ?? "").localeCompare(
           String(b?.customer?.customer_name ?? "")
         ),
+      render: (customer: TPart["customer"]) => (
+        <div className=' flex gap-2 items-center font-medium  '>
+          <Image
+            src={customer?.logo ?? ""}
+            alt='profile'
+            className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
+          />
+          <p>{customer?.customer_name ?? ""}</p>
+        </div>
+      ),
     },
     {
       title: "Part No.",

@@ -26,11 +26,13 @@ export const ReportPrintedTable: FC<ReportPrintedtTableProps> = ({
 
   const columns: TableProps<TPrintedTag>["columns"] = [
     {
-      title: "Printed ID",
-      dataIndex: "printed_id",
-      key: "printed_id",
-      sorter: (a, b) => a.printed_id.localeCompare(b.printed_id),
-      render: (printed_id) => <WriteText text={printed_id ?? "-"} />,
+      title: "Process",
+      dataIndex: "process",
+      key: "process",
+      sorter: (a, b) => a.process.localeCompare(b.process),
+      render: (process) => (
+        <WriteText text={process === "" ? "-" : process ?? "-"} />
+      ),
     },
     {
       title: "Summary",

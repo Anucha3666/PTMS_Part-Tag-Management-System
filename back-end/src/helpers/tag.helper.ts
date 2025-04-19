@@ -51,7 +51,10 @@ export class ClassTagHelper {
           },
         },
         {
-          $unwind: { path: '$printed_info', preserveNullAndEmptyArrays: true },
+          $unwind: {
+            path: '$printed_info',
+            preserveNullAndEmptyArrays: true,
+          },
         },
         {
           $lookup: {
@@ -61,7 +64,33 @@ export class ClassTagHelper {
             as: 'part_info',
           },
         },
-        { $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true } },
+        {
+          $unwind: {
+            path: '$part_info',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            'part_info.customer_object_id': {
+              $toObjectId: '$part_info.customer_id',
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'customers',
+            localField: 'part_info.customer_object_id',
+            foreignField: '_id',
+            as: 'customer_info',
+          },
+        },
+        {
+          $unwind: {
+            path: '$customer_info',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
         {
           $addFields: {
             printed_by_object_id: { $toObjectId: '$printed_info.printed_by' },
@@ -97,6 +126,9 @@ export class ClassTagHelper {
         },
       ])
       .exec();
+
+    console.log(tag);
+    console.log(tag[0]?.printed_info?.summary);
 
     const result = tag.map(mapRESOne);
     return result[0] || null;
@@ -144,7 +176,36 @@ export class ClassTagHelper {
           },
         },
         {
-          $unwind: { path: '$part_info', preserveNullAndEmptyArrays: true },
+          $unwind: {
+            path: '$part_info',
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $addFields: {
+            'part_info.customer_object_id': {
+              $convert: {
+                input: '$part_info.customer_id',
+                to: 'objectId',
+                onError: null,
+                onNull: null,
+              },
+            },
+          },
+        },
+        {
+          $lookup: {
+            from: 'customers',
+            localField: 'part_info.customer_object_id',
+            foreignField: '_id',
+            as: 'customer_info',
+          },
+        },
+        {
+          $unwind: {
+            path: '$customer_info',
+            preserveNullAndEmptyArrays: true,
+          },
         },
       ])
       .exec();
@@ -243,6 +304,14 @@ const mapRES = (data: any) => ({
   tag_id: data._id.toString() ?? '',
   printed_id: data.printed_id,
   process: data?.printed_info?.process ?? '',
+  customer_name:
+    (
+      data?.printed_info?.summary as {
+        customer_name: string;
+        part_id: string;
+      }[]
+    )?.find(({ part_id }) => part_id === data?.part_id?.toString())
+      ?.customer_name ?? '',
   printed_by: data?.printed_info?.printed_by,
   printed_at: data?.printed_info?.printed_at,
   tag_no: data.tag_no,
@@ -296,6 +365,14 @@ const mapRESOne = (data: any) => ({
   tag_id: data._id.toString() ?? '',
   printed_id: data.printed_id,
   process: data?.printed_info?.process ?? '',
+  customer_name:
+    (
+      data?.printed_info?.summary as {
+        customer_name: string;
+        part_id: string;
+      }[]
+    )?.find(({ part_id }) => part_id === data?.part_id?.toString())
+      ?.customer_name ?? '',
   printed_by: {
     employee_number: data?.printed_by_info?.employee_number,
     first_name: data?.printed_by_info?.first_name,
@@ -307,33 +384,34 @@ const mapRESOne = (data: any) => ({
   printed_at: data?.printed_info?.printed_at,
   tag_no: data.tag_no,
   ref_tag: data.ref_tag,
-  checked_by: {
-    employee_number: data?.checked_by_info?.employee_number,
-    first_name: data?.checked_by_info?.first_name,
-    last_name: data?.checked_by_info?.last_name,
-    profile_picture: data?.checked_by_info?.profile_picture
-      ? `${process.env.BASE_FILE_IMAGES}/profile_picture/${data?.checked_by_info?.profile_picture}`
-      : null,
-  },
+  checked_by:
+    (data?.checked_by_info?.employee_number ?? '') === ''
+      ? null
+      : {
+          employee_number: data?.checked_by_info?.employee_number,
+          first_name: data?.checked_by_info?.first_name,
+          last_name: data?.checked_by_info?.last_name,
+          profile_picture: data?.checked_by_info?.profile_picture
+            ? `${process.env.BASE_FILE_IMAGES}/profile_picture/${data?.checked_by_info?.profile_picture}`
+            : null,
+        },
   checked_at: data.checked_at,
   part: {
     part_id: data?.part_id,
     customer:
-      (data?.part_info?.customer?._id.toString() ?? '') === ''
+      (data?.customer_info?._id.toString() ?? '') === ''
         ? null
         : {
-            customer_id: data?.part_info?.customer?._id.toString() ?? '',
-            customer_name: data?.part_info?.customer?.customer_name,
-            customer_description:
-              data?.part_info?.customer?.customer_description,
-            logo: data?.part_info.customer?.logo
-              ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${data?.part_info.customer?.logo}`
+            customer_id: data?.customer_info?._id.toString() ?? '',
+            customer_name: data?.customer_info?.customer_name,
+            customer_description: data?.customer_info?.customer_description,
+            logo: data?.customer_info?.logo
+              ? `${process.env.BASE_FILE_IMAGES}/customer_logo/${data?.customer_info?.logo}`
               : null,
           },
     part_no: data?.part_info?.part_no,
     part_name: data?.part_info?.part_name,
     packing_std: data?.part_info?.packing_std,
-    customer_name: data?.part_info?.customer_name,
     picture_std: data?.part_info?.picture_std
       ? `${process.env.BASE_FILE_IMAGES}/picture_std/${data?.part_info?.picture_std}`
       : null,

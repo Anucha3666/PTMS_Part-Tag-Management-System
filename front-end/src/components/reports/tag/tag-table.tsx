@@ -1,3 +1,4 @@
+import { Image } from "@/components/36S/ui/image";
 import { WriteText } from "@/components/common";
 import { SRC_DAMAGED_PICTURE, SRC_NO_PICTURE, SRC_USER } from "@/constants";
 import { formatDateTime } from "@/helpers";
@@ -51,6 +52,34 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
       render: (tag_no) => <WriteText text={tag_no ?? "-"} />,
     },
     {
+      title: "Customer",
+      dataIndex: ["part", "customer"],
+      key: "customer_name",
+      width: "12rem",
+      sorter: (a, b) =>
+        String(a?.part?.customer?.customer_name ?? "").localeCompare(
+          String(b?.part?.customer?.customer_name ?? "")
+        ),
+      render: (customer: TTag["part"]["customer"]) => (
+        <div className=' flex gap-2 items-center font-medium  '>
+          <Image
+            src={customer?.logo ?? ""}
+            alt='profile'
+            className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
+          />
+          <p>{customer?.customer_name ?? ""}</p>
+        </div>
+      ),
+    },
+    {
+      title: "Process",
+      dataIndex: "process",
+      key: "process",
+      width: "10rem",
+      sorter: (a, b) => a.process.localeCompare(b.process),
+      render: (process) => <WriteText text={process ?? "-"} />,
+    },
+    {
       title: "Part No.",
       dataIndex: ["part", "picture_std"],
       key: "picture_std",
@@ -82,15 +111,7 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
         </div>
       ),
     },
-    {
-      title: "Customer Name",
-      dataIndex: ["part", "customer_name"],
-      key: "customer_name",
-      width: "12rem",
-      sorter: (a, b) =>
-        a?.part?.customer_name.localeCompare(b?.part?.customer_name),
-      render: (customer_name) => <WriteText text={customer_name ?? "-"} />,
-    },
+
     {
       title: "Part No.",
       dataIndex: ["part", "part_no"],
@@ -136,19 +157,11 @@ export const ReportTagTable: FC<ReportTagTableProps> = ({ search }) => {
         );
         return (
           <div className=' flex gap-2 items-center font-medium  '>
-            <img
+            <Image
               src={account?.profile_picture ?? ""}
+              srcErrorNoPicture={SRC_USER}
               alt='profile'
-              width='40'
-              height='40'
               className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src =
-                  account?.profile_picture ?? "" === ""
-                    ? SRC_USER
-                    : SRC_DAMAGED_PICTURE;
-              }}
             />
             <p>{account?.first_name}</p>
             <p>{account?.last_name}</p>

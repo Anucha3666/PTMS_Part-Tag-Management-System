@@ -31,6 +31,7 @@ export const SettingsProcessesTable: FC<TSettingsProcessesTableProps> = ({
       title: "Process name",
       dataIndex: "process_name",
       key: "process_name",
+      width: "18rem",
       sorter: (a, b) => a.process_name.localeCompare(b.process_name),
       render: (process_name) => <WriteText text={process_name ?? "-"} />,
     },
@@ -42,12 +43,19 @@ export const SettingsProcessesTable: FC<TSettingsProcessesTableProps> = ({
         a.process_description.localeCompare(b.process_description),
       render: (process_description) => (
         <WriteText
-          text={
+          value={
             (process_description ?? "") === ""
               ? "-"
               : process_description ?? "-"
-          }
-        />
+          }>
+          <div className='max-w-[58rem]'>
+            <p className='w-full truncate whitespace-nowrap'>
+              {(process_description ?? "") === ""
+                ? "-"
+                : process_description ?? "-"}
+            </p>
+          </div>
+        </WriteText>
       ),
     },
     {

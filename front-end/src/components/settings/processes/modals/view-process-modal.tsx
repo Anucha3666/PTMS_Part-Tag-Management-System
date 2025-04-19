@@ -43,7 +43,7 @@ export const ViewProcessModal: FC<TViewProcessModal> = ({ data, onCancel }) => {
           <div className=' flex gap-2 items-center justify-center text-black'>
             <p className='text-xl '>{data?.process_name}</p>
           </div>
-          <p className=' text-[0.7rem] text-slate-400'>
+          <p className=' text-[0.7rem] text-center text-slate-400'>
             {data?.process_description}
           </p>
         </div>

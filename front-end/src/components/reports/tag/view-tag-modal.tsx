@@ -49,7 +49,7 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
               <div className=' w-full flex text-nowrap gap-2'>
                 <p>ชื่อผู้สั่งทำ</p>
                 <p className='w-full border-b border-black inline-block indent-2 font-bold '>
-                  {data?.part?.customer_name}
+                  {data?.part?.customer?.customer_name}
                 </p>
               </div>
               <p className=' -mt-1'>Customer name</p>
@@ -99,7 +99,9 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
             <div className='w-full'>
               <div className=' w-full flex text-nowrap gap-2'>
                 <p>ขั้นตอน</p>
-                <p className='w-full border-b border-black inline-block'></p>
+                <p className='w-full border-b border-black inline-block indent-2 font-bold'>
+                  {data?.process}
+                </p>{" "}
               </div>
               <p className=' -mt-1'>Process</p>
             </div>

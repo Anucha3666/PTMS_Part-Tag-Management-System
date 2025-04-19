@@ -51,17 +51,19 @@ export const DeleteCustomerModal: FC<TDeleteCustomerModal> = ({
           ? "95%"
           : "max-content"
       }>
-      <div className='flex gap-4 justify-center items-center w-full'>
+      <div className='flex gap-4 max-w-[30rem] justify-center items-center w-full'>
         <Image
           src={data?.logo ?? ""}
           alt='logo'
           className='!max-w-[80px] !max-h-[80px] w-[80px] h-[80px] object-cover rounded-full border-[1px] my-4 shadow-md'
         />
-        <div className=' font-bold flex flex-col  text-lg text-slate-400 h-ful'>
+        <div className=' font-bold flex flex-col items-start text-lg text-slate-400 h-ful'>
           <div className=' flex gap-2 items-center justify-center text-black'>
             <p className='text-xl'>{data?.customer_name}</p>
           </div>
-          <p>{data?.customer_description}</p>
+          <p className=' text-[0.7rem] leading-tight'>
+            {data?.customer_description}
+          </p>
         </div>
       </div>
       <p className=' w-full text-center'>

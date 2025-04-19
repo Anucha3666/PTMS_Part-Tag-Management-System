@@ -1,3 +1,4 @@
+import { Image } from "@/components/36S/ui/image";
 import {
   CreatePartModal,
   DeletePartModal,
@@ -39,14 +40,24 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
 
   const columns: TableProps<TPart>["columns"] = [
     {
-      title: "Customer Name",
-      dataIndex: ["customer", "customer_name"],
-      key: "customer.customer_name",
+      title: "Customer",
+      dataIndex: ["customer"],
+      key: "customer",
       width: "12rem",
       sorter: (a, b) =>
         String(a?.customer?.customer_name ?? "").localeCompare(
           String(b?.customer?.customer_name ?? "")
         ),
+      render: (customer: TPart["customer"]) => (
+        <div className=' flex gap-2 items-center font-medium  '>
+          <Image
+            src={customer?.logo ?? ""}
+            alt='profile'
+            className='!max-w-[40px] !max-h-[40px] w-[40px] h-[40px] object-cover rounded-full border-[1px] my-4 shadow-md'
+          />
+          <p>{customer?.customer_name ?? ""}</p>
+        </div>
+      ),
     },
     {
       title: "Part No.",
@@ -191,7 +202,7 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
       width: "5rem",
       fixed: "right",
       render: (_, record) => (
-        <div className=' w-full flex gap-1 justify-center items-center'>
+        <div className=' w-full flex gap-1 justify-center items-center relative'>
           <Tooltip title={<p>View Tag</p>}>
             <div
               className='flex gap-2 cursor-pointer'
@@ -213,6 +224,11 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
                 }
               />
             </Tooltip>
+          )}
+          {record?.is_deleted && (
+            <p className=' text-xl font-bold absolute text-[#FF000030] rotate-12 -z-10 '>
+              Deleted
+            </p>
           )}
         </div>
       ),

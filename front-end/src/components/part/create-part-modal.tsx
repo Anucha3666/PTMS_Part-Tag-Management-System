@@ -52,26 +52,36 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
       <form onSubmit={handleSubmit} className=' -mt-6'>
         <div className='grid gap-1 py-4'>
           <div>
-            <label htmlFor='customer_name' className='text-right text-[0.8rem]'>
-              Customer Name :
-            </label>
+            <div className=' flex gap-1'>
+              <p className=' text-red-500'>*</p>
+              <label
+                htmlFor='customer_name'
+                className='text-right text-[0.8rem]'>
+                Customer Name :
+              </label>
+            </div>
 
             <Select
               id='customer_id'
               value={formData?.customer_id}
               placeholder='Select customer name.'
               className='w-full'
-              options={customers?.map(({ customer_id, customer_name }) => ({
-                value: customer_id,
-                label: customer_name,
-              }))}
+              options={customers
+                ?.filter(({ is_deleted }) => !is_deleted)
+                ?.map(({ customer_id, customer_name }) => ({
+                  value: customer_id,
+                  label: customer_name,
+                }))}
               onChange={(e) => setFormData({ ...formData, customer_id: e })}
             />
           </div>
           <div>
-            <label htmlFor='part_no' className='text-right text-[0.8rem]'>
-              Part No :
-            </label>
+            <div className=' flex gap-1'>
+              <p className=' text-red-500'>*</p>
+              <label htmlFor='part_no' className='text-right text-[0.8rem]'>
+                Part No :
+              </label>
+            </div>
             <Input
               id='part_no'
               name='part_no'
@@ -81,9 +91,12 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
             />
           </div>
           <div>
-            <label htmlFor='part_name' className='text-right text-[0.8rem]'>
-              Part Name :
-            </label>
+            <div className=' flex gap-1'>
+              <p className=' text-red-500'>*</p>
+              <label htmlFor='part_name' className='text-right text-[0.8rem]'>
+                Part Name :
+              </label>
+            </div>
             <Input
               id='part_name'
               name='part_name'
@@ -94,9 +107,12 @@ export const CreatePartModal: FC<TCreatePartModal> = ({ open, onClose }) => {
           </div>
 
           <div>
-            <label htmlFor='packing_std' className='text-right text-[0.8rem]'>
-              Packing Std :
-            </label>
+            <div className=' flex gap-1'>
+              <p className=' text-red-500'>*</p>
+              <label htmlFor='packing_std' className='text-right text-[0.8rem]'>
+                Packing Std :
+              </label>
+            </div>
             <Input
               id='packing_std'
               name='packing_std'

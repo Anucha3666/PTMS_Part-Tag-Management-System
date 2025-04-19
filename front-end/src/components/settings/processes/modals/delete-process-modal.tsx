@@ -50,13 +50,13 @@ export const DeleteProcessModal: FC<TDeleteProcessModal> = ({
           ? "95%"
           : "max-content"
       }>
-      <div className='flex gap-4 justify-center items-center w-full'>
-        <div className=' font-bold flex flex-col  text-lg text-slate-400 h-ful'>
-          <div className=' flex gap-2 items-center justify-center text-black'>
-            <p className='text-xl'>{data?.process_name}</p>
-          </div>
-          <p>{data?.process_description}</p>
+      <div className='flex max-w-[34rem] justify-center items-center w-full flex-col pb-2'>
+        <div className=' flex gap-2 items-center justify-center text-black'>
+          <p className='text-xl '>{data?.process_name}</p>
         </div>
+        <p className=' text-[0.7rem] text-center text-slate-400'>
+          {data?.process_description}
+        </p>
       </div>
       <p className=' w-full text-center'>
         --- Please press "Delete" to delete process. ---

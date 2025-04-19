@@ -52,7 +52,9 @@ export const ViewCustomerModal: FC<TViewCustomerModal> = ({
             <div className=' flex gap-2 items-center justify-center text-black'>
               <p className='text-xl'>{data?.customer_name}</p>
             </div>
-            <p className=' text-[0.7rem]'>{data?.customer_description}</p>
+            <p className=' text-[0.7rem] leading-tight'>
+              {data?.customer_description}
+            </p>
           </div>
         </div>
         <div className='grid gap-2 grid-cols-2 w-full border-t-2'>

@@ -3,6 +3,8 @@ import { TRESPart } from './part';
 export type TRESTag = {
   tag_id: string;
   printed_id: string;
+  process: string;
+  customer_name?: string;
   printed_by: string | any;
   printed_at: string;
   tag_no: string;

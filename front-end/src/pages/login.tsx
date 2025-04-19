@@ -9,8 +9,7 @@ export const LoginPage: FC = () => {
     <div
       className={`w-screen h-screen flex justify-center items-center md:items-start md:justify-end overflow-hidden md:pr-8`}
       style={{
-        backgroundImage:
-          "url('https://www.kacha.co.th/wp-content/uploads/2023/08/AnyConv.com__219.webp')",
+        backgroundImage: "url('/src/assets/images/bg-b4.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -18,7 +17,7 @@ export const LoginPage: FC = () => {
       <motion.div
         layout
         layoutId={"layout-login"}
-        className=' h-min w-[22rem] rounded-xl md:rounded-b-3xl flex flex-col gap-2 border-l-2 border-[#00000090] p-10 shadow-2xl backdrop-blur-md bg-[#00000090]'>
+        className=' h-min w-[22rem] rounded-xl md:rounded-b-3xl md:rounded-t-none flex flex-col gap-2 border-l-2 border-[#00000090] p-10 shadow-2xl backdrop-blur-md bg-[#00000090]'>
         <div className=' flex flex-col gap-2 items-center text-white'>
           <img
             src={

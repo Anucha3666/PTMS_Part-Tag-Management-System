@@ -4,7 +4,13 @@ import { useDisclosure } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TAccount } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
-import { CircleCheck, CirclePlus, CircleSlash, Trash2 } from "lucide-react";
+import {
+  CircleCheck,
+  CirclePlus,
+  CircleSlash,
+  Eye,
+  Trash2,
+} from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import {
   ApproveAccountModal,
@@ -12,6 +18,7 @@ import {
   CreateAccountModal,
   DeleteAccountModal,
   RejectAccountModal,
+  ViewAccountModal,
 } from ".";
 
 export type TSettingsAccountTableProps = {
@@ -27,6 +34,7 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
   const { accounts } = useAppSelector((store) => store?.account);
 
   const [height, setHeight] = useState(0);
+  const [dataView, setDataView] = useState<TAccount>({} as TAccount);
   const [dataDelete, setDataDelete] = useState<TAccount>({} as TAccount);
   const [dataApprove, setDataApprove] = useState<TAccount>({} as TAccount);
   const [dataReject, setDataReject] = useState<TAccount>({} as TAccount);
@@ -107,7 +115,13 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
       fixed: "right",
       render: (_, record) => {
         return (
-          <div className='flex justify-center  items-center gap-2'>
+          <div className='flex justify-center  items-center gap-2 relative'>
+            <Tooltip title={<p>View Account</p>}>
+              <Eye
+                className='text-gray-400 hover:text-blue-600 cursor-pointer'
+                onClick={() => setDataView(record)}
+              />
+            </Tooltip>
             {!record?.is_approved && (record?.approved_by ?? "") === "" ? (
               <>
                 <Tooltip title={<p>Approve Account</p>}>
@@ -125,12 +139,6 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
               </>
             ) : (
               <>
-                {/* <Tooltip title={<p>View Account</p>}>
-                  <Eye
-                    className='text-gray-400 hover:text-blue-600 cursor-pointer'
-                    onClick={() => setDataDelete(record)}
-                  />
-                </Tooltip> */}
                 {!record?.is_deleted && (
                   <Tooltip title={<p>Delete Account</p>}>
                     <Trash2
@@ -140,6 +148,12 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
                   </Tooltip>
                 )}
               </>
+            )}
+
+            {record?.is_deleted && (
+              <p className=' text-xl font-bold absolute text-[#FF000030] rotate-12 -z-10 '>
+                Deleted
+              </p>
             )}
           </div>
         );
@@ -225,6 +239,12 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
         onCancel={() => setDataChangeRole({} as TAccount)}
       />
       {isOpen && <CreateAccountModal open onClose={onClose} />}
+      {(dataView?.account_id ?? "") !== "" && (
+        <ViewAccountModal
+          open={dataView}
+          onClose={() => setDataView({} as TAccount)}
+        />
+      )}
     </div>
   );
 };

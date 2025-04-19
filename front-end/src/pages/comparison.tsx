@@ -96,9 +96,9 @@ export const ComparisonPage = () => {
           </div>
           <div className=' col-span-2 w-full h-full overflow-hidden pb-2'>
             <p>Preview Tag</p>
-            <div className='border-[1px] w-full rounded-md shadow-md h-min'>
+            <div className='border-[1px] w-full rounded-md shadow-md h-min p-2'>
               {(data?.tag_id ?? "") === "" || isFetching ? (
-                <div className=' w-full h-[5.3rem] overflow-hidden justify-center items-center flex'>
+                <div className=' w-full h-[4.2rem] overflow-hidden justify-center items-center flex'>
                   <Spin size='large' tip='Loading profile...' />
                 </div>
               ) : (
@@ -125,7 +125,7 @@ export const ComparisonPage = () => {
                           <div className=' w-full flex text-nowrap gap-2'>
                             <p>ชื่อผู้สั่งทำ</p>
                             <p className='w-full border-b border-black inline-block indent-2 font-bold '>
-                              {data?.part?.customer_name}
+                              {data?.part?.customer?.customer_name}
                             </p>
                           </div>
                           <p className=' -mt-1'>Customer name</p>
@@ -224,15 +224,17 @@ export const ComparisonPage = () => {
                   <div className=' w-full md:w-[20rem] h-min grid gap-1 py-4 -mt-6 '>
                     <div>
                       <label className='text-right text-[0.8rem]'>
-                        Customer Name :
+                        Customer :
                       </label>
-                      <Input
-                        id='customer_name'
-                        name='customer_name'
-                        value={data?.part?.customer_name || ""}
-                        placeholder='Enter customer name.'
-                        readOnly
-                      />
+                      <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
+                        <Image
+                          src={data?.part?.customer?.logo ?? ""}
+                          alt='customer_logio'
+                          className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
+                        />
+
+                        <p>{data?.part?.customer?.customer_name}</p>
+                      </div>
                     </div>
                     <div>
                       <label className='text-right text-[0.8rem]'>
