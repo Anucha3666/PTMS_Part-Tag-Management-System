@@ -27,8 +27,6 @@ export const ViewAccountModal: FC<TViewAccountModal> = ({ open, onClose }) => {
     ({ account_id }) => account_id === open?.approved_by
   );
 
-  console.log(open);
-
   return (
     <Modal
       title={"View Account"}

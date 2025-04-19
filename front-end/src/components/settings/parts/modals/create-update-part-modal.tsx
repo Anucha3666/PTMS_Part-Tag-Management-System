@@ -8,7 +8,7 @@ import { UploadImageFile } from "../../../common/upload-image-file";
 
 type TDataModalPart = (TPart & TCreatePart) &
   (TUpdatePart & {
-    order: "view" | "update" | "delete" | "create";
+    order: "view" | "update" | "delete" | "create" | "change-historys";
   });
 
 export type TCreateUpdatePartModal = {

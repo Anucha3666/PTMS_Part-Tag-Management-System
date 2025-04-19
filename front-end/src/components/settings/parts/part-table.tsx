@@ -4,12 +4,13 @@ import { getCustomTableDarkThemeProps } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
 import { TCreatePart, TPart, TUpdatePart } from "@/types";
 import { Empty, Table, TableProps, Tooltip } from "antd";
-import { CirclePlus, Eye, Pencil, Trash2 } from "lucide-react";
+import { CirclePlus, Eye, History, Pencil, Trash2 } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import {
   CreateUpdatePartModal,
   DeletePartModal,
+  ViewPartChangeHistorysModal,
   ViewPartModal,
 } from "./modals";
 
@@ -19,7 +20,7 @@ export type TSettingsPartsTableProps = {
 
 type TDataModalPart = (TPart & TCreatePart) &
   (TUpdatePart & {
-    order: "view" | "update" | "delete" | "create";
+    order: "view" | "update" | "delete" | "create" | "change-historys";
   });
 
 export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
@@ -202,14 +203,25 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
       fixed: "right",
       render: (_, record) => (
         <div className=' w-full flex gap-1 justify-center items-center relative'>
-          <Tooltip title={<p>View Tag</p>}>
-            <div
-              className='flex gap-2 cursor-pointer'
-              onClick={() => console.log(record)}>
+          <Tooltip title={<p>View Part</p>}>
+            <div className='flex gap-2 cursor-pointer'>
               <Eye
                 className=' text-gray-400 hover:text-blue-600'
                 onClick={() => {
                   setDataModal({ ...record, order: "view" } as TDataModalPart);
+                }}
+              />
+            </div>
+          </Tooltip>
+          <Tooltip title={<p>View Part Change Historys</p>}>
+            <div className='flex gap-2 cursor-pointer'>
+              <History
+                className=' text-gray-400 hover:text-blue-600'
+                onClick={() => {
+                  setDataModal({
+                    ...record,
+                    order: "change-historys",
+                  } as TDataModalPart);
                 }}
               />
             </div>
@@ -304,8 +316,6 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
               <CirclePlus
                 className=' text-gray-400 hover:text-green-600 cursor-pointer'
                 onClick={() => {
-                  console.log(dataModal);
-
                   setDataModal({ order: "create" } as TDataModalPart);
                 }}
               />
@@ -326,6 +336,12 @@ export const SettingsPartsTable: FC<TSettingsPartsTableProps> = ({
       )}
       {dataModal?.order === "view" && (
         <ViewPartModal
+          open={dataModal}
+          onClose={() => setDataModal({} as TDataModalPart)}
+        />
+      )}
+      {dataModal?.order === "change-historys" && (
+        <ViewPartChangeHistorysModal
           open={dataModal}
           onClose={() => setDataModal({} as TDataModalPart)}
         />

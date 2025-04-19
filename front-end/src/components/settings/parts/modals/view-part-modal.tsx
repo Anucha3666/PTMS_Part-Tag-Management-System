@@ -2,13 +2,14 @@ import { Image } from "@/components/36S/ui/image";
 import { UploadImage } from "@/components/common";
 import { SRC_DAMAGED_PICTURE, SRC_USER } from "@/constants";
 import { formatDateTime } from "@/helpers";
+import { usePart } from "@/services/hooks";
 import { useAppSelector } from "@/store/hook";
-import { TPart } from "@/types";
+import { TPart, TPartChangeHistory } from "@/types";
 import { Input, Modal } from "antd";
 import { FC, Fragment } from "react";
 
 type TDataModalPart = TPart & {
-  order: "view" | "update" | "delete" | "create";
+  order: "view" | "update" | "delete" | "create" | "change-historys";
 };
 
 export type TViewPartModal = {
@@ -17,15 +18,28 @@ export type TViewPartModal = {
 };
 
 export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
+  const { useGetPartChangeHistorys } = usePart();
   const { accounts } = useAppSelector((state) => state?.account);
 
+  const { data } = useGetPartChangeHistorys(open?.part_id);
+
+  const dataPartChangeHistorys = (data ?? []) as TPartChangeHistory[];
+
+  const dataCreated =
+    dataPartChangeHistorys[(dataPartChangeHistorys?.length ?? 1) - 1];
+
   const Created = accounts?.find(
+    ({ account_id }) => account_id === dataCreated?.created_by
+  );
+
+  const Updater = accounts?.find(
     ({ account_id }) => account_id === open?.created_by
   );
 
   const Deleter = accounts?.find(
     ({ account_id }) => account_id === open?.deleted_by
   );
+
   return (
     <Modal
       title={"View Part"}
@@ -118,19 +132,11 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
           <div>
             <label className='text-right text-[0.8rem]'>Creator :</label>
             <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
-              <img
+              <Image
                 src={Created?.profile_picture ?? ""}
+                srcErrorNoPicture={SRC_USER}
                 alt='profile'
-                width='30'
-                height='30'
                 className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src =
-                    Created?.profile_picture ?? "" === ""
-                      ? SRC_USER
-                      : SRC_DAMAGED_PICTURE;
-                }}
               />
               <p>{Created?.first_name}</p>
               <p>{Created?.last_name}</p>
@@ -141,13 +147,26 @@ export const ViewPartModal: FC<TViewPartModal> = ({ open, onClose }) => {
             <Input
               id='create_at'
               name='create_at'
-              value={formatDateTime(open.created_at) ?? "-"}
+              value={formatDateTime(dataCreated?.created_at) ?? "-"}
               readOnly
             />
           </div>
           <div>
+            <label className='text-right text-[0.8rem]'>Latest Updater :</label>
+            <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
+              <Image
+                src={Updater?.profile_picture ?? ""}
+                srcErrorNoPicture={SRC_USER}
+                alt='profile'
+                className='!max-w-[30px] !max-h-[30px] w-[30px] h-[30px] object-cover rounded-full border-[1px] my-4 shadow-md'
+              />
+              <p>{Updater?.first_name}</p>
+              <p>{Updater?.last_name}</p>
+            </div>
+          </div>
+          <div>
             <label className='text-right text-[0.8rem]'>
-              Latest update At :
+              Latest Updated At :
             </label>
             <Input
               id='update_at'

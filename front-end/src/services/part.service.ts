@@ -73,8 +73,6 @@ export class PartService extends APIService {
 
   createPart = async (req: TCreatePart): Promise<TResponse<[]>> => {
     try {
-      console.log(req);
-
       const formData = new FormData();
 
       formData.append("customer_id", req?.customer_id);
@@ -95,8 +93,6 @@ export class PartService extends APIService {
           formData.append("more_pictures", more_picture);
         }
       }
-
-      console.log(formData);
 
       const { data } = await this.post<TResponse<[]>>(`/part`, formData, {
         headers: {

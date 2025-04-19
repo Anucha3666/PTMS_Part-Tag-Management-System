@@ -30,8 +30,6 @@ const PDFTag: FC<TPDFTag> = ({
   isView = false,
   isViewPDF = false,
 }) => {
-  console.log(data);
-
   const transformData = (input: TPrintedTag): OutputData => {
     const result: OutputData = [];
 

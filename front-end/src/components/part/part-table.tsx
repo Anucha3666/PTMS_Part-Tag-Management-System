@@ -196,9 +196,7 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
       fixed: "right",
       render: (_, record) => (
         <div className=' w-full justify-center items-center'>
-          <div
-            className='flex gap-2 cursor-pointer'
-            onClick={() => console.log(record)}>
+          <div className='flex gap-2 cursor-pointer'>
             <Eye
               className=' text-gray-400 hover:text-blue-600'
               onClick={() => {

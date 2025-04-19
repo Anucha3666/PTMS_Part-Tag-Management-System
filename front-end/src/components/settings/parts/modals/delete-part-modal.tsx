@@ -4,7 +4,7 @@ import { Modal } from "antd";
 import { FC } from "react";
 
 type TDataModalPart = TPart & {
-  order: "view" | "update" | "delete" | "create";
+  order: "view" | "update" | "delete" | "create" | "change-historys";
 };
 
 export type TDeletePartModal = {
