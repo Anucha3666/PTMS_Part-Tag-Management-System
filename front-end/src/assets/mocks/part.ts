@@ -1,7 +1,7 @@
-import { TPart } from "@/types";
 import { faker } from "@faker-js/faker";
 
-const generateMockPart = (): TPart => ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const generateMockPart = (): any => ({
   part_id: faker.string.uuid(),
   part_no: faker.string.alphanumeric(10).toUpperCase(),
   part_name: faker.commerce.productName(),

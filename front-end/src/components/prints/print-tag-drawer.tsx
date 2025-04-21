@@ -89,7 +89,16 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
             value={process}
             placeholder='Select process.'
             className='w-full max-w-[8rem]'
-            options={[{ value: "", label: "Select process." }]?.concat(
+            options={[
+              {
+                value: "",
+                label:
+                  processes?.filter(({ is_deleted }) => !is_deleted)?.length ??
+                  0 === 0
+                    ? "Please create a process."
+                    : "Select a process.",
+              },
+            ]?.concat(
               processes
                 ?.filter(({ is_deleted }) => !is_deleted)
                 ?.map(({ process_name }) => ({

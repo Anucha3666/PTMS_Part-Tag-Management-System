@@ -9,7 +9,7 @@ export const LoginPage: FC = () => {
     <div
       className={`w-screen h-screen flex justify-center items-center md:items-start md:justify-end overflow-hidden md:pr-8`}
       style={{
-        backgroundImage: "url('/src/assets/images/bg-b4.png')",
+        backgroundImage: "url('/assets/images/bg-b4.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -21,7 +21,7 @@ export const LoginPage: FC = () => {
         <div className=' flex flex-col gap-2 items-center text-white'>
           <img
             src={
-              "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/icon-ptms.png"
+              "https://sncservices.sncformer.com/data/microservices/v1/file-storage/ptms/images/1a13374c-ff79-45a6-a122-e0ed6ef75c82-1745199350855.png"
             }
             alt='icon-ptms'
             className=' w-[6rem] h-max'

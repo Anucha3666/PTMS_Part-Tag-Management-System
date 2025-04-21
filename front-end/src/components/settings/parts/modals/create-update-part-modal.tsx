@@ -80,12 +80,23 @@ export const CreateUpdatePartModal: FC<TCreateUpdatePartModal> = ({
               value={formData?.customer_id}
               placeholder='Select customer name.'
               className='w-full'
-              options={customers
-                ?.filter(({ is_deleted }) => !is_deleted)
-                ?.map(({ customer_id, customer_name }) => ({
-                  value: customer_id,
-                  label: customer_name,
-                }))}
+              options={[
+                {
+                  value: "",
+                  label:
+                    (customers?.filter(({ is_deleted }) => !is_deleted)
+                      ?.length ?? 0) === 0
+                      ? "Please create a customer."
+                      : "Select a customer.",
+                },
+              ]?.concat(
+                customers
+                  ?.filter(({ is_deleted }) => !is_deleted)
+                  ?.map(({ customer_id, customer_name }) => ({
+                    value: customer_id,
+                    label: customer_name,
+                  }))
+              )}
               onChange={(e) => setFormData({ ...formData, customer_id: e })}
             />
           </div>

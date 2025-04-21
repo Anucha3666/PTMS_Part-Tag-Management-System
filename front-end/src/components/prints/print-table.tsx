@@ -1,13 +1,14 @@
 import { setPrints } from "@/store/features/print.features";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { TPart, TPrintTag } from "@/types";
+import { TPart, TPrintTagPart } from "@/types";
 import type { TableProps } from "antd";
 import { Empty, Input, Table } from "antd";
 import { Minus, Plus } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { Image } from "../36S/ui/image";
 
-type TDataTable = TPart & TPrintTag & { index: number };
+type TDataTable = TPart & TPrintTagPart & { index: number };
 
 export const PrintTable: FC = () => {
   const dispatch = useAppDispatch();
@@ -59,15 +60,10 @@ export const PrintTable: FC = () => {
           <PhotoProvider>
             <PhotoView src={picture_std}>
               <div className='relative w-full h-[4rem] bg-slate-50 rounded-md'>
-                <img
+                <Image
                   src={picture_std ?? ""}
                   alt={`picture_std`}
                   className='absolute inset-0 w-full h-full object-contain transition-all duration-200 cursor-pointer'
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src =
-                      "https://raw.githubusercontent.com/Anucha3666/PTMS_Part-Tag-Management-System/refs/heads/main/media/images/no-picture.png";
-                  }}
                 />
               </div>
             </PhotoView>
@@ -91,7 +87,8 @@ export const PrintTable: FC = () => {
                       ?.slice(0, record?.index)
                       ?.concat({
                         ...record,
-                        number_of_tags: record?.number_of_tags + 1,
+                        number_of_tags:
+                          prints[record?.index]?.number_of_tags + 1,
                       })
                       ?.concat(prints?.slice(record?.index + 1))
                   )
@@ -100,7 +97,7 @@ export const PrintTable: FC = () => {
             />
             <div className=' !w-[3rem] flex '>
               <Input
-                value={record?.number_of_tags}
+                value={prints[record?.index]?.number_of_tags}
                 className=' text-center'
                 onChange={(e) =>
                   dispatch(
@@ -130,9 +127,9 @@ export const PrintTable: FC = () => {
                       ?.concat({
                         ...record,
                         number_of_tags:
-                          record?.number_of_tags - 1 <= 0
+                          prints[record?.index]?.number_of_tags - 1 <= 0
                             ? 0
-                            : record?.number_of_tags - 1,
+                            : prints[record?.index]?.number_of_tags - 1,
                       })
                       ?.concat(prints?.slice(record?.index + 1))
                   )
