@@ -46,10 +46,21 @@ export const ComparisonPage = () => {
                   value={validationTag?.tag_no}
                   placeholder='Enter qr tag ptms.'
                   onChange={(e) => {
-                    setValidationTag({
-                      ...validationTag,
-                      tag_no: e?.target?.value ?? "",
-                    });
+                    if (
+                      e?.target?.value?.includes(
+                        "https://snc-services.sncformer.com/ptms/tag/"
+                      )
+                    ) {
+                      setValidationTag({
+                        ...validationTag,
+                        tag_no: e?.target?.value?.split("/")[5] ?? "",
+                      });
+                    } else {
+                      setValidationTag({
+                        ...validationTag,
+                        tag_no: e?.target?.value ?? "",
+                      });
+                    }
 
                     if (
                       (e.target?.value?.length ?? 0) >
@@ -71,7 +82,7 @@ export const ComparisonPage = () => {
               </div>
             </div>
             <div>
-              <label className='text-right text-[0.8rem]'>REF. Tag:</label>
+              <label className='text-right text-[0.8rem]'>EDI Tag :</label>
               <Input
                 id='ref_tag'
                 name='ref_tag'
@@ -198,12 +209,18 @@ export const ComparisonPage = () => {
                         </div>
                       </div>
 
-                      <div className='w-full'>
+                      <div className='w-full relative'>
                         <div className=' w-full flex text-nowrap gap-2'>
                           <p>ใบสั่งงานเลขที่</p>
                           <p className='w-full border-b border-black inline-block indent-2 font-bold'></p>
                         </div>
                         <p className=' -mt-1'>Order No.</p>
+
+                        <div className=' absolute right-0 top-1 pl-2 bg-white'>
+                          <p className=' border-[1px] border-black  rounded-sm px-1'>
+                            RoHS II
+                          </p>
+                        </div>
                       </div>
 
                       <div className=' w-full h-[16rem] overflow-hidden flex items-center justify-center border border-black mt-1'>
@@ -226,7 +243,7 @@ export const ComparisonPage = () => {
                       <label className='text-right text-[0.8rem]'>
                         Customer :
                       </label>
-                      <div className=' flex gap-2 pt-4 items-center font-medium h-[1rem]  '>
+                      <div className=' flex gap-2 py-4   items-center font-medium h-[1rem]  '>
                         <Image
                           src={data?.part?.customer?.logo ?? ""}
                           alt='customer_logio'
@@ -288,6 +305,18 @@ export const ComparisonPage = () => {
                         <p>{data?.printed_by?.first_name}</p>
                         <p>{data?.printed_by?.last_name}</p>
                       </div>
+                    </div>
+                    <div>
+                      <label className='text-right text-[0.8rem]'>
+                        Printed at :
+                      </label>
+                      <Input
+                        id='printed_at'
+                        name='printed_at'
+                        value={formatDateTime(data?.printed_at ?? "") || "-"}
+                        placeholder='Enter printed at.'
+                        readOnly
+                      />
                     </div>
                     {data?.checked_at && (
                       <>

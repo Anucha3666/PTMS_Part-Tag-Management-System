@@ -124,12 +124,18 @@ export const ViewTagModal: FC<TViewTagModal> = ({ data, onCancel }) => {
             </div>
           </div>
 
-          <div className='w-full'>
+          <div className='w-full relative'>
             <div className=' w-full flex text-nowrap gap-2'>
               <p>ใบสั่งงานเลขที่</p>
               <p className='w-full border-b border-black inline-block indent-2 font-bold'></p>
             </div>
             <p className=' -mt-1'>Order No.</p>
+
+            <div className=' absolute right-0 top-1 pl-2 bg-white'>
+              <p className=' border-[1px] border-black  rounded-sm px-1'>
+                RoHS II
+              </p>
+            </div>
           </div>
 
           <div

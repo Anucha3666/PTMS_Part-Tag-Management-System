@@ -1,9 +1,10 @@
 import { Image } from "@/components/36S/ui/image";
+import { UploadImage } from "@/components/common";
 import { SRC_USER, VITE_BASE_QR_CODE } from "@/constants";
 import { formatDate, formatDateTime } from "@/helpers";
 import { useTag } from "@/services/hooks";
 import { Input, Spin } from "antd";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import QRCode from "react-qr-code";
 import { useParams } from "react-router-dom";
 import { NotFoundPage } from "./not-found";
@@ -134,12 +135,18 @@ export const TagPage: FC = () => {
                 </div>
               </div>
 
-              <div className='w-full'>
+              <div className='w-full relative'>
                 <div className=' w-full flex text-nowrap gap-2'>
                   <p>ใบสั่งงานเลขที่</p>
                   <p className='w-full border-b border-black inline-block indent-2 font-bold'></p>
                 </div>
                 <p className=' -mt-1'>Order No.</p>
+
+                <div className=' absolute right-0 top-1 pl-2 bg-white'>
+                  <p className=' border-[1px] border-black  rounded-sm px-1'>
+                    RoHS II
+                  </p>
+                </div>
               </div>
 
               <div className=' w-full h-[16rem] overflow-hidden flex items-center justify-center border border-black mt-1'>
@@ -200,6 +207,42 @@ export const TagPage: FC = () => {
                 placeholder='Enter packing std.'
                 readOnly
               />
+            </div>
+            <div className='flex gap-2 justify-between'>
+              <div className='justify-between items-center'>
+                <label className='text-right text-[0.8rem] overflow-hidden text-nowrap w-full'>
+                  Picture Std :
+                </label>
+
+                <UploadImage src={data?.part?.picture_std ?? ""} disabled />
+              </div>
+              <div className='justify-between items-center'>
+                <label className='text-right text-[0.8rem] text-nowrap'>
+                  Q-Point :
+                </label>
+                <UploadImage src={data?.part?.q_point ?? ""} disabled />
+              </div>
+              <div className='justify-between items-center'>
+                <label className='text-right text-[0.8rem] text-nowrap'>
+                  Packing :
+                </label>
+                <UploadImage src={data?.part?.packing ?? ""} disabled />
+              </div>
+            </div>
+            <div className=' flex flex-col gap-1 items-start'>
+              <label className='text-right text-[0.8rem] text-nowrap'>
+                More pictures ({data?.part?.more_pictures?.length ?? 0}/3) :
+              </label>
+              <div className=' flex gap-2'>
+                {(data?.part?.more_pictures?.length === 0
+                  ? [""]
+                  : data?.part?.more_pictures
+                )?.map((src, i) => (
+                  <Fragment key={i}>
+                    <UploadImage src={src ?? ""} disabled />
+                  </Fragment>
+                ))}
+              </div>
             </div>
             <div>
               <label className='text-right text-[0.8rem]'>Printed By :</label>

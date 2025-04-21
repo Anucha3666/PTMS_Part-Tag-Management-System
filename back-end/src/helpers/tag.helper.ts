@@ -389,7 +389,7 @@ const mapRESOne = (data: any) => ({
           first_name: data?.checked_by_info?.first_name,
           last_name: data?.checked_by_info?.last_name,
           profile_picture: data?.checked_by_info?.profile_picture
-            ? `${process.env.BASE_FILE_IMAGES}/profile_picture/${data?.checked_by_info?.profile_picture}`
+            ? `${process.env.BASE_FILE_IMAGES}/profile/${data?.checked_by_info?.profile_picture}`
             : null,
         },
   checked_at: data.checked_at,
