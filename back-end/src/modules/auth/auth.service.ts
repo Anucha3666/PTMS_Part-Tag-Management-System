@@ -190,7 +190,8 @@ export class AuthService {
 
       return {
         status: 'success',
-        message: 'Forgot password successfully.',
+        message:
+          'Your request has been submitted. Please wait for admin approval',
         data: result,
       };
     } catch (error) {

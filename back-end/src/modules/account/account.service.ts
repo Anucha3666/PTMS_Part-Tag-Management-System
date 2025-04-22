@@ -108,7 +108,6 @@ export class AccountsService {
 
       const accounts = await this.accountModel
         .find()
-        .select('-password')
         .lean()
         .sort({ created_at: -1 })
         .exec();

@@ -1,4 +1,8 @@
-import { LoginForm, SignUpForm } from "@/components/common/form";
+import {
+  ForgotPasswordForm,
+  LoginForm,
+  SignUpForm,
+} from "@/components/common/form";
 
 import { motion } from "motion/react";
 import { FC, useState } from "react";
@@ -17,7 +21,7 @@ export const LoginPage: FC = () => {
       <motion.div
         layout
         layoutId={"layout-login"}
-        className=' h-min w-[22rem] rounded-xl md:rounded-b-3xl md:rounded-t-none flex flex-col gap-2 border-l-2 border-[#00000090] p-10 shadow-2xl backdrop-blur-md bg-[#00000090]'>
+        className=' h-min w-[21.38rem] rounded-xl md:rounded-b-3xl md:rounded-t-none flex flex-col gap-2 border-l-2 border-[#00000090] p-10 shadow-2xl backdrop-blur-md bg-[#00000090]'>
         <div className=' flex flex-col gap-2 items-center text-white'>
           <img
             src={
@@ -32,7 +36,7 @@ export const LoginPage: FC = () => {
               style={{ fontFamily: "Oswald, sans-serif" }}>
               PTMS
             </p>
-            <p className=' -mt-2 text-[1.18rem] font-bold'>
+            <p className=' -mt-2 text-[1.14rem] font-bold'>
               Part Tag Management System
             </p>
           </div>
@@ -63,6 +67,31 @@ export const LoginPage: FC = () => {
               </p>
             </div>
           </motion.div>
+        ) : order === "forgot-password" ? (
+          <motion.div
+            layout
+            layoutId={"sign-up"}
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}>
+            <div className=' text-[#FFFFFFF0] pb-2'>
+              <p className=' text-2xl'>Forgot Password</p>
+              <p className='text-[#FFFFFFA0] font-normal'>
+                Please enter your details
+              </p>
+            </div>
+
+            <ForgotPasswordForm onSucceed={() => setOrder("")} />
+
+            <div className=' pt-2 flex justify-center items-center text-[0.9rem] gap-2 text-[#FFFFFFA0] font-normal'>
+              <p>Changed your mind ?</p>
+              <p
+                className=' text-blue-400 underline cursor-pointer hover:text-blue-500 hover:scale-105 active:scale-105'
+                onClick={() => setOrder("sign-in")}>
+                Sign in
+              </p>
+            </div>
+          </motion.div>
         ) : (
           <motion.div
             layout
@@ -71,15 +100,13 @@ export const LoginPage: FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}>
             <div className=' text-[#FFFFFFF0] pb-2'>
-              <p className=' text-2xl'>
-                {order === "" ? "Welcome back" : "Sign In"}
-              </p>
+              <p className=' text-2xl'>Welcome back</p>
               <p className='text-[#FFFFFFA0] font-normal'>
                 Please enter your details
               </p>
             </div>
 
-            <LoginForm />
+            <LoginForm onForgotPassword={() => setOrder("forgot-password")} />
 
             <div className=' pt-2 flex justify-center items-center text-[0.9rem] gap-2 text-[#FFFFFFA0] font-normal'>
               <p>No Asscunt ?</p>

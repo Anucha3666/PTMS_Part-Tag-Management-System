@@ -37,7 +37,6 @@ export const ChangePasswordModal: FC<TChangePasswordModalProps> = ({
         form={form}
         layout='vertical'
         name='changePasswordForm'
-        initialValues={{ remember: true }}
         className=' flex flex-col gap-0'>
         <Form.Item
           label='Old Password'

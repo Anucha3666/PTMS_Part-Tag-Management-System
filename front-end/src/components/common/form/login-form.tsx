@@ -8,7 +8,11 @@ import { Lock, User } from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const LoginForm: FC = () => {
+export type TLoginFormProps = {
+  onForgotPassword?: () => void;
+};
+
+export const LoginForm: FC<TLoginFormProps> = ({ onForgotPassword }) => {
   const navigate = useNavigate();
   const { mutateSignIn } = useAuth();
 
@@ -73,14 +77,22 @@ export const LoginForm: FC = () => {
               />
             </Form.Item>
           </div>
-          <div className='w-full flex justify-end'>
+          <div className='w-full flex justify-between items-center'>
             <Form.Item<TLogin>
               name='remember'
               valuePropName='checked'
               label={null}
               className='m-0'>
-              <Checkbox className='text-white'>Remember</Checkbox>
+              <Checkbox className='text-white'>Remember me</Checkbox>
             </Form.Item>
+
+            {onForgotPassword && (
+              <p
+                className=' text-blue-400 underline cursor-pointer hover:text-blue-500 hover:scale-105 active:scale-105'
+                onClick={onForgotPassword}>
+                Forgot password
+              </p>
+            )}
           </div>
 
           <Button

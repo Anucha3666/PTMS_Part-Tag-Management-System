@@ -116,6 +116,7 @@ export const mapAccountToTRESAccount = (account: any) => ({
   is_deleted: account.is_deleted,
   deleted_at: account.deleted_at,
   deleted_by: account.deleted_by,
+  is_forgot_password: account.password === '',
 });
 
 export const AccountHelper = {
