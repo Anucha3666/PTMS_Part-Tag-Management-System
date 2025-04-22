@@ -26,6 +26,7 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
   const { className, rowClassName, rootClassName } =
     getCustomTableDarkThemeProps();
 
+  const { dataUser } = useAppSelector((state) => state.utils);
   const { parts } = useAppSelector((state) => state.part);
   const [height, setHeight] = useState(0);
   const [dataModal, setDataModal] = useState<TDataModalPart>(
@@ -248,7 +249,11 @@ export const PartTable: FC<TPartTableProps> = ({ search = "" }) => {
                 ...item,
                 key: item?.part_id,
               }))}
-            rowSelection={{ type: "checkbox", ...rowSelection, fixed: "left" }}
+            rowSelection={
+              dataUser?.role === "viewer"
+                ? undefined
+                : { type: "checkbox", ...rowSelection, fixed: "left" }
+            }
             components={{
               header: {
                 cell: (

@@ -8,6 +8,7 @@ import { PartTable } from "../components/part";
 
 export const PartPage = () => {
   const dispatch = useAppDispatch();
+  const { dataUser } = useAppSelector((state) => state.utils);
   const { parts } = useAppSelector((state) => state.part);
   const { prints } = useAppSelector((state) => state.print);
 
@@ -33,13 +34,15 @@ export const PartPage = () => {
               value={search}
               onChange={(e) => setSearch(e?.target?.value)}
             />
-            <Button
-              className=' px-2'
-              onClick={() => setIsOpenPrintTagDrawer(true)}
-              disabled={(prints?.length ?? 0) <= 0}>
-              <Printer size={20} />
-              Print Tag
-            </Button>
+            {!(dataUser?.role === "viewer") && (
+              <Button
+                className=' px-2'
+                onClick={() => setIsOpenPrintTagDrawer(true)}
+                disabled={(prints?.length ?? 0) <= 0}>
+                <Printer size={20} />
+                Print Tag
+              </Button>
+            )}
           </div>
         </div>
 

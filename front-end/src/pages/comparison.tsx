@@ -8,12 +8,14 @@ import { Input, InputRef, Spin } from "antd";
 import { Delete } from "lucide-react";
 import { useRef, useState } from "react";
 import QRCode from "react-qr-code";
+import { ForbiddenPage } from "./forbidden";
 
 export const ComparisonPage = () => {
   const qrCodeTagInputRef = useRef<InputRef>(null);
   const refTagInputRef = useRef<InputRef>(null);
   const { useGetTag, mutateValidationTag } = useTag();
 
+  const { dataUser } = useAppSelector((state) => state?.utils);
   const { tags } = useAppSelector((state) => state?.tag);
   const [validationTag, setValidationTag] = useState<TValidationTag>({
     type: "daikin",
@@ -27,6 +29,14 @@ export const ComparisonPage = () => {
     validationTag?.tag_no ?? "",
     tag_id ?? ""
   );
+
+  if (
+    dataUser?.role !== "admin" &&
+    dataUser?.role !== "owner" &&
+    dataUser?.role !== "user"
+  ) {
+    return <ForbiddenPage />;
+  }
 
   return (
     <div className='p-2 w-full h-full flex flex-col gap-2 overflow-hidden'>

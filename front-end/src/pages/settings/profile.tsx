@@ -1,8 +1,8 @@
+import { TagRole } from "@/components/common";
 import { EditProfileModal } from "@/components/settings/profile";
 import { SRC_DAMAGED_PICTURE, SRC_USER } from "@/constants";
 import { formatDateTime, useDisclosure } from "@/helpers";
 import { useAppSelector } from "@/store/hook";
-import { Tag } from "antd";
 import { Pencil } from "lucide-react";
 
 export const SettingProfilePage = () => {
@@ -69,7 +69,7 @@ export const SettingProfilePage = () => {
               <p className='text-4xl'>
                 {dataUser?.first_name} {dataUser?.last_name}
               </p>
-              <Tag color='red'>{dataUser?.role?.toLocaleUpperCase()}</Tag>
+              <TagRole role={dataUser?.role} isView />
             </div>
             <p>{dataUser?.position}</p>
             <p>@{dataUser?.username}</p>

@@ -50,6 +50,7 @@ export const SidebarApp = () => {
       label: "Compare",
       page: "/compare",
       icon: <GitCompareArrows />,
+      role: ["user", "admin", "owner"],
     },
     {
       label: "Reports",
@@ -67,7 +68,9 @@ export const SidebarApp = () => {
         },
       ],
     },
-  ];
+  ]?.filter(({ role }) =>
+    role === undefined ? true : role?.includes(dataUser?.role ?? "")
+  );
 
   return (
     <>
