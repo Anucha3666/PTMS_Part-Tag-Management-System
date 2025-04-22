@@ -20,6 +20,7 @@ import {
   RejectAccountModal,
   ViewAccountModal,
 } from ".";
+import { ResetPasswordAccountModal } from "./modals/reset-password-account-modal";
 
 export type TSettingsAccountTableProps = {
   search?: string;
@@ -36,6 +37,9 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
   const [height, setHeight] = useState(0);
   const [dataView, setDataView] = useState<TAccount>({} as TAccount);
   const [dataDelete, setDataDelete] = useState<TAccount>({} as TAccount);
+  const [dataResetPassword, setDataResetPassword] = useState<TAccount>(
+    {} as TAccount
+  );
   const [dataApprove, setDataApprove] = useState<TAccount>({} as TAccount);
   const [dataReject, setDataReject] = useState<TAccount>({} as TAccount);
   const [dataChangeRole, setDataChangeRole] = useState<TAccount>(
@@ -139,6 +143,29 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
               </>
             ) : (
               <>
+                {record?.is_forgot_password && (
+                  <Tooltip title={<p>Reset Password</p>}>
+                    <svg
+                      xmlns='http://www.w3.org/2000/svg'
+                      width='24'
+                      height='24'
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      stroke='currentColor'
+                      stroke-width='2'
+                      stroke-linecap='round'
+                      stroke-linejoin='round'
+                      className='text-gray-400 hover:text-purple-600 cursor-pointer'
+                      onClick={() => setDataResetPassword(record)}>
+                      <path d='m14.5 9.5 1 1' />
+                      <path d='m15.5 8.5-4 4' />
+                      <path d='M3 12a9 9 0 1 0 9-9 9.74 9.74 0 0 0-6.74 2.74L3 8' />
+                      <path d='M3 3v5h5' />
+                      <circle cx='10' cy='14' r='2' />
+                    </svg>
+                  </Tooltip>
+                )}
+
                 {!record?.is_deleted && (
                   <Tooltip title={<p>Delete Account</p>}>
                     <Trash2
@@ -226,6 +253,10 @@ export const SettingsAccountTable: FC<TSettingsAccountTableProps> = ({
       <DeleteAccountModal
         data={dataDelete}
         onCancel={() => setDataDelete({} as TAccount)}
+      />
+      <ResetPasswordAccountModal
+        data={dataResetPassword}
+        onCancel={() => setDataResetPassword({} as TAccount)}
       />
       <ApproveAccountModal
         data={dataApprove}
