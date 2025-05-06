@@ -13,7 +13,8 @@ export const LoginPage: FC = () => {
     <div
       className={`w-screen h-screen flex justify-center items-center md:items-start md:justify-end overflow-hidden md:pr-8`}
       style={{
-        backgroundImage: "url('/assets/images/bg-b4.png')",
+        backgroundImage:
+          "url('https://sncservices.sncformer.com/data/microservices/v1/file-storage/ptms/images/background.png')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

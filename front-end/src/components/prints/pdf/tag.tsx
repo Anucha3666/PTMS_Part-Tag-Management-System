@@ -11,6 +11,7 @@ export type TPDFTag = {
   data?: TPrintedTag;
   isView?: boolean;
   isViewPDF?: boolean;
+  isDate?: boolean;
 };
 
 type OutputData = {
@@ -29,6 +30,7 @@ const PDFTag: FC<TPDFTag> = ({
   data = {} as TPrintedTag,
   isView = false,
   isViewPDF = false,
+  isDate = true,
 }) => {
   const transformData = (input: TPrintedTag): OutputData => {
     const result: OutputData = [];
@@ -104,11 +106,11 @@ const PDFTag: FC<TPDFTag> = ({
                         </div>
                         <p className=' -mt-1'>Customer name</p>
                       </div>
-                      <div className='w-[10rem]'>
+                      <div className='w-[12rem] overflow-hidden'>
                         <div className=' w-full flex text-nowrap gap-2'>
                           <p>วันที่</p>
-                          <p className='w-full border-b border-black inline-block indent-2 font-bold'>
-                            {formatDate(new Date())}
+                          <p className='w-full h-[1.1rem] border-b border-black inline-block indent-2 font-bold'>
+                            {isDate && formatDate(new Date())}
                           </p>
                         </div>
                         <p className=' -mt-1'>Date</p>

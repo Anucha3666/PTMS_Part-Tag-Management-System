@@ -65,7 +65,7 @@ export const TagPage: FC = () => {
                   </div>
                   <p className=' -mt-1'>Customer name</p>
                 </div>
-                <div className='w-[10rem]'>
+                <div className='w-[12rem] overflow-hidden'>
                   <div className=' w-full flex text-nowrap gap-2'>
                     <p>วันที่</p>
                     <p className='w-full border-b border-black inline-block indent-2 font-bold'>

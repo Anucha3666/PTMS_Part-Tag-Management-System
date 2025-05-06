@@ -117,7 +117,7 @@ export class TagService {
       const parts = req?.ref_tag.split('|');
       if (`${parts[1]}${parts[2]}` !== existingTag?.part?.part_no) {
         this?.commonHelper?.httpExceptionError(
-          `Tag part number ${existingTag?.part?.part_no} does not match with ref_tag part number ${parts[1]}${parts[2]}`,
+          `Tag part number ${existingTag?.part?.part_no} does not match with EDI tag part number ${parts[1]}${parts[2]}`,
         );
       }
 

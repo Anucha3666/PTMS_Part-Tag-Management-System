@@ -1,7 +1,7 @@
 import { usePrint } from "@/services/hooks";
 import { useAppSelector } from "@/store/hook";
 import { TPrintedTag, TPrintedTagSummary, TPrintTag } from "@/types";
-import { Button, Drawer, Segmented, Select } from "antd";
+import { Button, Checkbox, Drawer, Segmented, Select } from "antd";
 import { Printer } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -27,6 +27,7 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
   const [segmented, setSegmented] = useState("Part List");
   const [printedTag, setPrintedTag] = useState<TPrintedTag>({} as TPrintedTag);
   const [process, setProcess] = useState<string>("");
+  const [isDate, setIsDate] = useState<boolean>(true);
 
   const printTags = async () => {
     const data = await mutatePrintTags({
@@ -84,30 +85,38 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
             onChange={(value) => setSegmented(value)}
           />
 
-          <Select
-            id='process'
-            value={process}
-            placeholder='Select process.'
-            className='w-full max-w-[8rem]'
-            options={[
-              {
-                value: "",
-                label:
-                  processes?.filter(({ is_deleted }) => !is_deleted)?.length ??
-                  0 === 0
-                    ? "Please create a process."
-                    : "Select a process.",
-              },
-            ]?.concat(
-              processes
-                ?.filter(({ is_deleted }) => !is_deleted)
-                ?.map(({ process_name }) => ({
-                  value: process_name,
-                  label: process_name,
-                }))
-            )}
-            onChange={(e) => setProcess(e)}
-          />
+          <div className='flex gap-2 items-center'>
+            <Select
+              id='process'
+              value={process}
+              placeholder='Select process.'
+              className='w-full max-w-[8rem]'
+              options={[
+                {
+                  value: "",
+                  label:
+                    processes?.filter(({ is_deleted }) => !is_deleted)
+                      ?.length ?? 0 === 0
+                      ? "Please create a process."
+                      : "Select a process.",
+                },
+              ]?.concat(
+                processes
+                  ?.filter(({ is_deleted }) => !is_deleted)
+                  ?.map(({ process_name }) => ({
+                    value: process_name,
+                    label: process_name,
+                  }))
+              )}
+              onChange={(e) => setProcess(e)}
+            />
+            <Checkbox
+              checked={isDate}
+              onChange={() => setIsDate(!isDate)}
+              className=' text-nowrap'>
+              Use this date
+            </Checkbox>
+          </div>
         </div>
         <div className=' w-full h-full overflow-auto'>
           <div className='flex w-full rounded-md overflow-hidden flex-col space-y-2'>
@@ -122,13 +131,14 @@ export const PrintTagDrawer: FC<TPrintTagDrawer> = ({
                   } as TPrintedTag
                 }
                 isView
+                {...{ isDate }}
               />
             )}
           </div>
         </div>
         <div className=' hidden'>
           <div ref={printRef}>
-            <PDFTag data={printedTag} />
+            <PDFTag data={printedTag} {...{ isDate }} />
           </div>
         </div>
       </div>

@@ -6,13 +6,15 @@ import { useAppSelector } from "@/store/hook";
 import { TValidationTag } from "@/types";
 import { Input, InputRef, Spin } from "antd";
 import { Delete } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import QRCode from "react-qr-code";
 import { ForbiddenPage } from "./forbidden";
 
 export const ComparisonPage = () => {
   const qrCodeTagInputRef = useRef<InputRef>(null);
   const refTagInputRef = useRef<InputRef>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutTagRef = useRef<NodeJS.Timeout | null>(null);
   const { useGetTag, mutateValidationTag } = useTag();
 
   const { dataUser } = useAppSelector((state) => state?.utils);
@@ -22,13 +24,66 @@ export const ComparisonPage = () => {
   } as TValidationTag);
 
   const tag_id = tags?.find(
-    ({ tag_no }) => tag_no === validationTag?.tag_no
+    (info) => info?.tag_no === validationTag?.tag_no
   )?.tag_id;
 
   const { isFetching, data } = useGetTag(
     validationTag?.tag_no ?? "",
     tag_id ?? ""
   );
+
+  useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      if (
+        validationTag?.tag_no?.includes(
+          "https://snc-services.sncformer.com/ptms/tag/"
+        )
+      ) {
+        setValidationTag({
+          ...validationTag,
+          tag_no: validationTag?.tag_no?.split("/")[5] ?? "",
+        });
+        refTagInputRef.current?.focus();
+      }
+    }, 500);
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [validationTag?.tag_no]);
+
+  useEffect(() => {
+    if (timeoutTagRef.current) {
+      clearTimeout(timeoutTagRef.current);
+    }
+
+    timeoutTagRef.current = setTimeout(async () => {
+      if (validationTag?.ref_tag?.length > 1) {
+        const res = await mutateValidationTag(validationTag);
+
+        if (res?.status === "success") {
+          setTimeout(() => {
+            setValidationTag({ type: "daikin" } as TValidationTag);
+            qrCodeTagInputRef.current?.focus();
+          }, 1000);
+        } else {
+          setValidationTag({ ...validationTag, ref_tag: "" } as TValidationTag);
+        }
+      }
+    }, 500);
+
+    return () => {
+      if (timeoutTagRef.current) {
+        clearTimeout(timeoutTagRef.current);
+      }
+    };
+  }, [validationTag?.ref_tag]);
 
   if (
     dataUser?.role !== "admin" &&
@@ -45,9 +100,11 @@ export const ComparisonPage = () => {
           <p className=' text-lg font-bold'>Comparison</p>
         </div>
         <div className=' w-full h-min overflow-hidden grid gap-2 grid-cols-3'>
-          <div className='w-full  h-min '>
-            <div>
-              <label className='text-right text-[0.8rem]'>QR Tag PTMS :</label>
+          <div className='w-full h-min overflow-hidden '>
+            <div className=' w-full overflow-hidden'>
+              <label className='text-right text-[0.8rem] w-full text-nowrap whitespace-nowrap overflow-hidden text-ellipsis'>
+                QR Tag PTMS :
+              </label>
               <div className='w-full relative'>
                 <Input
                   ref={qrCodeTagInputRef}
@@ -56,27 +113,10 @@ export const ComparisonPage = () => {
                   value={validationTag?.tag_no}
                   placeholder='Enter qr tag ptms.'
                   onChange={(e) => {
-                    if (
-                      e?.target?.value?.includes(
-                        "https://snc-services.sncformer.com/ptms/tag/"
-                      )
-                    ) {
-                      setValidationTag({
-                        ...validationTag,
-                        tag_no: e?.target?.value?.split("/")[5] ?? "",
-                      });
-                    } else {
-                      setValidationTag({
-                        ...validationTag,
-                        tag_no: e?.target?.value ?? "",
-                      });
-                    }
-
-                    if (
-                      (e.target?.value?.length ?? 0) >
-                      validationTag?.tag_no?.length + 1
-                    )
-                      refTagInputRef.current?.focus();
+                    setValidationTag({
+                      ...validationTag,
+                      tag_no: e?.target?.value ?? "",
+                    });
                   }}
                 />
                 <Delete
@@ -97,20 +137,13 @@ export const ComparisonPage = () => {
                 id='ref_tag'
                 name='ref_tag'
                 ref={refTagInputRef}
-                value={""}
+                value={validationTag?.ref_tag}
                 placeholder='Enter ref tag.'
-                onChange={async (e) => {
-                  const res = await mutateValidationTag({
+                onChange={(e) => {
+                  setValidationTag({
                     ...validationTag,
-                    ref_tag: e?.target?.value ?? "",
+                    ref_tag: e.target.value,
                   });
-
-                  if (res?.status === "success") {
-                    setTimeout(() => {
-                      setValidationTag({ type: "daikin" } as TValidationTag);
-                      qrCodeTagInputRef.current?.focus();
-                    }, 1000);
-                  }
                 }}
               />
             </div>
@@ -151,7 +184,7 @@ export const ComparisonPage = () => {
                           </div>
                           <p className=' -mt-1'>Customer name</p>
                         </div>
-                        <div className='w-[10rem]'>
+                        <div className='w-[12rem] overflow-hidden'>
                           <div className=' w-full flex text-nowrap gap-2'>
                             <p>วันที่</p>
                             <p className='w-full border-b border-black inline-block indent-2 font-bold'>
