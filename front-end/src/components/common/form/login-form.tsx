@@ -9,10 +9,14 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 export type TLoginFormProps = {
+  isTagPage?: boolean;
   onForgotPassword?: () => void;
 };
 
-export const LoginForm: FC<TLoginFormProps> = ({ onForgotPassword }) => {
+export const LoginForm: FC<TLoginFormProps> = ({
+  isTagPage = false,
+  onForgotPassword,
+}) => {
   const navigate = useNavigate();
   const { mutateSignIn } = useAuth();
 
@@ -25,7 +29,12 @@ export const LoginForm: FC<TLoginFormProps> = ({ onForgotPassword }) => {
       } else {
         cookieCryptoUtils.delete("DATA_USER_REMEMBER");
       }
-      navigate("/parts");
+
+      if (!isTagPage) {
+        navigate("/parts");
+      } else {
+        window.location.reload();
+      }
     }
   };
 

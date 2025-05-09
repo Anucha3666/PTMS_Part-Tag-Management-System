@@ -7,7 +7,11 @@ import {
 import { motion } from "motion/react";
 import { FC, useState } from "react";
 
-export const LoginPage: FC = () => {
+export type TLoginProps = {
+  isTagPage?: boolean;
+};
+
+export const LoginPage: FC<TLoginProps> = ({ isTagPage = false }) => {
   const [order, setOrder] = useState<string>("");
   return (
     <div
@@ -107,7 +111,10 @@ export const LoginPage: FC = () => {
               </p>
             </div>
 
-            <LoginForm onForgotPassword={() => setOrder("forgot-password")} />
+            <LoginForm
+              onForgotPassword={() => setOrder("forgot-password")}
+              {...{ isTagPage }}
+            />
 
             <div className=' pt-2 flex justify-center items-center text-[0.9rem] gap-2 text-[#FFFFFFA0] font-normal'>
               <p>No Asscunt ?</p>

@@ -1,12 +1,19 @@
 import { Image } from "@/components/36S/ui/image";
 import { UploadImage } from "@/components/common";
-import { SRC_USER, VITE_BASE_QR_CODE } from "@/constants";
+import {
+  SERVICE_CONFIG_DATA_USER,
+  SRC_USER,
+  VITE_BASE_QR_CODE,
+} from "@/constants";
 import { formatDate, formatDateTime } from "@/helpers";
 import { useTag } from "@/services/hooks";
+import { TAuth } from "@/types";
+import { cookieCryptoUtils } from "@/utils";
 import { Input, Spin } from "antd";
 import { FC, Fragment } from "react";
 import QRCode from "react-qr-code";
 import { useParams } from "react-router-dom";
+import { LoginPage } from "./login";
 import { NotFoundPage } from "./not-found";
 
 export const TagPage: FC = () => {
@@ -14,6 +21,26 @@ export const TagPage: FC = () => {
   const { tag_no, tag_id } = useParams<{ tag_no: string; tag_id: string }>();
 
   const { isFetching, data } = useGetTag(tag_no ?? "", tag_id ?? "");
+
+  const dataUser = cookieCryptoUtils?.get(SERVICE_CONFIG_DATA_USER) as TAuth;
+
+  if ((dataUser?.token ?? "") === "" || (dataUser?.role ?? "") === "") {
+    return <LoginPage isTagPage />;
+  }
+
+  if (isFetching) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}>
+        <Spin size='large' tip='Loading profile...' />
+      </div>
+    );
+  }
 
   if (isFetching) {
     return (
