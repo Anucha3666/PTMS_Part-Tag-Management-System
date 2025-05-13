@@ -158,7 +158,7 @@ export const ComparisonPage = () => {
               ) : (
                 <div className=' flex-col md:flex-row flex gap-4'>
                   <div className='w-full h-min flex justify-center items-center overflow-hidden'>
-                    <div className=' scale-90 md:scale-100 w-[24rem] h-full relative pb-4 px-6 border border-black pt-2'>
+                    <div className=' scale-90  md:scale-75 lg:scale-100 w-[24rem] h-full relative pb-4 px-6 border border-black pt-2'>
                       <div className='w-full h-[5rem] overflow-hidden flex justify-between items-center'>
                         <p className=' text-red-600 text-[3.8rem] font-bold text-logo'>
                           IPC

@@ -79,7 +79,7 @@ export const AppNavbar = () => {
               "https://sncservices.sncformer.com/data/microservices/v1/file-storage/ptms/images/1a13374c-ff79-45a6-a122-e0ed6ef75c82-1745199350855.png"
             }
             alt='icon-ptms'
-            className=' w-[2.4rem] h-max'
+            className=' w-[2.4rem] h-[2.4rem]'
           />
           <div className='!w-[3px] h-[34px] rounded-full  bg-black  shadow-inner' />
           <div className=' text-sm'>
