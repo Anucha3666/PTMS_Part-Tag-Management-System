@@ -20,8 +20,6 @@ export const AppLayout = () => {
             </div>
           </AnimatedRoutes>
         </div>
-
-        <Outlet />
       </div>
     </AppWrapper>
   );

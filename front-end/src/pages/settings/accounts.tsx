@@ -22,7 +22,7 @@ export const SettingAccountsPage = () => {
 
           <Input
             size='small'
-            className=' max-w-[12rem] h-[2rem] mr-1'
+            className=' max-w-[8rem] md:max-w-[12rem] h-[2rem] mr-1'
             prefix={<Search size={20} className=' text-gray-400' />}
             placeholder='Search'
             value={search}
