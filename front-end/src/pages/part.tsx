@@ -15,6 +15,8 @@ export const PartPage = () => {
   const [isOpenPrintTagDrawer, setIsOpenPrintTagDrawer] = useState(false);
   const [search, setSearch] = useState<string>("");
 
+  console.log(parts);
+
   useEffect(() => {
     dispatch(setPrints([]));
   }, []);

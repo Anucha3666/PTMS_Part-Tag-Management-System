@@ -142,15 +142,18 @@ const mapRES = (part: any) => ({
   part_name: part.part_name,
   packing_std: part.packing_std,
   customer_name: part.customer_name,
-  picture_std: part.picture_std
-    ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
-    : null,
-  q_point: part.q_point
-    ? `${process.env.BASE_FILE_IMAGES}/q_point/${part.q_point}`
-    : null,
-  packing: part.packing
-    ? `${process.env.BASE_FILE_IMAGES}/packing/${part.packing}`
-    : null,
+  picture_std:
+    (part.picture_std ?? '') !== ''
+      ? `${process.env.BASE_FILE_IMAGES}/picture_std/${part.picture_std}`
+      : null,
+  q_point:
+    (part?.q_point ?? '') !== ''
+      ? `${process.env.BASE_FILE_IMAGES}/q_point/${part.q_point}`
+      : null,
+  packing:
+    (part?.packing ?? '') !== ''
+      ? `${process.env.BASE_FILE_IMAGES}/packing/${part.packing}`
+      : null,
   more_pictures:
     part?.more_pictures?.length > 0
       ? part?.more_pictures?.map(

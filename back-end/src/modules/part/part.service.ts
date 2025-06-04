@@ -72,8 +72,10 @@ export class PartService {
       const morePictures = req?.more_pictures;
       if (
         pictureSTD &&
-        pictureSTD instanceof Object &&
-        'buffer' in pictureSTD
+        typeof pictureSTD === 'object' &&
+        'buffer' in pictureSTD &&
+        Buffer.isBuffer(pictureSTD.buffer) &&
+        pictureSTD.buffer.length > 0
       ) {
         const res = await await this.microServiceUplode.uploadFile(
           'ptms/images/picture_std',
@@ -81,14 +83,26 @@ export class PartService {
         );
         req = { ...req, picture_std: res?.name ?? null };
       }
-      if (packing && packing instanceof Object && 'buffer' in packing) {
+      if (
+        packing &&
+        typeof packing === 'object' &&
+        'buffer' in packing &&
+        Buffer.isBuffer(packing.buffer) &&
+        packing.buffer.length > 0
+      ) {
         const res = await await this.microServiceUplode.uploadFile(
           'ptms/images/packing',
           packing,
         );
         req = { ...req, packing: res?.name ?? null };
       }
-      if (qPoint && qPoint instanceof Object && 'buffer' in qPoint) {
+      if (
+        qPoint &&
+        typeof qPoint === 'object' &&
+        'buffer' in qPoint &&
+        Buffer.isBuffer(qPoint.buffer) &&
+        qPoint.buffer.length > 0
+      ) {
         const res = await await this.microServiceUplode.uploadFile(
           'ptms/images/q_point',
           qPoint,
